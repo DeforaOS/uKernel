@@ -29,7 +29,7 @@ Once this done, to build uKernel, simply run:
 $ make
 ```
 
-The resulting kernel is located in src/uKernel.bin. It is meant to produce a
+The resulting kernel is located in `src/uKernel.bin`. It produces a
 multiboot-compliant kernel file.
 
 
