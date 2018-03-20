@@ -4,14 +4,6 @@
 
 
 
-#include "drivers/console.h"
-
-
-/* public */
-/* functions */
-/* main */
-int main(void)
-{
-	console_init();
-	return 0;
-}
+#if defined(__amd64__) || defined(__i386__)
+# include "console/vga.c"
+#endif

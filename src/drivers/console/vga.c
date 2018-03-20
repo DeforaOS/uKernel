@@ -4,14 +4,10 @@
 
 
 
-#include "drivers/console.h"
-
-
-/* public */
 /* functions */
-/* main */
-int main(void)
+/* console_init */
+int console_init(void)
 {
-	console_init();
+	/* TODO really implement */
 	return 0;
 }
