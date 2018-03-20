@@ -14,8 +14,10 @@ typedef long int size_t;
 
 
 /* constants */
-#define VGA_COLUMNS	80
-#define VGA_ROWS	25
+#define VGA_ADDRESS_BASE	0xb8000
+
+#define VGA_TEXT_COLUMNS	80
+#define VGA_TEXT_ROWS		25
 
 
 /* functions */
@@ -30,11 +32,11 @@ int console_init(void)
 
 static void _init_clear(void)
 {
-	uint16_t * buf = (uint16_t *)0xb8000;
+	uint16_t * buf = (uint16_t *)VGA_ADDRESS_BASE;
 	size_t row;
 	size_t col;
 
-	for(row = 0; row < VGA_ROWS; row++)
-		for(col = 0; col < VGA_COLUMNS; col++)
-			buf[row * VGA_COLUMNS + col] = (' ' | (0x00 << 8));
+	for(row = 0; row < VGA_TEXT_ROWS; row++)
+		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
+			buf[row * VGA_TEXT_COLUMNS + col] = (' ' | (0x00 << 8));
 }
