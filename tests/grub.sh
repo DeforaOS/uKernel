@@ -27,7 +27,9 @@
 
 #variables
 PROGNAME="grub.sh"
+UKERNELBIN="../src/uKernel.bin"
 #executables
+DATE="date"
 GRUBFILE="grub-file"
 UNAME="uname"
 
@@ -40,6 +42,42 @@ _error()
 	return 2
 }
 
+_grub()
+{
+	ret=0
+	machine=$($UNAME -m)
+
+	if [ $? -ne 0 -o -z "$machine" ]; then
+		_error "Could not determine the platform"
+		return $?
+	fi
+	$DATE
+	echo
+	case "$machine" in
+		amd64|i?86)
+			_info "Testing multiboot conformance ($machine)"
+			$GRUBFILE --is-x86-multiboot "$UKERNELBIN"
+			ret=$?
+			if [ $ret -eq 127 ]; then
+				_error "Cannot test: $GRUBFILE not available (ignored)"
+				ret=0
+			elif [ $ret -ne 0 ]; then
+				_error "$UKERNELBIN: Not compliant with multiboot"
+				ret=$?
+			fi
+			;;
+		*)
+			_info "$machine: Unsupported platform (ignored)"
+			;;
+	esac
+	if [ $ret -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return $ret
+}
+
 
 #info
 _info()
@@ -48,20 +86,46 @@ _info()
 }
 
 
+#usage
+_usage()
+{
+	echo "Usage: $PROGNAME [-c] target..." 1>&2
+	return 1
+}
+
+
 #main
-case $($UNAME -m) in
-	amd64|i?86)
-		_info "Testing multiboot conformance"
-		$GRUBFILE --is-x86-multiboot ../uKernel.bin
-		res=$?
-		if [ $res -eq 127 ]; then
-			_error "Cannot test: $GRUBFILE not available (ignored)"
-			exit 0
-		elif [ $req -ne 0 ]; then
-			_error ""
+clean=0
+while getopts "cO:P:" name; do
+	case "$name" in
+		c)
+			clean=1
+			;;
+		O)
+			export "${OPTARG%%=*}"="${OPTARG#*=}"
+			;;
+		P)
+			#XXX ignored for compatibility
+			;;
+		?)
+			_usage
 			exit $?
-		fi
-		;;
-	*)
-		;;
-esac
+			;;
+	esac
+done
+shift $((OPTIND - 1))
+if [ $# -lt 1 ]; then
+	_usage
+	exit $?
+fi
+
+#clean
+[ $clean -ne 0 ] && exit 0
+
+exec 3>&1
+while [ $# -gt 0 ]; do
+	target="$1"
+	shift
+
+	_grub > "$target"					|| exit 2
+done
