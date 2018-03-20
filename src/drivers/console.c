@@ -4,6 +4,9 @@
 
 
 
+#include "console.h"
+
+
 #if defined(__amd64__) || defined(__i386__)
 # include "console/vga.c"
 #endif

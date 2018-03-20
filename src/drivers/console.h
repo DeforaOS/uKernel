@@ -8,7 +8,13 @@
 
 
 /* public */
+/* types */
+typedef struct _Console Console;
+
+
 /* prototypes */
-int console_init(void);
+Console * console_init(void);
+
+void console_clear(Console * console);
 
 #endif /* !UKERNEL_DRIVERS_CONSOLE_H */

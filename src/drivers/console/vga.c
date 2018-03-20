@@ -13,6 +13,13 @@ typedef long int size_t;
 #endif
 
 
+/* types */
+struct _Console
+{
+	volatile uint16_t * buf;
+};
+
+
 /* constants */
 #define VGA_ADDRESS_BASE	0xb8000
 
@@ -20,23 +27,29 @@ typedef long int size_t;
 #define VGA_TEXT_ROWS		25
 
 
+/* variables */
+static Console _vga_console;
+
+
 /* functions */
 /* console_init */
-static void _init_clear(void);
-
-int console_init(void)
+Console * console_init(void)
 {
-	_init_clear();
-	return 0;
+	_vga_console.buf = (uint16_t *)VGA_ADDRESS_BASE;
+	console_clear(&_vga_console);
+	return &_vga_console;
 }
 
-static void _init_clear(void)
+
+/* useful */
+/* console_clear */
+void console_clear(Console * console)
 {
-	uint16_t * buf = (uint16_t *)VGA_ADDRESS_BASE;
 	size_t row;
 	size_t col;
 
 	for(row = 0; row < VGA_TEXT_ROWS; row++)
 		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
-			buf[row * VGA_TEXT_COLUMNS + col] = (' ' | (0x00 << 8));
+			console->buf[row * VGA_TEXT_COLUMNS + col]
+				= (' ' | (0x00 << 8));
 }
