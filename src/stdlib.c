@@ -4,6 +4,7 @@
 
 
 
+#include <unistd.h>
 #include <stdlib.h>
 
 
@@ -12,7 +13,7 @@
 /* abort */
 void abort(void)
 {
-	/* FIXME implement */
+	_exit(125);
 }
 
 
@@ -21,4 +22,11 @@ uint32_t arc4random(void)
 {
 	/* FIXME really implement */
 	return 0x41414141;
+}
+
+
+/* exit */
+void exit(int status)
+{
+	_exit(status);
 }

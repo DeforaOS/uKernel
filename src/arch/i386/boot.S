@@ -32,6 +32,17 @@ stack_top:
 
 /* text */
 .section .text
+/* exit */
+.global _exit
+.type _exit, @function
+_exit:
+	/* infinite loop */
+	cli
+1:	hlt
+	jmp 1b
+
+
+/* start */
 .global _start
 .type _start, @function
 _start:
@@ -46,9 +57,10 @@ _start:
 	/* start the kernel */
 	call main
 
-	/* infinite loop */
-	cli
-1:	hlt
-	jmp 1b
+	/* exit the kernel */
+	push %eax
+	call exit
+
+	hlt
 
 .size _start, . - _start

@@ -14,5 +14,6 @@
 /* prototypes */
 void abort(void);
 uint32_t arc4random(void);
+void exit(int status);
 
 #endif /* !UKERNEL_STDLIB_H */
