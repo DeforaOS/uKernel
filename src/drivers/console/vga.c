@@ -4,13 +4,7 @@
 
 
 
-/* FIXME provide <stdint.h> or use a cross-compiler */
-#if 0
-# include <stdint.h>
-#else
-typedef short int uint16_t;
-typedef long int size_t;
-#endif
+#include <stdint.h>
 
 
 /* types */
