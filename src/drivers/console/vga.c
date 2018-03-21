@@ -61,6 +61,27 @@ void console_clear(Console * console)
 }
 
 
+/* console_print */
+void console_print(Console * console, char const * str, size_t len)
+{
+	size_t i;
+
+	for(i = 0; i < len; i++)
+	{
+		if(str[i] == '\n' || console->pos_x == VGA_TEXT_COLUMNS)
+		{
+			console->pos_x = 0;
+			console->pos_y++;
+			continue;
+		}
+		if(console->pos_y == VGA_TEXT_ROWS)
+			/* XXX really scroll */
+			console->pos_y = 0;
+		_vga_print(console, str[i], console->pos_y, console->pos_x++);
+	}
+}
+
+
 /* private */
 /* functions */
 /* vga_print */

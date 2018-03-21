@@ -6,6 +6,8 @@
 #ifndef UKERNEL_DRIVERS_CONSOLE_H
 # define UKERNEL_DRIVERS_CONSOLE_H
 
+# include <stdint.h>
+
 
 /* public */
 /* types */
@@ -15,6 +17,8 @@ typedef struct _Console Console;
 /* prototypes */
 Console * console_init(void);
 
+/* useful */
 void console_clear(Console * console);
+void console_print(Console * console, char const * str, size_t len);
 
 #endif /* !UKERNEL_DRIVERS_CONSOLE_H */

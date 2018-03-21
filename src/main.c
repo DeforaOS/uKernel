@@ -12,6 +12,10 @@
 /* main */
 int main(void)
 {
-	console_init();
+	Console * console;
+	char msg[] = "Starting DeforaOS...\n";
+
+	console = console_init();
+	console_print(console, msg, sizeof(msg) - 1);
 	return 0;
 }
