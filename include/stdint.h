@@ -19,6 +19,12 @@ typedef __UINT16_TYPE__ uint16_t;
 # else
 typedef unsigned short uint16_t;
 # endif
+# ifdef __UINT32_TYPE__
+typedef __UINT32_TYPE__ uint32_t;
+# else
+typedef unsigned int uint32_t;
+# endif
+
 typedef unsigned long size_t;
 
 #endif /* !UKERNEL_STDINT_H */
