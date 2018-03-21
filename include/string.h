@@ -13,5 +13,6 @@
 /* prototypes */
 void * memcpy(void * dest, void const * src, size_t n);
 void * memmove(void * dest, void const * src, size_t n);
+void * memset(void * dest, int c, size_t n);
 
 #endif /* !UKERNEL_STRING_H */
