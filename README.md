@@ -15,8 +15,8 @@ Compiling uKernel
 
 First, the Makefiles must be generated for the current platform. This can be
 performed with `configure(1)` from the DeforaOS configure project, found at
-<https://www.defora.org/os/project/16/configure>. The procedure is then as
-follows:
+<https://www.defora.org/os/project/16/configure> (or
+<https://github.com/DeforaOS/configure>). The procedure is then as follows:
 ```
 $ configure
 ```
