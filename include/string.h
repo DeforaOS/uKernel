@@ -7,6 +7,7 @@
 #ifndef UKERNEL_STRING_H
 # define UKERNEL_STRING_H
 
+# include <stddef.h>
 # include <stdint.h>
 
 
