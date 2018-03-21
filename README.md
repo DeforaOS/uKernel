@@ -38,5 +38,5 @@ Testing uKernel
 
 To test uKernel:
 ```
-$ qemu-system-i386 -nographic -kernel src/uKernel.bin
+$ qemu-system-i386 -kernel src/uKernel.bin
 ```
