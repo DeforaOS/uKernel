@@ -13,7 +13,7 @@
 int main(void)
 {
 	Console * console;
-	char msg[] = "Starting DeforaOS...\n";
+	const char msg[] = "Starting DeforaOS...\n";
 
 	console = console_init();
 	console_print(console, msg, sizeof(msg) - 1);

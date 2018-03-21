@@ -38,6 +38,11 @@ _start:
 	/* initialize the stack */
 	mov $stack_top, %esp
 
+#if defined(__SSP__)
+	/* initialize SSP */
+	call __stack_chk_setup
+#endif
+
 	/* start the kernel */
 	call main
 
