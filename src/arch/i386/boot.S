@@ -54,6 +54,9 @@ _start:
 	call __stack_chk_setup
 #endif
 
+	/* call the global constructors */
+	call _init
+
 	/* start the kernel */
 	call main
 
