@@ -29,6 +29,9 @@ Once this done, to build uKernel, simply run:
 The resulting kernel is located in `src/uKernel.bin`. It produces a
 multiboot-compliant kernel file.
 
+To cross-compile uKernel, select a different C compiler as follows:
+
+    $ make CC="other-cc"
 
 Testing uKernel
 ---------------
