@@ -7,11 +7,11 @@
 /* sections */
 /* init */
 .section .init
-	popl %ebp
+	pop %ebp
 	ret
 
 
 /* fini */
 .section .fini
-	popl %ebp
+	pop %ebp
 	ret
