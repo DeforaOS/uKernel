@@ -27,6 +27,17 @@ void __stack_chk_fail(void)
 }
 
 
+/* stack_chk_fail_local */
+# ifdef __PIC__
+#  ifdef __i386__
+void __stack_chk_fail_local(void)
+{
+	__stack_chk_fail();
+}
+#  endif
+# endif
+
+
 /* stack_chk_setup */
 void __stack_chk_setup(void)
 {
