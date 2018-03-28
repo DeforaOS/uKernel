@@ -108,7 +108,11 @@ _platform_variable_amd64()
 
 	case "$variable" in
 		LIBUKERNEL_CFLAGS|UKERNEL_CFLAGS)
-			[ "$platform" = "OpenBSD" ] && extra=" -fno-stack-protector"
+			if [ "$platform" = "OpenBSD" ]; then
+				extra=" -fno-stack-protector"
+			else
+				extra=" -fstack-protector"
+			fi
 			echo "-ffreestanding -fPIC -mno-red-zone"
 			;;
 		LIBUKERNEL_LDFLAGS)
@@ -128,7 +132,11 @@ _platform_variable_i386()
 
 	case "$variable" in
 		LIBUKERNEL_CFLAGS|UKERNEL_CFLAGS)
-			[ "$platform" = "OpenBSD" ] && extra=" -fno-stack-protector"
+			if [ "$platform" = "OpenBSD" ]; then
+				extra=" -fno-stack-protector"
+			else
+				extra=" -fstack-protector"
+			fi
 			echo "-ffreestanding -fPIC$extra"
 			;;
 		LIBUKERNEL_LDFLAGS)
