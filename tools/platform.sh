@@ -115,7 +115,7 @@ _platform_variable_amd64()
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
-			echo "-nostdlib -static -T arch/amd64/uKernel.ld"
+			echo "-nostdlib -static -T ../src/arch/amd64/uKernel.ld"
 			;;
 	esac
 }
@@ -135,7 +135,7 @@ _platform_variable_i386()
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
-			echo "-nostdlib -static -T arch/i386/uKernel.ld"
+			echo "-nostdlib -static -T ../src/arch/i386/uKernel.ld"
 			;;
 	esac
 }
