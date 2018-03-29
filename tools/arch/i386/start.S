@@ -84,4 +84,13 @@ _write:
 	.long	__NetBSD_Version__
 	.previous
 	.p2align 2
+#elif defined(__OpenBSD__)
+.section ".note.openbsd.ident", "a"
+	.p2align 2
+	.long	8
+	.long	4
+	.long	1
+	.ascii	"OpenBSD\0"
+	.long	0
+	.previous
 #endif
