@@ -4,13 +4,22 @@
 
 
 .section .text
+_syscall:
+	int	$0x80
+	jnc	.errnoret
+.errno:
+	mov	%eax, errno
+	mov	$-1, %eax
+.errnoret:
+	ret
+
+
 /* exit */
 .global _exit
 .type _exit, @function
 _exit:
 	mov	$0x1, %eax
-	int	$0x80
-	ret
+	jmp	_syscall
 
 
 /* start */
@@ -66,8 +75,7 @@ auxv_done:
 .type _write, @function
 _write:
 	mov	$0x4, %eax
-	int	$0x80
-	ret
+	jmp	_syscall
 
 
 #if defined(__NetBSD__)
