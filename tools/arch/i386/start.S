@@ -93,6 +93,8 @@ _write:
 	.previous
 	.p2align 2
 #elif defined(__OpenBSD__)
+/* OpenBSD emulation */
+
 .section ".note.openbsd.ident", "a"
 	.p2align 2
 	.long	8
