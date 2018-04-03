@@ -26,7 +26,7 @@ static Console _console;
 
 /* functions */
 /* console_init */
-Console * console_init(void)
+Console * console_init(Bus * bus)
 {
 	_console.fd = STDOUT_FILENO;
 	return &_console;

@@ -4,6 +4,7 @@
 
 
 
+#include "drivers/bus.h"
 #include "drivers/console.h"
 
 
@@ -12,10 +13,12 @@
 /* main */
 int main(void)
 {
+	Bus * bus;
 	Console * console;
 	const char msg[] = "Starting DeforaOS...\n";
 
-	console = console_init();
+	bus = bus_init();
+	console = console_init(bus);
 	console_print(console, msg, sizeof(msg) - 1);
 	return 0;
 }

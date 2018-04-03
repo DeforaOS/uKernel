@@ -7,6 +7,7 @@
 # define UKERNEL_DRIVERS_CONSOLE_H
 
 # include <stdint.h>
+# include "bus.h"
 
 
 /* public */
@@ -15,7 +16,7 @@ typedef struct _Console Console;
 
 
 /* prototypes */
-Console * console_init(void);
+Console * console_init(Bus * bus);
 
 /* useful */
 void console_clear(Console * console);

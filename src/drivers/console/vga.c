@@ -36,8 +36,10 @@ static void _vga_scroll(Console * console, size_t rows);
 /* public */
 /* functions */
 /* console_init */
-Console * console_init(void)
+Console * console_init(Bus * bus)
 {
+	(void) bus;
+
 	_vga_console.buf = (uint16_t *)VGA_ADDRESS_BASE;
 	_vga_console.color_bg = VGA_TEXT_COLOR_BLACK;
 	_vga_console.color_fg = VGA_TEXT_COLOR_WHITE;
