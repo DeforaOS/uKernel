@@ -6,7 +6,7 @@
 
 #include "drivers/bus.h"
 
-#include "drivers/bus/stdio.c"
+#include "drivers/bus/tty.c"
 
 
 /* bus_init */
@@ -14,6 +14,6 @@ ukBus * bus_init(void)
 {
 	static ukBus * bus;
 
-	bus = _stdio_bus_init();
+	bus = _tty_bus_init();
 	return bus;
 }
