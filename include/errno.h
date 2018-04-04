@@ -9,9 +9,10 @@
 
 
 /* constants */
-# define EINVAL		1
-# define ENODEV		2
-# define ENOTSUP	3
+# define EBADF		9
+# define ENODEV		19
+# define EINVAL		22
+# define ENOTSUP	86
 
 
 /* variables */
