@@ -10,7 +10,8 @@
 
 /* constants */
 # define EINVAL		1
-# define ENOTSUP	2
+# define ENODEV		2
+# define ENOTSUP	3
 
 
 /* variables */

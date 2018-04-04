@@ -15,7 +15,9 @@
 
 /* private */
 /* types */
-struct _ukConsole
+typedef struct _ukConsole VGAConsole;
+
+typedef struct _ukConsoleData
 {
 	volatile uint16_t * buf;
 
@@ -26,44 +28,63 @@ struct _ukConsole
 	uint8_t pos_y;
 
 	ukBus * bus;
-};
-
-
-/* variables */
-static ukConsole _vga_console;
+} VGAConsoleData;
 
 
 /* prototypes */
+/* console */
+static VGAConsole * _vga_console_init(ukBus * bus);
+
+static void _vga_console_clear(VGAConsole * console);
+
+static void _vga_console_print(VGAConsole * console, char const * str,
+		size_t len);
+
 /* useful */
 /* cursor */
-static void _vga_cursor_set(ukConsole * console, _Bool enabled,
+static void _vga_cursor_set(VGAConsole * console, _Bool enabled,
 		size_t row, size_t column);
 
-static void _vga_print(ukConsole * console, unsigned char c,
+static void _vga_print(VGAConsole * console, unsigned char c,
 		size_t row, size_t column);
-static void _vga_scroll(ukConsole * console, size_t rows);
+static void _vga_scroll(VGAConsole * console, size_t rows);
 
 
-/* public */
-/* functions */
-/* console_init */
-ukConsole * console_init(ukBus * bus)
+/* variables */
+static ukConsoleData _vga_console_data =
 {
-	_vga_console.buf = (uint16_t *)VGA_ADDRESS_BASE;
-	_vga_console.color_bg = VGA_TEXT_COLOR_BLACK;
-	_vga_console.color_fg = VGA_TEXT_COLOR_WHITE;
-	_vga_console.pos_x = 0;
-	_vga_console.pos_y = 0;
-	console_clear(&_vga_console);
-	_vga_console.bus = bus;
+	(uint16_t *)VGA_ADDRESS_BASE,
+	VGA_TEXT_COLOR_BLACK,
+	VGA_TEXT_COLOR_WHITE,
+	0,
+	0,
+	NULL
+};
+
+static VGAConsole _vga_console =
+{
+	_vga_console_init,
+	_vga_console_clear,
+	_vga_console_print,
+	&_vga_console_data
+};
+
+
+/* functions */
+/* console */
+/* vga_console_init */
+static ukConsole * _vga_console_init(ukBus * bus)
+{
+	_vga_console_data.bus = bus;
+	_vga_console_clear(&_vga_console);
 	return &_vga_console;
 }
 
 
-/* useful */
-/* console_clear */
-void console_clear(ukConsole * console)
+/* vga_console_clear */
+static void _vga_console_clear(VGAConsole * console)
 {
+	VGAConsoleData * data = console->data;
 	size_t row;
 	size_t col;
 
@@ -72,68 +93,73 @@ void console_clear(ukConsole * console)
 	for(row = 0; row < VGA_TEXT_ROWS; row++)
 		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
 			_vga_print(console, ' ', row, col);
-	console->pos_x = 0;
-	console->pos_y = 0;
+	data->pos_x = 0;
+	data->pos_y = 0;
 }
 
 
-/* console_print */
-void console_print(ukConsole * console, char const * str, size_t len)
+/* vga_console_print */
+static void _vga_console_print(VGAConsole * console, char const * str,
+		size_t len)
 {
+	VGAConsoleData * data = console->data;
 	size_t i;
 
 	if(console == NULL)
 		console = &_vga_console;
 	for(i = 0; i < len; i++)
 	{
-		if(str[i] == '\n' || console->pos_x == VGA_TEXT_COLUMNS)
+		if(str[i] == '\n' || data->pos_x == VGA_TEXT_COLUMNS)
 		{
-			console->pos_x = 0;
-			console->pos_y++;
+			data->pos_x = 0;
+			data->pos_y++;
 			continue;
 		}
-		if(console->pos_y == VGA_TEXT_ROWS)
+		if(data->pos_y == VGA_TEXT_ROWS)
 			_vga_scroll(console, 1);
-		_vga_print(console, str[i], console->pos_y, console->pos_x++);
+		_vga_print(console, str[i], data->pos_y, data->pos_x++);
 	}
-	_vga_cursor_set(console, true, console->pos_y,
-			min(console->pos_x, VGA_TEXT_COLUMNS));
+	_vga_cursor_set(console, true, data->pos_y, min(data->pos_x,
+				VGA_TEXT_COLUMNS));
 }
 
 
-/* private */
-/* functions */
+/* useful */
+/* cursor */
 /* vga_cursor_set */
-static void _vga_cursor_set(ukConsole * console, bool enabled,
+static void _vga_cursor_set(VGAConsole * console, bool enabled,
 		size_t row, size_t column)
 {
+	VGAConsoleData * data = console->data;
 	uint16_t pos = row * VGA_TEXT_COLUMNS + column;
 
 	if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
-	console->bus->write8(console->bus, (ukBusAddress *)0x3d4, 0x0f);
-	console->bus->write8(console->bus, (ukBusAddress *)0x3d5, pos & 0xff);
-	console->bus->write8(console->bus, (ukBusAddress *)0x3d4, 0x0e);
-	console->bus->write8(console->bus, (ukBusAddress *)0x3d5, pos >> 8);
+	data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0f);
+	data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos & 0xff);
+	data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0e);
+	data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos >> 8);
 }
 
 
 /* vga_print */
-static void _vga_print(ukConsole * console, unsigned char c,
+static void _vga_print(VGAConsole * console, unsigned char c,
 		size_t row, size_t column)
 {
+	VGAConsoleData * data = console->data;
 	uint8_t color;
 
 	if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
-	color = (console->color_bg << 4) | console->color_fg;
-	console->buf[row * VGA_TEXT_COLUMNS + column] = c | (color << 8);
+	color = (data->color_bg << 4) | data->color_fg;
+	data->buf[row * VGA_TEXT_COLUMNS + column] = c | (color << 8);
 }
 
 
 /* vga_scroll */
-static void _vga_scroll(ukConsole * console, size_t rows)
+static void _vga_scroll(VGAConsole * console, size_t rows)
 {
+	VGAConsoleData * data = console->data;
 	size_t s;
 
 	if(rows == 0)
@@ -144,8 +170,8 @@ static void _vga_scroll(ukConsole * console, size_t rows)
 		return;
 	}
 	s = rows * VGA_TEXT_COLUMNS;
-	memmove(console->buf, &console->buf[s],
-			sizeof(console->buf) - (s * sizeof(*console->buf)));
-	console->pos_x = 0;
-	console->pos_y = VGA_TEXT_ROWS - rows;
+	memmove(data->buf, &data->buf[s], sizeof(data->buf)
+			- (s * sizeof(*data->buf)));
+	data->pos_x = 0;
+	data->pos_y = VGA_TEXT_ROWS - rows;
 }
