@@ -11,21 +11,21 @@
 
 /* public */
 /* types */
-typedef struct _Bus Bus;
-typedef void * BusAddress;
-typedef struct _BusData BusData;
+typedef struct _ukBus ukBus;
+typedef void * ukBusAddress;
+typedef struct _ukBusData ukBusData;
 
-struct _Bus
+struct _ukBus
 {
-	int (*write8)(Bus * bus, BusAddress * address, uint8_t value);
-	int (*write16)(Bus * bus, BusAddress * address, uint16_t value);
-	int (*write32)(Bus * bus, BusAddress * address, uint32_t value);
+	int (*write8)(ukBus * bus, ukBusAddress * address, uint8_t value);
+	int (*write16)(ukBus * bus, ukBusAddress * address, uint16_t value);
+	int (*write32)(ukBus * bus, ukBusAddress * address, uint32_t value);
 
-	BusData * data;
+	ukBusData * data;
 };
 
 
 /* prototypes */
-Bus * bus_init(void);
+ukBus * bus_init(void);
 
 #endif /* !UKERNEL_DRIVERS_BUS_H */

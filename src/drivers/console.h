@@ -12,14 +12,14 @@
 
 /* public */
 /* types */
-typedef struct _Console Console;
+typedef struct _ukConsole ukConsole;
 
 
 /* prototypes */
-Console * console_init(Bus * bus);
+ukConsole * console_init(ukBus * bus);
 
 /* useful */
-void console_clear(Console * console);
-void console_print(Console * console, char const * str, size_t len);
+void console_clear(ukConsole * console);
+void console_print(ukConsole * console, char const * str, size_t len);
 
 #endif /* !UKERNEL_DRIVERS_CONSOLE_H */

@@ -13,8 +13,8 @@
 /* main */
 int main(void)
 {
-	Bus * bus;
-	Console * console;
+	ukBus * bus;
+	ukConsole * console;
 	const char msg[] = "Starting DeforaOS...\n";
 
 	bus = bus_init();

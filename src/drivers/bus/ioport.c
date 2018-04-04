@@ -10,13 +10,13 @@
 
 /* private */
 /* prototypes */
-extern int ioport_write8(Bus * bus, BusAddress * address, uint8_t value);
-static int _ioport_write16(Bus * bus, BusAddress * address, uint16_t value);
-static int _ioport_write32(Bus * bus, BusAddress * address, uint32_t value);
+extern int ioport_write8(ukBus * bus, ukBusAddress * address, uint8_t value);
+static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value);
+static int _ioport_write32(ukBus * bus, ukBusAddress * address, uint32_t value);
 
 
 /* variables */
-static Bus _ioport_bus =
+static ukBus _ioport_bus =
 {
 	ioport_write8,
 	_ioport_write16,
@@ -27,8 +27,8 @@ static Bus _ioport_bus =
 
 /* public */
 /* functions */
-/* bus_init */
-Bus * bus_init(void)
+/* ukbus_init */
+ukBus * bus_init(void)
 {
 	return &_ioport_bus;
 }
@@ -36,7 +36,7 @@ Bus * bus_init(void)
 
 /* useful */
 /* ioport_write16 */
-static int _ioport_write16(Bus * bus, BusAddress * address, uint16_t value)
+static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value)
 {
 	(void) bus;
 	(void) address;
@@ -47,7 +47,7 @@ static int _ioport_write16(Bus * bus, BusAddress * address, uint16_t value)
 
 
 /* ioport_write32 */
-static int _ioport_write32(Bus * bus, BusAddress * address, uint32_t value)
+static int _ioport_write32(ukBus * bus, ukBusAddress * address, uint32_t value)
 {
 	(void) bus;
 	(void) address;
