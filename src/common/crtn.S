@@ -6,9 +6,9 @@
 
 /* check for supported architectures */
 #if defined(__amd64__)
-# include "arch/amd64/crtn.S"
+# include "../arch/amd64/crtn.S"
 #elif defined(__i386__)
-# include "arch/i386/crtn.S"
+# include "../arch/i386/crtn.S"
 #else
 # warning Unsupported architecture
 #endif

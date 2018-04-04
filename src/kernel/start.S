@@ -6,7 +6,7 @@
 
 /* check for supported architectures */
 #if defined(__amd64__) || defined(__i386__)
-# include "arch/i386/kernel.S"
+# include "../arch/i386/kernel.S"
 #else
 # warning Unsupported architecture
 #endif

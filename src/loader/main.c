@@ -6,9 +6,9 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "drivers/boot/multiboot.h"
-#include "drivers/bus.h"
-#include "drivers/console.h"
+#include "../drivers/boot/multiboot.h"
+#include "../drivers/bus.h"
+#include "../drivers/console.h"
 
 #ifndef MAIN_BUS
 # define MAIN_BUS	"ioport"

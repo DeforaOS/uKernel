@@ -5,4 +5,4 @@
 
 
 #define MAIN_BUS	"tty"
-#include "../src/main.c"
+#include "../src/kernel/main.c"
