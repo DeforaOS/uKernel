@@ -7,6 +7,10 @@
 #include "drivers/bus.h"
 #include "drivers/console.h"
 
+#ifndef MAIN_BUS
+# define MAIN_BUS	"ioport"
+#endif
+
 
 /* public */
 /* functions */
@@ -17,7 +21,7 @@ int main(void)
 	ukConsole * console;
 	const char msg[] = "Starting DeforaOS...\n";
 
-	bus = bus_init();
+	bus = bus_init(MAIN_BUS);
 	console = console_init(bus);
 	console_print(console, msg, sizeof(msg) - 1);
 	return 0;

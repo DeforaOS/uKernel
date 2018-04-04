@@ -32,6 +32,6 @@ struct _ukBus
 
 
 /* prototypes */
-ukBus * bus_init(void);
+ukBus * bus_init(char const * name);
 
 #endif /* !UKERNEL_DRIVERS_BUS_H */

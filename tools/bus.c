@@ -10,10 +10,10 @@
 
 
 /* bus_init */
-ukBus * bus_init(void)
+ukBus * bus_init(char const * name)
 {
-	static ukBus * bus;
-
-	bus = _tty_bus_init();
-	return bus;
+	if(strcmp(name, "tty") == 0)
+		return _tty_bus_init();
+	errno = ENODEV;
+	return NULL;
 }

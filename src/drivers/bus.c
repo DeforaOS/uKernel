@@ -4,6 +4,7 @@
 
 
 
+#include <string.h>
 #include "bus.h"
 
 
@@ -11,11 +12,11 @@
 # include "bus/ioport.c"
 
 /* bus_init */
-ukBus * bus_init(void)
+ukBus * bus_init(char const * name)
 {
-	static ukBus * bus;
-
-	bus = _ioport_bus_init();
-	return bus;
+	if(strcmp(name, "ioport") == 0)
+		return _ioport_bus_init();
+	errno = ENODEV;
+	return NULL;
 }
 #endif
