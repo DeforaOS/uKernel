@@ -14,5 +14,6 @@ bus_write8:
 	mov 0x8(%esp), %dx
 	mov 0xc(%esp), %al
 	out %al, %dx
+	mov $0x0, %eax
 	ret
 #endif
