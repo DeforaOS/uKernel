@@ -4,18 +4,25 @@
 
 
 
+#include <stddef.h>
 #include <errno.h>
 
 
 /* private */
-/* types */
-struct _Bus
-{
-};
+/* prototypes */
+extern int ioport_write8(Bus * bus, BusAddress * address, uint8_t value);
+static int _ioport_write16(Bus * bus, BusAddress * address, uint16_t value);
+static int _ioport_write32(Bus * bus, BusAddress * address, uint32_t value);
 
 
 /* variables */
-static Bus _ioport_bus;
+static Bus _ioport_bus =
+{
+	ioport_write8,
+	_ioport_write16,
+	_ioport_write32,
+	NULL
+};
 
 
 /* public */
@@ -28,22 +35,22 @@ Bus * bus_init(void)
 
 
 /* useful */
-/* bus_write16 */
-int bus_write16(Bus * bus, void * addr, uint16_t value)
+/* ioport_write16 */
+static int _ioport_write16(Bus * bus, BusAddress * address, uint16_t value)
 {
 	(void) bus;
-	(void) addr;
+	(void) address;
 	(void) value;
 
 	return -ENOTSUP;
 }
 
 
-/* bus_write32 */
-int bus_write32(Bus * bus, void * addr, uint32_t value)
+/* ioport_write32 */
+static int _ioport_write32(Bus * bus, BusAddress * address, uint32_t value)
 {
 	(void) bus;
-	(void) addr;
+	(void) address;
 	(void) value;
 
 	return -ENOTSUP;

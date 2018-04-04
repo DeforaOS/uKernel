@@ -12,14 +12,20 @@
 /* public */
 /* types */
 typedef struct _Bus Bus;
+typedef void * BusAddress;
+typedef struct _BusData BusData;
+
+struct _Bus
+{
+	int (*write8)(Bus * bus, BusAddress * address, uint8_t value);
+	int (*write16)(Bus * bus, BusAddress * address, uint16_t value);
+	int (*write32)(Bus * bus, BusAddress * address, uint32_t value);
+
+	BusData * data;
+};
 
 
 /* prototypes */
 Bus * bus_init(void);
-
-/* useful */
-int bus_write8(Bus * bus, void * addr, uint8_t value);
-int bus_write16(Bus * bus, void * addr, uint16_t value);
-int bus_write32(Bus * bus, void * addr, uint32_t value);
 
 #endif /* !UKERNEL_DRIVERS_BUS_H */

@@ -7,10 +7,10 @@
 #if defined(__amd64__) || defined(__i386__)
 /* functions */
 .section .text
-/* bus_write8 */
-.global bus_write8
-.type bus_write8, @function
-bus_write8:
+/* ioport_write8 */
+.global ioport_write8
+.type ioport_write8, @function
+ioport_write8:
 	mov 0x8(%esp), %dx
 	mov 0xc(%esp), %al
 	out %al, %dx

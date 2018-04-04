@@ -111,10 +111,10 @@ static void _vga_cursor_set(Console * console, bool enabled,
 
 	if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
-	bus_write8(&console->bus, 0x3d4, 0x0f);
-	bus_write8(&console->bus, 0x3d5, pos & 0xff);
-	bus_write8(&console->bus, 0x3d4, 0x0e);
-	bus_write8(&console->bus, 0x3d5, pos >> 8);
+	console->bus->write8(console->bus, (BusAddress *)0x3d4, 0x0f);
+	console->bus->write8(console->bus, (BusAddress *)0x3d5, pos & 0xff);
+	console->bus->write8(console->bus, (BusAddress *)0x3d4, 0x0e);
+	console->bus->write8(console->bus, (BusAddress *)0x3d5, pos >> 8);
 }
 
 
