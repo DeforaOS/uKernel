@@ -12,16 +12,10 @@
 /* types */
 typedef struct _ukBus STDIOBus;
 
-typedef struct _ukBusData
-{
-	int fd;
-} STDIOBusData;
-
 
 /* prototypes */
 static STDIOBus * _stdio_bus_init(void);
 
-/* FIXME pass fd as the address */
 static int _stdio_bus_write8(STDIOBus * bus, ukBusAddress * address,
 		uint8_t value);
 static int _stdio_bus_write16(STDIOBus * bus, ukBusAddress * address,
@@ -34,19 +28,13 @@ extern int write(int fd, char const * buf, size_t len);
 
 
 /* variables */
-static STDIOBusData _stdio_bus_data =
-{
-	1				/* standard output */
-};
-
-
 static STDIOBus _stdio_bus =
 {
 	_stdio_bus_init,
 	_stdio_bus_write8,
 	_stdio_bus_write16,
 	_stdio_bus_write32,
-	&_stdio_bus_data
+	NULL
 };
 
 
@@ -64,10 +52,7 @@ static STDIOBus * _stdio_bus_init(void)
 static int _stdio_bus_write8(STDIOBus * bus, ukBusAddress * address,
 		uint8_t value)
 {
-	STDIOBusData * data = bus->data;
-	(void) address;
-
-	return write(data->fd, &value, sizeof(value));
+	return write((int)address, &value, sizeof(value));
 }
 
 
@@ -75,10 +60,7 @@ static int _stdio_bus_write8(STDIOBus * bus, ukBusAddress * address,
 static int _stdio_bus_write16(STDIOBus * bus, ukBusAddress * address,
 		uint16_t value)
 {
-	STDIOBusData * data = bus->data;
-	(void) address;
-
-	return write(data->fd, &value, sizeof(value));
+	return write((int)address, &value, sizeof(value));
 }
 
 
@@ -86,8 +68,5 @@ static int _stdio_bus_write16(STDIOBus * bus, ukBusAddress * address,
 static int _stdio_bus_write32(STDIOBus * bus, ukBusAddress * address,
 		uint32_t value)
 {
-	STDIOBusData * data = bus->data;
-	(void) address;
-
-	return write(data->fd, &value, sizeof(value));
+	return write((int)address, &value, sizeof(value));
 }

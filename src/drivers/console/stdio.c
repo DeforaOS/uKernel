@@ -5,6 +5,7 @@
 
 
 #include <string.h>
+#include "stdio.h"
 
 
 /* private */
@@ -68,5 +69,5 @@ static void _stdio_console_print(STDIOConsole * console, char const * str,
 	size_t i;
 
 	for(i = 0; i < len; i++)
-		data->bus->write8(data->bus, NULL, str[i]);
+		data->bus->write8(data->bus, STDIO_ADDRESS_STDOUT, str[i]);
 }
