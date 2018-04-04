@@ -47,9 +47,6 @@ _exit:
 .global _start
 .type _start, @function
 _start:
-	/* disable interrupts */
-	cli
-
 	/* initialize the stack */
 	mov $stack_top, %esp
 
@@ -61,13 +58,11 @@ _start:
 	/* call the global constructors */
 	call _init
 
-	/* start the bootloader */
-	push %ebx
+	/* start the kernel */
 	call main
 
 	/* exit the kernel */
-	call _exit
+	push %eax
+	call exit
 
 	hlt
-
-.size _start, . - _start
