@@ -52,7 +52,9 @@ static STDIOBus * _stdio_bus_init(void)
 static int _stdio_bus_write8(STDIOBus * bus, ukBusAddress * address,
 		uint8_t value)
 {
-	return write((int)address, &value, sizeof(value));
+	(void) bus;
+
+	return write((int)address, (char const *)&value, sizeof(value));
 }
 
 
@@ -60,7 +62,9 @@ static int _stdio_bus_write8(STDIOBus * bus, ukBusAddress * address,
 static int _stdio_bus_write16(STDIOBus * bus, ukBusAddress * address,
 		uint16_t value)
 {
-	return write((int)address, &value, sizeof(value));
+	(void) bus;
+
+	return write((int)address, (char const *)&value, sizeof(value));
 }
 
 
@@ -68,5 +72,7 @@ static int _stdio_bus_write16(STDIOBus * bus, ukBusAddress * address,
 static int _stdio_bus_write32(STDIOBus * bus, ukBusAddress * address,
 		uint32_t value)
 {
-	return write((int)address, &value, sizeof(value));
+	(void) bus;
+
+	return write((int)address, (char const *)&value, sizeof(value));
 }
