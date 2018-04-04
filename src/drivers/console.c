@@ -13,6 +13,7 @@
 static ukConsole * _console = NULL;
 
 
+/* functions */
 #if defined(__amd64__) || defined(__i386__)
 # include "console/vga.c"
 
@@ -34,7 +35,6 @@ ukConsole * console_init(ukBus * bus)
 #endif
 
 
-/* functions */
 /* accessors */
 /* console_get_default */
 ukConsole * console_get_default(void)

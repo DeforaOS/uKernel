@@ -71,9 +71,9 @@ auxv_done:
 
 
 /* write */
-.global _write
-.type _write, @function
-_write:
+.global write
+.type write, @function
+write:
 	mov	$0x4, %eax
 	jmp	_syscall
 

@@ -9,35 +9,44 @@
 
 
 /* private */
+/* types */
+typedef struct _ukBus IOPortBus;
+
+
 /* prototypes */
-extern int ioport_write8(ukBus * bus, ukBusAddress * address, uint8_t value);
-static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value);
-static int _ioport_write32(ukBus * bus, ukBusAddress * address, uint32_t value);
+static IOPortBus * _ioport_bus_init(void);
+extern int ioport_bus_write8(IOPortBus * bus, ukBusAddress * address,
+		uint8_t value);
+static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress * address,
+		uint16_t value);
+static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress * address,
+		uint32_t value);
 
 
 /* variables */
-static ukBus _ioport_bus =
+static IOPortBus _ioport_bus =
 {
-	ioport_write8,
-	_ioport_write16,
-	_ioport_write32,
+	_ioport_bus_init,
+	ioport_bus_write8,
+	_ioport_bus_write16,
+	_ioport_bus_write32,
 	NULL
 };
 
 
-/* public */
+/* private */
 /* functions */
-/* ukbus_init */
-ukBus * bus_init(void)
+/* bus */
+/* ioport_bus_init */
+static IOPortBus * _ioport_bus_init(void)
 {
 	return &_ioport_bus;
 }
 
 
-/* private */
-/* useful */
-/* ioport_write16 */
-static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value)
+/* ioport_bus_write16 */
+static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress * address,
+		uint16_t value)
 {
 	(void) bus;
 	(void) address;
@@ -48,7 +57,8 @@ static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value)
 
 
 /* ioport_write32 */
-static int _ioport_write32(ukBus * bus, ukBusAddress * address, uint32_t value)
+static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress * address,
+		uint32_t value)
 {
 	(void) bus;
 	(void) address;

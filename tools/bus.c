@@ -6,20 +6,14 @@
 
 #include "drivers/bus.h"
 
-
-/* types */
-struct _Bus
-{
-};
+#include "drivers/bus/stdio.c"
 
 
-/* variables */
-static Bus _bus;
-
-
-/* functions */
 /* bus_init */
-Bus * bus_init(void)
+ukBus * bus_init(void)
 {
-	return &_bus;
+	static ukBus * bus;
+
+	bus = _stdio_bus_init();
+	return bus;
 }

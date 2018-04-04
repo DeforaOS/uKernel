@@ -4,44 +4,49 @@
 
 
 
-#include <unistd.h>
-#include <stdint.h>
 #include "drivers/console.h"
 
-
-/* types */
-struct _Console
-{
-	int fd;
-};
+#include "drivers/console/stdio.c"
 
 
-/* prototypes */
-int _write(int fd, char const * buf, size_t len);
-
-
+/* private */
 /* variables */
-static Console _console;
+static ukConsole * _console = NULL;
 
 
 /* functions */
 /* console_init */
-Console * console_init(Bus * bus)
+ukConsole * console_init(ukBus * bus)
 {
-	_console.fd = STDOUT_FILENO;
-	return &_console;
+	if((_console = _stdio_console_init(bus)) == NULL)
+		return NULL;
+	return _console;
 }
 
 
-/* useful */
-/* console_clear */
-void console_clear(Console * console)
+/* FIXME code duplication with src/drivers/console.c */
+/* accessors */
+/* console_get_default */
+ukConsole * console_get_default(void)
 {
+	return _console;
+}
+
+
+/* helpers */
+/* console_clear */
+void console_clear(ukConsole * console)
+{
+	if(console == NULL)
+		console = console_get_default();
+	console->clear(console);
 }
 
 
 /* console_print */
-void console_print(Console * console, char const * text, size_t len)
+void console_print(ukConsole * console, char const * str, size_t len)
 {
-	_write(console->fd, text, len);
+	if(console == NULL)
+		console = console_get_default();
+	console->print(console, str, len);
 }
