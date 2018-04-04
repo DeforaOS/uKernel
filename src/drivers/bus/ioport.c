@@ -34,6 +34,7 @@ ukBus * bus_init(void)
 }
 
 
+/* private */
 /* useful */
 /* ioport_write16 */
 static int _ioport_write16(ukBus * bus, ukBusAddress * address, uint16_t value)

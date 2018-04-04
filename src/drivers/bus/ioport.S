@@ -11,9 +11,11 @@
 .global ioport_write8
 .type ioport_write8, @function
 ioport_write8:
-	mov 0x8(%esp), %dx
-	mov 0xc(%esp), %al
-	out %al, %dx
-	mov $0x0, %eax
+	mov	0x8(%esp), %dx		/* address */
+	mov	0xc(%esp), %al		/* value */
+	out	%al, %dx
+
+	/* return 0 */
+	mov	$0x0, %eax
 	ret
 #endif
