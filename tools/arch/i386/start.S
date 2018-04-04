@@ -22,6 +22,14 @@ _exit:
 	jmp	_syscall
 
 
+/* read */
+.global read
+.type read, @function
+read:
+	mov	$0x3, %eax
+	jmp	_syscall
+
+
 /* start */
 _start:
 	/* reset the stack */

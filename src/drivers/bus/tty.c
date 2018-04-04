@@ -16,6 +16,13 @@ typedef struct _ukBus TTYBus;
 /* prototypes */
 static TTYBus * _tty_bus_init(void);
 
+static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
+		uint8_t * value);
+static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
+		uint16_t * value);
+static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
+		uint32_t * value);
+
 static int _tty_bus_write8(TTYBus * bus, ukBusAddress * address, uint8_t value);
 static int _tty_bus_write16(TTYBus * bus, ukBusAddress * address,
 		uint16_t value);
@@ -23,6 +30,7 @@ static int _tty_bus_write32(TTYBus * bus, ukBusAddress * address,
 		uint32_t value);
 
 /* XXX make this more elegant */
+extern int read(int fd, char const * buf, size_t len);
 extern int write(int fd, char const * buf, size_t len);
 
 
@@ -30,6 +38,9 @@ extern int write(int fd, char const * buf, size_t len);
 static TTYBus _tty_bus =
 {
 	_tty_bus_init,
+	_tty_bus_read8,
+	_tty_bus_read16,
+	_tty_bus_read32,
 	_tty_bus_write8,
 	_tty_bus_write16,
 	_tty_bus_write32,
@@ -44,6 +55,36 @@ static TTYBus _tty_bus =
 static TTYBus * _tty_bus_init(void)
 {
 	return &_tty_bus;
+}
+
+
+/* tty_bus_read8 */
+static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
+		uint8_t * value)
+{
+	(void) bus;
+
+	return read((int)address, (char const *)value, sizeof(value));
+}
+
+
+/* tty_bus_read16 */
+static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
+		uint16_t * value)
+{
+	(void) bus;
+
+	return read((int)address, (char const *)value, sizeof(value));
+}
+
+
+/* tty_bus_read32 */
+static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
+		uint32_t * value)
+{
+	(void) bus;
+
+	return read((int)address, (char const *)value, sizeof(value));
 }
 
 

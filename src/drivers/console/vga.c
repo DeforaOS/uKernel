@@ -1,6 +1,8 @@
 /* $Id$ */
 /* Copyright (c) 2018 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS uKernel */
+/* TODO:
+ * - document the values used */
 
 
 
@@ -23,6 +25,8 @@ typedef struct _ukConsoleData
 
 	uint8_t color_bg;
 	uint8_t color_fg;
+
+	bool cursor;
 
 	uint8_t pos_x;
 	uint8_t pos_y;
@@ -56,6 +60,7 @@ static ukConsoleData _vga_console_data =
 	(uint16_t *)VGA_ADDRESS_BASE,
 	VGA_TEXT_COLOR_BLACK,
 	VGA_TEXT_COLOR_WHITE,
+	false,
 	0,
 	0,
 	NULL
@@ -77,6 +82,9 @@ static ukConsole * _vga_console_init(ukBus * bus)
 {
 	_vga_console_data.bus = bus;
 	_vga_console_clear(&_vga_console);
+	/* reset the cursor */
+	_vga_cursor_set(&_vga_console, !_vga_console_data.cursor, 0, 0);
+	_vga_cursor_set(&_vga_console, true, 0, 0);
 	return &_vga_console;
 }
 
@@ -119,7 +127,7 @@ static void _vga_console_print(VGAConsole * console, char const * str,
 			_vga_scroll(console, 1);
 		_vga_print(console, str[i], data->pos_y, data->pos_x++);
 	}
-	_vga_cursor_set(console, true, data->pos_y, min(data->pos_x,
+	_vga_cursor_set(console, data->cursor, data->pos_y, min(data->pos_x,
 				VGA_TEXT_COLUMNS));
 }
 
@@ -132,13 +140,37 @@ static void _vga_cursor_set(VGAConsole * console, bool enabled,
 {
 	VGAConsoleData * data = console->data;
 	uint16_t pos = row * VGA_TEXT_COLUMNS + column;
+	uint8_t u8;
 
-	if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
+	if(enabled == false)
+	{
+		/* disable the cursor if necessary */
+		if(data->cursor == false)
+			return;
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0a);
+		data->bus->read8(data->bus, (ukBusAddress *)0x3d5, &u8);
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d5, u8 | 0x20);
+	}
+	else if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
-	data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0f);
-	data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos & 0xff);
-	data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0e);
-	data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos >> 8);
+	else
+	{
+		/* position the cursor */
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0f);
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos & 0xff);
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d4, 0x0e);
+		data->bus->write8(data->bus, (ukBusAddress *)0x3d5, pos >> 8);
+		/* enable the cursor if necessary */
+		if(data->cursor == false)
+		{
+			data->bus->write8(data->bus, (ukBusAddress *)0x3d4,
+					0x0a);
+			data->bus->read8(data->bus, (ukBusAddress *)0x3d5, &u8);
+			data->bus->write8(data->bus, (ukBusAddress *)0x3d5,
+					u8 & ~0x20);
+		}
+	}
+	data->cursor = enabled;
 }
 
 
