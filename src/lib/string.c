@@ -52,3 +52,20 @@ void * memset(void * dest, int c, size_t n)
 		*d++ = c;
 	return dest;
 }
+
+
+/* strcmp */
+int strcmp(char const * s1, char const * s2)
+{
+	unsigned char const * u1;
+	unsigned char const * u2;
+
+	u1 = (unsigned char const *)s1;
+	u2 = (unsigned char const *)s2;
+	while(*u1 && *u2 && *u1 == *u2)
+	{
+		u1++;
+		u2++;
+	}
+	return *u1 - *u2;
+}
