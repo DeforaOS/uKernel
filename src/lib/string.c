@@ -69,3 +69,14 @@ int strcmp(char const * s1, char const * s2)
 	}
 	return *u1 - *u2;
 }
+
+
+/* strlen */
+size_t strlen(char const * s)
+{
+	size_t len = 0;
+
+	while(*s++)
+		len++;
+	return len;
+}
