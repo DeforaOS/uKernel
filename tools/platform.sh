@@ -129,7 +129,7 @@ _platform_variable_amd64()
 			else
 				extra=" -fstack-protector"
 			fi
-			echo "-m32 -ffreestanding -fPIC -mno-red-zone$extra"
+			echo "-m32 -ffreestanding -fPIC$extra"
 			;;
 		LIBUKERNEL_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib -static"
