@@ -64,7 +64,7 @@ static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return _read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char *)value, sizeof(value));
 }
 
 
@@ -74,7 +74,7 @@ static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return _read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char *)value, sizeof(value));
 }
 
 
@@ -84,7 +84,7 @@ static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return _read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char *)value, sizeof(value));
 }
 
 
