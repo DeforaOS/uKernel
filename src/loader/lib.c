@@ -11,10 +11,11 @@
 #include <errno.h>
 
 #include "lib/errno.c"
+#include "lib/ssp.c"
 #include "lib/stdio.c"
 #include "lib/stdlib.c"
 #include "lib/string.c"
-#include "lib/ssp.c"
+#include "lib/unistd.c"
 
 #include "drivers/bus.c"
 #include "drivers/console.c"

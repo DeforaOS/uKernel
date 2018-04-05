@@ -8,6 +8,12 @@
 # define UKERNEL_STDDEF_H
 
 
+/* types */
+# ifndef size_t
+#  define size_t size_t
+typedef unsigned long size_t;
+# endif
+
 /* constants */
 # ifndef NULL
 #  define NULL ((void *)0)

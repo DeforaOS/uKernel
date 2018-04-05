@@ -4,12 +4,7 @@
 
 
 
-.text
-
-
-/* _start */
-.global _start
-.type _start, @function
+.section .text
 
 
 /* check for supported architectures */

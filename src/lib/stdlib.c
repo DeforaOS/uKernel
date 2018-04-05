@@ -30,3 +30,17 @@ void exit(int status)
 {
 	_exit(status);
 }
+
+
+/* labs */
+long labs(long x)
+{
+	return (x >= 0) ? x : -x;
+}
+
+
+/* llabs */
+long long llabs(long long x)
+{
+	return (x >= 0) ? x : -x;
+}

@@ -30,8 +30,8 @@ static int _tty_bus_write32(TTYBus * bus, ukBusAddress * address,
 		uint32_t value);
 
 /* XXX make this more elegant */
-extern int read(int fd, char const * buf, size_t len);
-extern int write(int fd, char const * buf, size_t len);
+extern int _read(int fildes, void * buf, size_t count);
+extern int _write(int fildes, void const * buf, size_t count);
 
 
 /* variables */
@@ -64,7 +64,7 @@ static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char const *)value, sizeof(value));
 }
 
 
@@ -74,7 +74,7 @@ static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char const *)value, sizeof(value));
 }
 
 
@@ -84,7 +84,7 @@ static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return read((int)address, (char const *)value, sizeof(value));
+	return _read((int)address, (char const *)value, sizeof(value));
 }
 
 
@@ -93,7 +93,7 @@ static int _tty_bus_write8(TTYBus * bus, ukBusAddress * address, uint8_t value)
 {
 	(void) bus;
 
-	return write((int)address, (char const *)&value, sizeof(value));
+	return _write((int)address, (char const *)&value, sizeof(value));
 }
 
 
@@ -103,7 +103,7 @@ static int _tty_bus_write16(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return write((int)address, (char const *)&value, sizeof(value));
+	return _write((int)address, (char const *)&value, sizeof(value));
 }
 
 
@@ -113,5 +113,5 @@ static int _tty_bus_write32(TTYBus * bus, ukBusAddress * address,
 {
 	(void) bus;
 
-	return write((int)address, (char const *)&value, sizeof(value));
+	return _write((int)address, (char const *)&value, sizeof(value));
 }

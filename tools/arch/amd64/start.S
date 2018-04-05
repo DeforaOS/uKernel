@@ -29,14 +29,16 @@ _exit:
 
 
 /* read */
-.global read
-.type read, @function
-read:
+.global _read
+.type _read, @function
+_read:
 	mov	$0x3, %rax
 	jmp	_syscall
 
 
 /* start */
+.global _start
+.type _start, @function
 _start:
 	/* reset the stack */
 	xor	%rbp, %rbp
@@ -90,8 +92,8 @@ _start:
 
 
 /* write */
-.global write
-.type write, @function
-write:
+.global _write
+.type _write, @function
+_write:
 	mov	$0x4, %rax
 	jmp	_syscall

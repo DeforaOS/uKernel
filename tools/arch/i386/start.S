@@ -23,14 +23,16 @@ _exit:
 
 
 /* read */
-.global read
-.type read, @function
-read:
+.global _read
+.type _read, @function
+_read:
 	mov	$0x3, %eax
 	jmp	_syscall
 
 
 /* start */
+.global _start
+.type _start, @function
 _start:
 	/* reset the stack */
 	xor	%ebp, %ebp
@@ -79,8 +81,8 @@ auxv_done:
 
 
 /* write */
-.global write
-.type write, @function
-write:
+.global _write
+.type _write, @function
+_write:
 	mov	$0x4, %eax
 	jmp	_syscall

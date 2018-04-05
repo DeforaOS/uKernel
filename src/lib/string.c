@@ -71,6 +71,16 @@ int strcmp(char const * s1, char const * s2)
 }
 
 
+/* strcpy */
+char * strcpy(char * dest, char const * src)
+{
+	char * ret = dest;
+
+	while((*dest++ = *src++));
+	return ret;
+}
+
+
 /* strlen */
 size_t strlen(char const * s)
 {

@@ -15,5 +15,7 @@
 void abort(void);
 uint32_t arc4random(void);
 void exit(int status);
+long labs(long x);
+long long llabs(long long x);
 
 #endif /* !UKERNEL_STDLIB_H */

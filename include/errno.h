@@ -12,6 +12,8 @@
 # define EBADF		9
 # define ENODEV		19
 # define EINVAL		22
+# define ERANGE		34
+# define ENOSYS		78
 # define ENOTSUP	86
 
 
