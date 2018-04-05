@@ -8,8 +8,11 @@
 #include "drivers/bus.h"
 #include "drivers/console.h"
 
-#ifndef MAIN_BUS
-# define MAIN_BUS	"ioport"
+#ifndef KERNEL_BUS
+# define KERNEL_BUS	"ioport"
+#endif
+#ifndef KERNEL_CONSOLE
+# define KERNEL_CONSOLE	"vga"
 #endif
 
 
@@ -21,8 +24,8 @@ int main(void)
 	ukBus * bus;
 	const char msg[] = "Starting DeforaOS...\n";
 
-	bus = bus_init(MAIN_BUS);
-	console_init(bus);
+	bus = bus_init(KERNEL_BUS);
+	console_init(bus, KERNEL_CONSOLE);
 	puts(msg);
 	return 0;
 }

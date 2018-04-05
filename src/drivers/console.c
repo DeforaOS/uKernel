@@ -19,17 +19,29 @@ static ukConsole * _console = NULL;
 # include "console/vga.c"
 
 /* console_init */
-ukConsole * console_init(ukBus * bus)
+ukConsole * console_init(ukBus * bus, char const * name)
 {
-	if((_console = _vga_console_init(bus)) == NULL)
+	ukConsole * console;
+
+	if(strcmp(name, "vga") == 0)
+		console = _vga_console_init(bus);
+	else
+	{
+		errno = ENODEV;
 		return NULL;
-	return _console;
+	}
+	if(_console == NULL)
+		_console = console;
+	return console;
 }
 #else
 # warning Unsupported platform: missing console
 /* console_init */
-ukConsole * console_init(ukBus * bus)
+ukConsole * console_init(ukBus * bus, char const * name)
 {
+	(void) bus;
+	(void) name;
+
 	errno = ENODEV;
 	return NULL;
 }

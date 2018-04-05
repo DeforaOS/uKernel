@@ -4,6 +4,8 @@
 
 
 
+#include <string.h>
+#include <errno.h>
 #include "drivers/console.h"
 
 #include "drivers/console/stdio.c"
@@ -16,11 +18,20 @@ static ukConsole * _console = NULL;
 
 /* functions */
 /* console_init */
-ukConsole * console_init(ukBus * bus)
+ukConsole * console_init(ukBus * bus, char const * name)
 {
-	if((_console = _stdio_console_init(bus)) == NULL)
+	ukConsole * console = NULL;
+
+	if(strcmp(name, "stdio") == 0)
+		console = _stdio_console_init(bus);
+	else
+	{
+		errno = ENODEV;
 		return NULL;
-	return _console;
+	}
+	if(_console == NULL)
+		_console = console;
+	return console;
 }
 
 

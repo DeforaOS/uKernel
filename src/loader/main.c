@@ -11,8 +11,11 @@
 #include "../drivers/bus.h"
 #include "../drivers/console.h"
 
-#ifndef MAIN_BUS
-# define MAIN_BUS	"ioport"
+#ifndef LOADER_BUS
+# define LOADER_BUS	"ioport"
+#endif
+#ifndef LOADER_CONSOLE
+# define LOADER_CONSOLE	"vga"
 #endif
 
 
@@ -31,8 +34,8 @@ int main(ukMultibootInfo * mi)
 	const char msg_newline[] = "\n";
 	ukMultibootMod * mod;
 
-	bus = bus_init(MAIN_BUS);
-	console_init(bus);
+	bus = bus_init(LOADER_BUS);
+	console_init(bus, LOADER_CONSOLE);
 	puts(msg_starting);
 	if(mi->loader_name != NULL)
 	{

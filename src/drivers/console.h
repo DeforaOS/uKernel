@@ -28,7 +28,7 @@ struct _ukConsole
 
 
 /* prototypes */
-ukConsole * console_init(ukBus * bus);
+ukConsole * console_init(ukBus * bus, char const * name);
 
 /* accessors */
 ukConsole * console_get_default(void);
