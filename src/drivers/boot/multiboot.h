@@ -79,7 +79,7 @@ struct _ukBootMultibootMod
 {
 	uint32_t start;
 	uint32_t end;
-	char const * string;
+	char const * cmdline;
 	uint32_t _padding;
 };
 
