@@ -47,6 +47,9 @@ _exit:
 .global _start
 .type _start, @function
 _start:
+	/* disable interrupts */
+	cli
+
 	/* initialize the stack */
 	mov $stack_top, %esp
 
