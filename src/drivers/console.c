@@ -5,6 +5,7 @@
 
 
 #include <stddef.h>
+#include <errno.h>
 #include "console.h"
 
 
@@ -39,6 +40,8 @@ ukConsole * console_init(ukBus * bus)
 /* console_get_default */
 ukConsole * console_get_default(void)
 {
+	if(_console == NULL)
+		errno = ENODEV;
 	return _console;
 }
 
@@ -47,8 +50,9 @@ ukConsole * console_get_default(void)
 /* console_clear */
 void console_clear(ukConsole * console)
 {
-	if(console == NULL)
-		console = console_get_default();
+	if(console == NULL
+			&& (console = console_get_default()) == NULL)
+		return;
 	console->clear(console);
 }
 
@@ -56,7 +60,8 @@ void console_clear(ukConsole * console)
 /* console_print */
 void console_print(ukConsole * console, char const * str, size_t len)
 {
-	if(console == NULL)
-		console = console_get_default();
+	if(console == NULL
+			&& (console = console_get_default()) == NULL)
+		return;
 	console->print(console, str, len);
 }
