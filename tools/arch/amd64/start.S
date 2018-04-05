@@ -93,5 +93,5 @@ _start:
 .global write
 .type write, @function
 write:
-	mov	$0x4, %eax
+	mov	$0x4, %rax
 	jmp	_syscall
