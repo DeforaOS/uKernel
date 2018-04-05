@@ -61,7 +61,7 @@ _start:
 	/* call the global constructors */
 	call _init
 
-	/* start the bootloader */
+	/* start the loader */
 	push %ebx
 	call main
 
