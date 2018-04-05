@@ -22,13 +22,13 @@
 
 /* private */
 /* prototypes */
-static int _loader_kernel(ukMultibootMod * mod);
+static vaddr_t _loader_kernel(ukMultibootMod * mod);
 static int _loader_module(ukMultibootMod * mod);
 
 
 /* functions */
 /* loader_kernel */
-static int _loader_kernel(ukMultibootMod * mod)
+static vaddr_t _loader_kernel(ukMultibootMod * mod)
 {
 	const char msg_loading[] = "Loading kernel: ";
 	const char msg_format[] = "Could not load kernel: Invalid format";
@@ -42,7 +42,7 @@ static int _loader_kernel(ukMultibootMod * mod)
 	if(mod->end < mod->start || mod->end - mod->start < sizeof(ehdr))
 	{
 		puts(msg_format);
-		return -1;
+		return 0x0;
 	}
 	memcpy(&ehdr, (void *)mod->start, sizeof(ehdr));
 	switch(ehdr.e_ident[EI_CLASS])
@@ -52,12 +52,12 @@ static int _loader_kernel(ukMultibootMod * mod)
 			break;
 		case ELFCLASS64:
 			puts(msg_class64);
-			return -1;
+			return 0x0;
 		default:
 			puts(msg_class);
-			return -1;
+			return 0x0;
 	}
-	return 0;
+	return ehdr.e_entry;
 }
 
 
@@ -87,8 +87,10 @@ int main(ukMultibootInfo * mi)
 	size_t i;
 	const char msg_failed2[] = "No modules provided\n";
 	const char msg_failed3[] = "No kernel provided\n";
+	const char msg_failed4[] = "Could not load the kernel";
 	const char msg_newline[] = "\n";
 	ukMultibootMod * mod;
+	vaddr_t entrypoint = 0x0;
 
 	bus = bus_init(LOADER_BUS);
 	console_init(bus, LOADER_CONSOLE);
@@ -120,9 +122,14 @@ int main(ukMultibootInfo * mi)
 	{
 		mod = &mi->mods_addr[i];
 		if(i == 0)
-			_loader_kernel(mod);
+			entrypoint = _loader_kernel(mod);
 		else
 			_loader_module(mod);
+	}
+	if(entrypoint == 0x0)
+	{
+		puts(msg_failed4);
+		return 4;
 	}
 	return 0;
 }
