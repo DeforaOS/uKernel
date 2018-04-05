@@ -15,3 +15,6 @@
 #include "lib/stdlib.c"
 #include "lib/string.c"
 #include "lib/ssp.c"
+
+#include "drivers/bus.c"
+#include "drivers/console.c"
