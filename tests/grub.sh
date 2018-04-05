@@ -27,7 +27,7 @@
 
 #variables
 PROGNAME="grub.sh"
-UKERNELBIN="../src/uKernel.bin"
+UKERNELBIN="../src/kernel/uKernel.bin"
 #executables
 DATE="date"
 GRUBFILE="grub-file"
@@ -56,13 +56,13 @@ _grub()
 	case "$machine" in
 		amd64|i?86)
 			_info "Testing multiboot conformance ($machine)"
-			$GRUBFILE --is-x86-multiboot "$UKERNELBIN"
+			$GRUBFILE --is-x86-multiboot "$OBJDIR$UKERNELBIN"
 			ret=$?
 			if [ $ret -eq 127 ]; then
 				_error "Cannot test: $GRUBFILE not available (ignored)"
 				ret=0
 			elif [ $ret -ne 0 ]; then
-				_error "$UKERNELBIN: Not compliant with multiboot"
+				_error "$OBJDIR$UKERNELBIN: Not compliant with multiboot"
 				ret=$?
 			fi
 			;;

@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <errno.h>
+#include "arch/arch.h"
 
 
 /* private */
@@ -15,13 +16,13 @@ typedef struct _ukBus IOPortBus;
 
 /* prototypes */
 static IOPortBus * _ioport_bus_init(void);
-extern int ioport_bus_read8(IOPortBus * bus, ukBusAddress * address,
+static int _ioport_bus_read8(IOPortBus * bus, ukBusAddress * address,
 		uint8_t * value);
 static int _ioport_bus_read16(IOPortBus * bus, ukBusAddress * address,
 		uint16_t * value);
 static int _ioport_bus_read32(IOPortBus * bus, ukBusAddress * address,
 		uint32_t * value);
-extern int ioport_bus_write8(IOPortBus * bus, ukBusAddress * address,
+static int _ioport_bus_write8(IOPortBus * bus, ukBusAddress * address,
 		uint8_t value);
 static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress * address,
 		uint16_t value);
@@ -33,10 +34,10 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress * address,
 static IOPortBus _ioport_bus =
 {
 	_ioport_bus_init,
-	ioport_bus_read8,
+	_ioport_bus_read8,
 	_ioport_bus_read16,
 	_ioport_bus_read32,
-	ioport_bus_write8,
+	_ioport_bus_write8,
 	_ioport_bus_write16,
 	_ioport_bus_write32,
 	NULL
@@ -50,6 +51,16 @@ static IOPortBus _ioport_bus =
 static IOPortBus * _ioport_bus_init(void)
 {
 	return &_ioport_bus;
+}
+
+
+/* ioport_bus_read8 */
+static int _ioport_bus_read8(IOPortBus * bus, ukBusAddress * address,
+		uint8_t * value)
+{
+	(void) bus;
+
+	return inb(address, value);
 }
 
 
@@ -74,6 +85,16 @@ static int _ioport_bus_read32(IOPortBus * bus, ukBusAddress * address,
 	(void) value;
 
 	return -ENOTSUP;
+}
+
+
+/* ioport_write8 */
+static int _ioport_bus_write8(IOPortBus * bus, ukBusAddress * address,
+		uint8_t value)
+{
+	(void) bus;
+
+	return outb(address, value);
 }
 
 
