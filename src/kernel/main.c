@@ -4,6 +4,7 @@
 
 
 
+#include <stdio.h>
 #include "drivers/bus.h"
 #include "drivers/console.h"
 
@@ -18,11 +19,10 @@
 int main(void)
 {
 	ukBus * bus;
-	ukConsole * console;
 	const char msg[] = "Starting DeforaOS...\n";
 
 	bus = bus_init(MAIN_BUS);
-	console = console_init(bus);
-	console_print(console, msg, sizeof(msg) - 1);
+	console_init(bus);
+	puts(msg);
 	return 0;
 }

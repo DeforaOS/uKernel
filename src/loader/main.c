@@ -5,6 +5,7 @@
 
 
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "../drivers/boot/multiboot.h"
 #include "../drivers/bus.h"
@@ -21,7 +22,6 @@
 int main(ukMultibootInfo * mi)
 {
 	ukBus * bus;
-	ukConsole * console;
 	const char msg_starting[] = "Booting DeforaOS...\n";
 	const char msg_loader[] = "Loader: ";
 	const char msg_cmdline[] = "Command line: ";
@@ -32,33 +32,29 @@ int main(ukMultibootInfo * mi)
 	ukMultibootMod * mod;
 
 	bus = bus_init(MAIN_BUS);
-	console = console_init(bus);
-	console_print(console, msg_starting, sizeof(msg_starting) - 1);
+	console_init(bus);
+	puts(msg_starting);
 	if(mi->loader_name != NULL)
 	{
-		console_print(console, msg_loader, sizeof(msg_loader) - 1);
-		console_print(console, mi->loader_name,
-				strlen(mi->loader_name));
-		console_print(console, msg_newline, sizeof(msg_newline) - 1);
+		puts(msg_loader);
+		puts(mi->loader_name);
+		puts(msg_newline);
 	}
 	if(mi->cmdline != NULL)
 	{
-		console_print(console, msg_cmdline, sizeof(msg_cmdline) - 1);
-		console_print(console, mi->cmdline, strlen(mi->cmdline));
-		console_print(console, msg_newline, sizeof(msg_newline) - 1);
+		puts(msg_cmdline);
+		puts(mi->cmdline);
+		puts(msg_newline);
 	}
 	if(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS)
 	{
-		console_print(console, msg_modules, sizeof(msg_modules) - 1);
+		puts(msg_modules);
 		for(i = 0; i < mi->mods_count; i++)
 		{
-			console_print(console, msg_loading,
-					sizeof(msg_loading) - 1);
+			puts(msg_loading);
 			mod = &mi->mods_addr[i];
-			console_print(console, mod->string,
-					strlen(mod->string));
-			console_print(console, msg_newline,
-					sizeof(msg_newline) - 1);
+			puts(mod->string);
+			puts(msg_newline);
 		}
 	}
 	return 0;
