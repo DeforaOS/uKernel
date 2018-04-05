@@ -68,7 +68,7 @@ static int _loader_module(ukMultibootMod * mod)
 	const char msg_newline[] = "\n";
 
 	puts(msg_loading);
-	puts(mod->string);
+	puts(mod->cmdline);
 	puts(msg_newline);
 	return 0;
 }
