@@ -30,31 +30,25 @@ static int _loader_module(ukMultibootMod * mod);
 /* loader_kernel */
 static vaddr_t _loader_kernel(ukMultibootMod * mod)
 {
-	const char msg_loading[] = "Loading kernel: ";
-	const char msg_format[] = "Could not load kernel: Invalid format";
-	const char msg_class[] = "Could not load kernel: Invalid class";
-	const char msg_class32[] = "Detected 32-bit kernel";
-	const char msg_class64[] = "Detected 64-bit kernel";
 	Elf32_Ehdr ehdr;
 
-	puts(msg_loading);
-	puts(mod->cmdline);
+	printf("Loading kernel: %s\n", mod->cmdline);
 	if(mod->end < mod->start || mod->end - mod->start < sizeof(ehdr))
 	{
-		puts(msg_format);
+		puts("Could not load kernel: Invalid format");
 		return 0x0;
 	}
 	memcpy(&ehdr, (void *)mod->start, sizeof(ehdr));
 	switch(ehdr.e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
-			puts(msg_class32);
+			puts("Detected 32-bit kernel");
 			break;
 		case ELFCLASS64:
-			puts(msg_class64);
+			puts("Detected 64-bit kernel");
 			return 0x0;
 		default:
-			puts(msg_class);
+			puts("Could not load kernel: Invalid class");
 			return 0x0;
 	}
 	return ehdr.e_entry;
@@ -65,11 +59,9 @@ static vaddr_t _loader_kernel(ukMultibootMod * mod)
 static int _loader_module(ukMultibootMod * mod)
 {
 	const char msg_loading[] = "Loading module: ";
-	const char msg_newline[] = "\n";
 
 	puts(msg_loading);
 	puts(mod->cmdline);
-	puts(msg_newline);
 	return 0;
 }
 
@@ -80,33 +72,19 @@ static int _loader_module(ukMultibootMod * mod)
 int main(ukMultibootInfo * mi)
 {
 	ukBus * bus;
-	const char msg_starting[] = "Booting DeforaOS...\n";
-	const char msg_loader[] = "Loader: ";
-	const char msg_cmdline[] = "Command line: ";
-	const char msg_modules[] = "Loading modules...\n";
 	size_t i;
-	const char msg_failed2[] = "No modules provided\n";
-	const char msg_failed3[] = "No kernel provided\n";
-	const char msg_failed4[] = "Could not load the kernel";
-	const char msg_newline[] = "\n";
+	const char msg_failed2[] = "No modules provided";
+	const char msg_failed3[] = "No kernel provided";
 	ukMultibootMod * mod;
 	vaddr_t entrypoint = 0x0;
 
 	bus = bus_init(LOADER_BUS);
 	console_init(bus, LOADER_CONSOLE);
-	puts(msg_starting);
+	puts("Booting DeforaOS...");
 	if(mi->loader_name != NULL)
-	{
-		puts(msg_loader);
-		puts(mi->loader_name);
-		puts(msg_newline);
-	}
+		printf("Loader: %s\n", mi->loader_name);
 	if(mi->cmdline != NULL)
-	{
-		puts(msg_cmdline);
-		puts(mi->cmdline);
-		puts(msg_newline);
-	}
+		printf("Command line: %s\n", mi->cmdline);
 	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
 	{
 		puts(msg_failed2);
@@ -117,7 +95,7 @@ int main(ukMultibootInfo * mi)
 		puts(msg_failed3);
 		return 3;
 	}
-	puts(msg_modules);
+	puts("Loading modules...");
 	for(i = 0; i < mi->mods_count; i++)
 	{
 		mod = &mi->mods_addr[i];
@@ -128,7 +106,7 @@ int main(ukMultibootInfo * mi)
 	}
 	if(entrypoint == 0x0)
 	{
-		puts(msg_failed4);
+		puts("Could not load the kernel");
 		return 4;
 	}
 	return 0;

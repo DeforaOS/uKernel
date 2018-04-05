@@ -22,10 +22,9 @@
 int main(void)
 {
 	ukBus * bus;
-	const char msg[] = "Starting DeforaOS...\n";
 
 	bus = bus_init(KERNEL_BUS);
 	console_init(bus, KERNEL_CONSOLE);
-	puts(msg);
+	puts("Starting DeforaOS...");
 	return 0;
 }
