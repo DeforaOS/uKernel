@@ -4,6 +4,7 @@
 
 
 
+#include <string.h>
 #include "drivers/bus.h"
 
 #include "drivers/bus/tty.c"
