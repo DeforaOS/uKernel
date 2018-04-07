@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <elf.h>
-#include "../drivers/boot/multiboot.h"
-#include "../drivers/bus.h"
-#include "../drivers/console.h"
+#include "drivers/boot/multiboot.h"
+#include "drivers/bus.h"
+#include "drivers/console.h"
 
 #ifndef LOADER_BUS
 # define LOADER_BUS	"ioport"
