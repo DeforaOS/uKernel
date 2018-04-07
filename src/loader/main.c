@@ -130,8 +130,7 @@ static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 			return _loader_kernel32(mod, entrypoint, ehdr);
 		case ELFCLASS64:
 			puts("Detected 64-bit kernel");
-			*entrypoint = ehdr.e_entry + mod->start;
-			return _kernel64;
+			return _loader_kernel64(mod, entrypoint, ehdr);
 		default:
 			puts("Could not load kernel: Invalid class");
 			break;
