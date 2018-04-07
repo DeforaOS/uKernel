@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#define ELFSIZE 32
 #include <elf.h>
 #include "drivers/boot/multiboot.h"
 #include "drivers/bus.h"
@@ -107,13 +106,13 @@ static int _loader_gdt(GDT const * gdt, size_t size)
 /* functions */
 /* loader_kernel */
 static LoaderCallback _loader_kernel32(ukMultibootMod * mod,
-		vaddr_t * entrypoint, Elf_Ehdr * ehdr);
+		vaddr_t * entrypoint, Elf32_Ehdr * ehdr);
 static LoaderCallback _loader_kernel64(ukMultibootMod * mod,
-		vaddr_t * entrypoint, Elf_Ehdr * ehdr);
+		vaddr_t * entrypoint, Elf64_Ehdr * ehdr);
 
 static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 {
-	Elf_Ehdr * ehdr;
+	Elf32_Ehdr * ehdr;
 
 	printf("Loading kernel: %s (%#x, %#x)\n", mod->cmdline, mod->start,
 			mod->end);
@@ -122,7 +121,7 @@ static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 		puts("Could not load kernel: Invalid format");
 		return NULL;
 	}
-	ehdr = (Elf_Ehdr *)mod->start;
+	ehdr = (Elf32_Ehdr *)mod->start;
 	switch(ehdr->e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
@@ -130,7 +129,8 @@ static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 			return _loader_kernel32(mod, entrypoint, ehdr);
 		case ELFCLASS64:
 			puts("Detected 64-bit kernel");
-			return _loader_kernel64(mod, entrypoint, ehdr);
+			return _loader_kernel64(mod, entrypoint,
+					(Elf64_Ehdr *)ehdr);
 		default:
 			puts("Could not load kernel: Invalid class");
 			break;
@@ -139,7 +139,7 @@ static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 }
 
 static LoaderCallback _loader_kernel32(ukMultibootMod * mod,
-		vaddr_t * entrypoint, Elf_Ehdr * ehdr)
+		vaddr_t * entrypoint, Elf32_Ehdr * ehdr)
 {
 	Elf32_Phdr * phdr;
 	Elf32_Half i;
@@ -168,7 +168,7 @@ static LoaderCallback _loader_kernel32(ukMultibootMod * mod,
 }
 
 static LoaderCallback _loader_kernel64(ukMultibootMod * mod,
-		vaddr_t * entrypoint, Elf_Ehdr * ehdr)
+		vaddr_t * entrypoint, Elf64_Ehdr * ehdr)
 {
 	Elf64_Phdr * phdr;
 	Elf64_Quarter i;
@@ -188,7 +188,8 @@ static LoaderCallback _loader_kernel64(ukMultibootMod * mod,
 				|| phdr[i].p_vaddr + phdr[i].p_filesz
 				<= ehdr->e_entry)
 			continue;
-		*entrypoint = mod->start + ehdr->e_entry - phdr[i].p_vaddr;
+		*entrypoint = mod->start + ehdr->e_entry - phdr[i].p_vaddr
+			+ phdr[i].p_offset;
 		return _kernel64;
 	}
 	puts("Could not load 64-bit kernel: Invalid entrypoint");
