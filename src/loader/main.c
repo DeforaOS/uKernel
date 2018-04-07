@@ -116,7 +116,7 @@ static vaddr_t _loader_kernel(ukMultibootMod * mod)
 			break;
 		case ELFCLASS64:
 			puts("Detected 64-bit kernel");
-			return 0x0;
+			break;
 		default:
 			puts("Could not load kernel: Invalid class");
 			return 0x0;
