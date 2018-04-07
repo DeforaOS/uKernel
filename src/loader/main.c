@@ -165,6 +165,8 @@ int main(ukMultibootInfo * mi)
 		printf("Loader: %s\n", mi->loader_name);
 	if(mi->cmdline != NULL)
 		printf("Command line: %s\n", mi->cmdline);
+	printf("%u MB memory available\n",
+			(mi->mem_upper - mi->mem_lower) / 1024);
 	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
 	{
 		puts(msg_failed2);
