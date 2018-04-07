@@ -5,6 +5,7 @@
 
 
 #include <stdio.h>
+#include "drivers/boot/multiboot.h"
 #include "drivers/bus.h"
 #include "drivers/console.h"
 
@@ -19,7 +20,7 @@
 /* public */
 /* functions */
 /* main */
-int main(void)
+int main(ukMultibootInfo * mi)
 {
 	ukBus * bus;
 
