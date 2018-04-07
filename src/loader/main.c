@@ -159,7 +159,8 @@ static LoaderCallback _loader_kernel32(ukMultibootMod * mod,
 				|| phdr[i].p_vaddr + phdr[i].p_filesz
 				<= ehdr->e_entry)
 			continue;
-		*entrypoint = mod->start + ehdr->e_entry - phdr[i].p_vaddr;
+		*entrypoint = mod->start + ehdr->e_entry - phdr[i].p_vaddr
+			+ phdr[i].p_offset;
 		return _kernel32;
 	}
 	puts("Could not load 32-bit kernel: Invalid entrypoint");
