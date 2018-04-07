@@ -69,7 +69,8 @@ _setgdt:
 	mov %eax, 0x2(%ecx)
 	/* set the size of the GDT */
 	mov 0x8(%esp), %eax
-	mov %eax, (%ecx)
+	dec %eax
+	mov %ax, (%ecx)
 	/* load the GDT */
 	lgdt (%ecx)
 	ret
