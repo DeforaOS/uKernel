@@ -21,10 +21,17 @@
 
 
 /* private */
+/* types */
+typedef int (*LoaderCallback)(ukMultibootInfo * mi, vaddr_t entrypoint);
+
+
 /* prototypes */
-static vaddr_t _loader_kernel(ukMultibootMod * mod);
+static LoaderCallback _loader_kernel(ukMultibootMod * mod,
+		vaddr_t * entrypoint);
 static int _loader_module(ukMultibootMod * mod);
 
+extern int _kernel32(ukMultibootInfo * mi, vaddr_t entrypoint);
+extern int _kernel64(ukMultibootInfo * mi, vaddr_t entrypoint);
 
 /* platform-dependent */
 #if defined(__i386__)
@@ -98,7 +105,7 @@ static int _loader_gdt(GDT const * gdt, size_t size)
 
 /* functions */
 /* loader_kernel */
-static vaddr_t _loader_kernel(ukMultibootMod * mod)
+static LoaderCallback _loader_kernel(ukMultibootMod * mod, vaddr_t * entrypoint)
 {
 	Elf32_Ehdr ehdr;
 
@@ -106,22 +113,24 @@ static vaddr_t _loader_kernel(ukMultibootMod * mod)
 	if(mod->end < mod->start || mod->end - mod->start < sizeof(ehdr))
 	{
 		puts("Could not load kernel: Invalid format");
-		return 0x0;
+		return NULL;
 	}
 	memcpy(&ehdr, (void *)mod->start, sizeof(ehdr));
 	switch(ehdr.e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
 			puts("Detected 32-bit kernel");
-			break;
+			*entrypoint = ehdr.e_entry + mod->start;
+			return _kernel32;
 		case ELFCLASS64:
 			puts("Detected 64-bit kernel");
-			break;
+			*entrypoint = ehdr.e_entry + mod->start;
+			return _kernel64;
 		default:
 			puts("Could not load kernel: Invalid class");
-			return 0x0;
+			break;
 	}
-	return ehdr.e_entry;
+	return NULL;
 }
 
 
@@ -146,7 +155,8 @@ int main(ukMultibootInfo * mi)
 	const char msg_failed2[] = "No modules provided";
 	const char msg_failed3[] = "No kernel provided";
 	ukMultibootMod * mod;
-	vaddr_t entrypoint = 0x0;
+	LoaderCallback callback = NULL;
+	vaddr_t entrypoint;
 
 	bus = bus_init(LOADER_BUS);
 	console_init(bus, LOADER_CONSOLE);
@@ -177,14 +187,14 @@ int main(ukMultibootInfo * mi)
 	{
 		mod = &mi->mods_addr[i];
 		if(i == 0)
-			entrypoint = _loader_kernel(mod);
+			callback = _loader_kernel(mod, &entrypoint);
 		else
 			_loader_module(mod);
 	}
-	if(entrypoint == 0x0)
+	if(callback == NULL)
 	{
 		puts("Could not load the kernel");
 		return 5;
 	}
-	return 0;
+	return callback(mi, entrypoint);
 }

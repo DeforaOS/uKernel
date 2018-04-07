@@ -43,6 +43,38 @@ _exit:
 	jmp 1b
 
 
+.global _kernel32
+.type _kernel32,function
+_kernel32:
+	mov 0x8(%esp), %eax
+	push 0x4(%esp)
+	call *%eax
+	sub $0x4, %esp
+	ret
+
+
+.global _kernel64
+.type _kernel64,function
+_kernel64:
+	mov $-1, %eax
+	ret
+
+
+.global _setgdt
+.type _setgdt,function
+_setgdt:
+	lea gdt_descriptor, %ecx
+	/* set the offset of the GDT */
+	mov 0x4(%esp), %eax
+	mov %eax, 0x2(%ecx)
+	/* set the size of the GDT */
+	mov 0x8(%esp), %eax
+	mov %eax, (%ecx)
+	/* load the GDT */
+	lgdt (%ecx)
+	ret
+
+
 /* start */
 .global _start
 .type _start, @function
@@ -71,21 +103,6 @@ _start:
 	hlt
 
 .size _start, . - _start
-
-
-.global _setgdt
-.type _setgdt,function
-_setgdt:
-	lea gdt_descriptor, %ecx
-	/* set the offset of the GDT */
-	mov 0x4(%esp), %eax
-	mov %eax, 0x2(%ecx)
-	/* set the size of the GDT */
-	mov 0x8(%esp), %eax
-	mov %eax, (%ecx)
-	/* load the GDT */
-	lgdt (%ecx)
-	ret
 
 
 .section .bss
