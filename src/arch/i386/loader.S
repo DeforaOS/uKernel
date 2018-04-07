@@ -71,3 +71,25 @@ _start:
 	hlt
 
 .size _start, . - _start
+
+
+.global _setgdt
+.type _setgdt,function
+_setgdt:
+	lea gdt_descriptor, %ecx
+	/* set the offset of the GDT */
+	mov 0x4(%esp), %eax
+	mov %eax, 0x2(%ecx)
+	/* set the size of the GDT */
+	mov 0x8(%esp), %eax
+	mov %eax, (%ecx)
+	/* load the GDT */
+	lgdt (%ecx)
+	ret
+
+
+.section .bss
+.align 16
+gdt_descriptor:
+.skip 2		/* size */
+.skip 4		/* offset */

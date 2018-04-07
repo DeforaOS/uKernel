@@ -26,6 +26,76 @@ static vaddr_t _loader_kernel(ukMultibootMod * mod);
 static int _loader_module(ukMultibootMod * mod);
 
 
+/* platform-dependent */
+#if defined(__i386__)
+/* types */
+typedef struct _GDT
+{
+	vaddr_t base;
+	vaddr_t limit;
+	uint8_t type;
+} GDT;
+
+/* prototypes */
+static int _loader_gdt(GDT const * gdt, size_t size);
+extern void _setgdt(uint8_t * buf, size_t size);
+
+/* constants */
+/* GDT: flat memory setup */
+static const GDT _gdt_4gb[4] =
+{
+	{ 0x00000000, 0x00000000, 0x00 },
+	{ 0x00000000, 0xffffffff, 0x9a },
+	{ 0x00000000, 0xffffffff, 0x92 },
+	{ 0x00000000, 0x00000000, 0x89 }
+};
+
+/* variables */
+static uint8_t _buf[65536];
+
+/* functions */
+/* loader_gdt */
+static int _loader_gdt(GDT const * gdt, size_t size)
+{
+	uint8_t * buf;
+	size_t i;
+	GDT g;
+
+	memset(&_buf, 0, sizeof(_buf));
+	if(size > sizeof(_buf) / sizeof(*gdt))
+		return -1;
+	for(i = 0; i < size; i++)
+	{
+		g = gdt[i];
+		buf = &_buf[sizeof(g) * i];
+		if(g.limit > 65536)
+		{
+			/* make sure the limit can be encoded */
+			if((g.limit & 0xfff) != 0xfff)
+				return -1;
+			g.limit = g.limit >> 12;
+			buf[6] = 0xc0;
+		}
+		else
+			buf[6] = 0x40;
+		//encode the limit
+		buf[0] = g.limit & 0xff;
+		buf[1] = (g.limit >> 8) & 0xff;
+		buf[6] |= (g.limit >> 16) & 0xf;
+		//encode the base
+		buf[2] = g.base & 0xff;
+		buf[3] = (g.base >> 8) & 0xff;
+		buf[4] = (g.base >> 16) & 0xff;
+		buf[7] = (g.base >> 24) & 0xff;
+		//encode the type
+		buf[5] = g.type;
+	}
+	_setgdt(buf, size);
+	return 0;
+}
+#endif
+
+
 /* functions */
 /* loader_kernel */
 static vaddr_t _loader_kernel(ukMultibootMod * mod)
@@ -95,6 +165,13 @@ int main(ukMultibootInfo * mi)
 		puts(msg_failed3);
 		return 3;
 	}
+#if defined(__i386__)
+	if(_loader_gdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
+	{
+		puts("Could not setup the GDT");
+		return 4;
+	}
+#endif
 	puts("Loading modules...");
 	for(i = 0; i < mi->mods_count; i++)
 	{
@@ -107,7 +184,7 @@ int main(ukMultibootInfo * mi)
 	if(entrypoint == 0x0)
 	{
 		puts("Could not load the kernel");
-		return 4;
+		return 5;
 	}
 	return 0;
 }
