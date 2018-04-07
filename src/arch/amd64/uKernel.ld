@@ -1,6 +1,6 @@
 /* $Id$ */
 /* This file is part of DeforaOS uKernel */
-/* Originally from https://wiki.osdev.org/Bare_Bones */
+/* Originally from https://wiki.osdev.org/Creating_a_64-bit_kernel */
 
 /* The bootloader will look at this image and start execution at the symbol
    designated as the entry point. */
@@ -14,34 +14,46 @@ SECTIONS
 	   loaded at by the bootloader. */
 	. = 1M;
 
-	/* First put the multiboot header, as it is required to be put very early
-	   early in the image or the bootloader won't recognize the file format.
-	   Next we'll put the .text section. */
-	.text BLOCK(4K) : ALIGN(4K)
+	.text : AT(ADDR(.text) - 1M)
 	{
-		*(.multiboot)
+		_code = .;
 		*(.text)
+		*(.rodata*)
+		. = ALIGN(4096);
 	}
 
-	/* Read-only data. */
-	.rodata BLOCK(4K) : ALIGN(4K)
+	.data : AT(ADDR(.data) - 1M)
 	{
-		*(.rodata)
-	}
-
-	/* Read-write data (initialized) */
-	.data BLOCK(4K) : ALIGN(4K)
-	{
+		_data = .;
 		*(.data)
+		. = ALIGN(4096);
 	}
 
-	/* Read-write data (uninitialized) and stack */
-	.bss BLOCK(4K) : ALIGN(4K)
+	.eh_frame : AT(ADDR(.eh_frame) - 1M)
 	{
-		*(COMMON)
-		*(.bss)
+		_ehframe = .;
+		*(.eh_frame)
+		. = ALIGN(4096);
 	}
 
-	/* The compiler may produce other sections, by default it will put them in
-	   a segment with the same name. Simply add stuff here as needed. */
+	.bss : AT(ADDR(.bss) - 1M)
+	{
+		_bss = .;
+		*(.bss)
+
+		/*
+		 * You usually need to include generated COMMON symbols
+		 * under kernel BSS section or use gcc's -fno-common
+		 */
+
+		*(COMMON)
+		. = ALIGN(4096);
+	}
+
+	_end = .;
+
+	/DISCARD/ :
+	{
+		*(.comment)
+	}
 }
