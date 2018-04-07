@@ -46,10 +46,9 @@ _exit:
 .global _kernel32
 .type _kernel32,function
 _kernel32:
+	mov 0x4(%esp), %ebx
 	mov 0x8(%esp), %eax
-	push 0x4(%esp)
 	call *%eax
-	sub $0x4, %esp
 	ret
 
 
@@ -97,6 +96,7 @@ _start:
 	/* start the loader */
 	push %ebx
 	call main
+	sub $0x4, %esp
 
 	/* exit the kernel */
 	call _exit
