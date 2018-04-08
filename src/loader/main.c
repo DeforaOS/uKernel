@@ -97,7 +97,7 @@ static int _loader_gdt(GDT const * gdt, size_t size)
 		//encode the type
 		buf[5] = g.type;
 	}
-	_setgdt(buf, size);
+	_setgdt(_buf, size);
 	return 0;
 }
 #endif
