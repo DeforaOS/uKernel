@@ -5,6 +5,10 @@
 
 
 
+#include "../i386/multiboot/header.S"
+#include "../i386/idt.S"
+
+
 /* sections */
 /* bss */
 .section .bss
@@ -26,6 +30,14 @@ _exit:
 	jmp 1b
 
 
+/* setidt */
+.global _setidt
+.type _setidt,function
+_setidt:
+	lidt (idt)
+	ret
+
+
 /* start */
 .global _start
 .type _start, @function
@@ -44,6 +56,11 @@ _start:
 
 	/* call the global constructors */
 	call _init
+
+	/* set the interrupt descriptor */
+	call _setidt
+
+	/* FIXME setup paging */
 
 	/* start the kernel */
 	xor %rdi, %rdi

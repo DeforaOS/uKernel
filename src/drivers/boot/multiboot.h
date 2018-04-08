@@ -9,6 +9,7 @@
 
 # include <sys/types.h>
 # include <stdint.h>
+# include <elf.h>
 
 
 /* types */
@@ -101,5 +102,12 @@ struct _ukBootMultibootMod
 # define BOOT_MULTIBOOT_INFO_HAS_DRIVES		0x00000080
 # define BOOT_MULTIBOOT_INFO_HAS_LOADER_NAME	0x00000200
 # define BOOT_MULTIBOOT_INFO_HAS_VBE		0x00000800
+
+/* prototypes */
+int multiboot_boot_kernel32(ukMultibootInfo * info, vaddr_t entrypoint);
+int multiboot_boot_kernel64(ukMultibootInfo * info, vaddr_t entrypoint);
+
+int multiboot_load_module(ukMultibootMod * mod, unsigned char * elfclass,
+		vaddr_t * entrypoint);
 
 #endif /* !UKERNEL_DRIVERS_BOOT_MULTIBOOT_H */

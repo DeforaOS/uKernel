@@ -57,6 +57,8 @@ _grub()
 		amd64|i?86)
 			_info "Testing multiboot conformance ($machine)"
 			$GRUBFILE --is-x86-multiboot "$OBJDIR$UKERNELBIN"
+			#FIXME look for multiboot2 instead?
+			#$GRUBFILE --is-x86-multiboot2 "$OBJDIR$UKERNELBIN"
 			ret=$?
 			if [ $ret -eq 127 ]; then
 				_error "Cannot test: $GRUBFILE not available (ignored)"

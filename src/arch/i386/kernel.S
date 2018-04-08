@@ -5,22 +5,7 @@
 
 
 
-/* variables */
-#define ALIGN		(1 << 0)		/* align the modules loaded on */
-						/* page boundaries */
-#define MEMINFO		(1 << 1)		/* provide the memory map */
-#define FLAGS		ALIGN | MEMINFO		/* multiboot flags */
-#define MAGIC		0x1badb002		/* magic number */
-#define CHECKSUM	-(MAGIC + FLAGS)	/* checksum for the above */
-
-
-/* sections */
-/* multiboot */
-.section .multiboot
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+#include "multiboot.S"
 
 
 /* bss */
@@ -54,6 +39,8 @@ _start:
 	mov $stack_top, %esp
 	xor %ebp, %ebp
 
+	push %eax
+
 #if defined(__SSP__)
 	/* initialize SSP */
 	call __stack_chk_setup
@@ -62,8 +49,16 @@ _start:
 	/* call the global constructors */
 	call _init
 
-	/* start the kernel */
+	/* detect multiboot */
+	pop %eax
+	cmp $MAGIC2, %eax
+	jne 1f
 	push %ebx
+	call multiboot
+1:
+
+	/* start the kernel */
+	push $0x0
 	call main
 	add $0x4, %esp
 
