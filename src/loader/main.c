@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include <elf.h>
 #include "drivers/boot/multiboot.h"
 #include "drivers/bus.h"
@@ -68,9 +69,11 @@ static int _loader_gdt(GDT const * gdt, size_t size)
 	size_t i;
 	GDT g;
 
-	memset(&_buf, 0, sizeof(_buf));
-	if(size > sizeof(_buf) / sizeof(*gdt))
+	if(size == 0 || size > sizeof(_buf) / sizeof(*gdt))
+	{
+		errno = ERANGE;
 		return -1;
+	}
 	for(i = 0; i < size; i++)
 	{
 		g = gdt[i];
