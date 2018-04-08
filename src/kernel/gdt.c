@@ -4,8 +4,4 @@
 
 
 
-#define KERNEL_BUS	"tty"
-#define KERNEL_CONSOLE	"stdio"
-
-
-#include "../src/kernel/main.c"
+#include "../loader/gdt.c"
