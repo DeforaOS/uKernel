@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include "drivers/console.h"
 #include "vga.h"
 
 /* macros */
