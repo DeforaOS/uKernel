@@ -62,7 +62,7 @@ static int _load_module32(ukMultibootMod * mod, vaddr_t * entrypoint,
 			> mod->end)
 	{
 		puts("Could not load 32-bit module: Invalid format");
-		return NULL;
+		return -1;
 	}
 	phdr = (Elf32_Phdr *)(mod->start + ehdr->e_phoff);
 	for(i = 0; i < ehdr->e_phnum; i++)
