@@ -34,7 +34,8 @@ _start:
 	cli
 
 	/* initialize the stack */
-	mov $stack_top, %esp
+	mov $stack_top, %rsp
+	xor %rbp, %rbp
 
 #if defined(__SSP__)
 	/* initialize SSP */
@@ -45,10 +46,11 @@ _start:
 	call _init
 
 	/* start the kernel */
+	xor %rdi, %rdi
 	call main
 
 	/* exit the kernel */
-	push %rax
+	mov %rax, %rdi
 	call exit
 
 	hlt

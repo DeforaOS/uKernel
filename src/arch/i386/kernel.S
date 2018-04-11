@@ -52,6 +52,7 @@ _start:
 
 	/* initialize the stack */
 	mov $stack_top, %esp
+	xor %ebp, %ebp
 
 #if defined(__SSP__)
 	/* initialize SSP */
