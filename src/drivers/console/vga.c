@@ -97,8 +97,6 @@ static void _vga_console_clear(VGAConsole * console)
 	size_t row;
 	size_t col;
 
-	if(console == NULL)
-		console = &_vga_console;
 	for(row = 0; row < VGA_TEXT_ROWS; row++)
 		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
 			_vga_print(console, ' ', row, col);
@@ -114,8 +112,6 @@ static void _vga_console_print(VGAConsole * console, char const * str,
 	VGAConsoleData * data = console->data;
 	size_t i;
 
-	if(console == NULL)
-		console = &_vga_console;
 	for(i = 0; i < len; i++)
 	{
 		if(str[i] == '\n' || data->pos_x == VGA_TEXT_COLUMNS)
