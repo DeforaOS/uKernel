@@ -40,14 +40,20 @@ static const GDT _gdt_4gb[4] =
 int multiboot(ukMultibootInfo * mi)
 {
 	ukBus * bus;
+	char const * console = LOADER_CONSOLE;
 	size_t i;
 	ukMultibootMod * mod;
 	int res = -1;
 	unsigned char elfclass;
 	vaddr_t entrypoint;
 
+	/* initialize the root bus */
 	bus = bus_init(LOADER_BUS);
-	console_init(bus, LOADER_CONSOLE);
+
+	/* initialize the console */
+	console_init(bus, console);
+
+	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
 	if(mi->loader_name != NULL)
 		printf("Loader: %s\n", mi->loader_name);
@@ -56,6 +62,8 @@ int multiboot(ukMultibootInfo * mi)
 	printf("%u MB memory available\n",
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
+
+	/* look for the kernel and modules */
 	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
 	{
 		puts("No modules provided");
@@ -71,6 +79,8 @@ int multiboot(ukMultibootInfo * mi)
 		puts("Could not setup the GDT");
 		return 4;
 	}
+
+	/* load the kernel and modules */
 	puts("Loading modules...");
 	for(i = 0; i < mi->mods_count; i++)
 	{
@@ -87,6 +97,8 @@ int multiboot(ukMultibootInfo * mi)
 		puts("Could not load the kernel");
 		return 5;
 	}
+
+	/* hand control over to the kernel */
 	printf("Jumping into the kernel at %#x (%u, %u, %#x) %p\n", entrypoint,
 			mi->elfshdr_num, mi->elfshdr_size, mi->elfshdr_addr,
 			multiboot);
