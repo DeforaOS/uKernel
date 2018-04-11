@@ -44,6 +44,7 @@ _start:
 	mov	%eax, %ecx	/* envp */
 	shl	$2, %ecx
 	add	%ebx, %ecx
+	mov	%ecx, environ	/* environ */
 #if defined(__ELF__)
 	mov	%ecx, %edx	/* auxv */
 auxv:
