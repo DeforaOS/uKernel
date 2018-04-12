@@ -16,17 +16,17 @@ typedef struct _ukBus TTYBus;
 /* prototypes */
 static TTYBus * _tty_bus_init(void);
 
-static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read8(TTYBus * bus, ukBusAddress address,
 		uint8_t * value);
-static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read16(TTYBus * bus, ukBusAddress address,
 		uint16_t * value);
-static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read32(TTYBus * bus, ukBusAddress address,
 		uint32_t * value);
 
-static int _tty_bus_write8(TTYBus * bus, ukBusAddress * address, uint8_t value);
-static int _tty_bus_write16(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_write8(TTYBus * bus, ukBusAddress address, uint8_t value);
+static int _tty_bus_write16(TTYBus * bus, ukBusAddress address,
 		uint16_t value);
-static int _tty_bus_write32(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_write32(TTYBus * bus, ukBusAddress address,
 		uint32_t value);
 
 /* XXX make this more elegant */
@@ -59,7 +59,7 @@ static TTYBus * _tty_bus_init(void)
 
 
 /* tty_bus_read8 */
-static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read8(TTYBus * bus, ukBusAddress address,
 		uint8_t * value)
 {
 	(void) bus;
@@ -69,7 +69,7 @@ static int _tty_bus_read8(TTYBus * bus, ukBusAddress * address,
 
 
 /* tty_bus_read16 */
-static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read16(TTYBus * bus, ukBusAddress address,
 		uint16_t * value)
 {
 	(void) bus;
@@ -79,7 +79,7 @@ static int _tty_bus_read16(TTYBus * bus, ukBusAddress * address,
 
 
 /* tty_bus_read32 */
-static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_read32(TTYBus * bus, ukBusAddress address,
 		uint32_t * value)
 {
 	(void) bus;
@@ -89,7 +89,7 @@ static int _tty_bus_read32(TTYBus * bus, ukBusAddress * address,
 
 
 /* tty_bus_write8 */
-static int _tty_bus_write8(TTYBus * bus, ukBusAddress * address, uint8_t value)
+static int _tty_bus_write8(TTYBus * bus, ukBusAddress address, uint8_t value)
 {
 	(void) bus;
 
@@ -98,7 +98,7 @@ static int _tty_bus_write8(TTYBus * bus, ukBusAddress * address, uint8_t value)
 
 
 /* tty_bus_write16 */
-static int _tty_bus_write16(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_write16(TTYBus * bus, ukBusAddress address,
 		uint16_t value)
 {
 	(void) bus;
@@ -108,7 +108,7 @@ static int _tty_bus_write16(TTYBus * bus, ukBusAddress * address,
 
 
 /* tty_bus_write32 */
-static int _tty_bus_write32(TTYBus * bus, ukBusAddress * address,
+static int _tty_bus_write32(TTYBus * bus, ukBusAddress address,
 		uint32_t value)
 {
 	(void) bus;

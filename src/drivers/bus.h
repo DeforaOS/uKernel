@@ -19,13 +19,13 @@ struct _ukBus
 {
 	ukBus * (*init)(void);
 
-	int (*read8)(ukBus * bus, ukBusAddress * address, uint8_t * value);
-	int (*read16)(ukBus * bus, ukBusAddress * address, uint16_t * value);
-	int (*read32)(ukBus * bus, ukBusAddress * address, uint32_t * value);
+	int (*read8)(ukBus * bus, ukBusAddress address, uint8_t * value);
+	int (*read16)(ukBus * bus, ukBusAddress address, uint16_t * value);
+	int (*read32)(ukBus * bus, ukBusAddress address, uint32_t * value);
 
-	int (*write8)(ukBus * bus, ukBusAddress * address, uint8_t value);
-	int (*write16)(ukBus * bus, ukBusAddress * address, uint16_t value);
-	int (*write32)(ukBus * bus, ukBusAddress * address, uint32_t value);
+	int (*write8)(ukBus * bus, ukBusAddress address, uint8_t value);
+	int (*write16)(ukBus * bus, ukBusAddress address, uint16_t value);
+	int (*write32)(ukBus * bus, ukBusAddress address, uint32_t value);
 
 	ukBusData * data;
 };
