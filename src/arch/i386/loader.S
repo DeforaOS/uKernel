@@ -38,7 +38,12 @@ _start:
 	/* initialize the stack */
 	mov $stack_top, %esp
 	xor %ebp, %ebp
+
 	push %eax
+
+	/* reset EFLAGS */
+	pushl $0x0
+	popf
 
 #if defined(__SSP__)
 	/* initialize SSP */

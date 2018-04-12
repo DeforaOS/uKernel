@@ -41,6 +41,10 @@ _start:
 
 	push %eax
 
+	/* reset EFLAGS */
+	pushl $0x0
+	popf
+
 #if defined(__SSP__)
 	/* initialize SSP */
 	call __stack_chk_setup

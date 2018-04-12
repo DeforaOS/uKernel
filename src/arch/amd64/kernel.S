@@ -30,14 +30,6 @@ _exit:
 	jmp 1b
 
 
-/* setidt */
-.global _setidt
-.type _setidt,function
-_setidt:
-	lidt (idt)
-	ret
-
-
 /* start */
 .global _start
 .type _start, @function
@@ -58,7 +50,7 @@ _start:
 	call _init
 
 	/* set the interrupt descriptor */
-	call _setidt
+	call __arch_setidt
 
 	/* FIXME setup paging */
 
