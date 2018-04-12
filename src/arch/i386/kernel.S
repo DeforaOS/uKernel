@@ -61,6 +61,11 @@ _start:
 	call multiboot
 1:
 
+	/* set the interrupt descriptor */
+	call __arch_setidt
+
+	/* FIXME setup paging */
+
 	/* start the kernel */
 	push $0x0
 	call main
