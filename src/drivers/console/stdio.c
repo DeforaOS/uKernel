@@ -37,6 +37,7 @@ static ukConsoleData _stdio_console_data =
 static STDIOConsole _stdio_console =
 {
 	_stdio_console_init,
+	NULL,
 	_stdio_console_clear,
 	_stdio_console_print,
 	&_stdio_console_data

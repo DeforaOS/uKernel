@@ -46,6 +46,7 @@ static ukConsoleData _vesa_console_data =
 VESAConsole vesa_console =
 {
 	_vesa_console_init,
+	NULL,
 	_vesa_console_clear,
 	_vesa_console_print,
 	&_vesa_console_data

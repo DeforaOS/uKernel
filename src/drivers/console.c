@@ -65,6 +65,22 @@ ukConsole * console_get_default(void)
 }
 
 
+/* console_set_mode */
+int console_set_mode(ukConsole * console, ukConsoleMode mode,
+		unsigned int width, unsigned int height, unsigned int depth)
+{
+	if(console == NULL
+			&& (console = console_get_default()) == NULL)
+		return -1;
+	if(console->set_mode == NULL)
+	{
+		errno = ENOTSUP;
+		return -1;
+	}
+	return console->set_mode(console, mode, width, height, depth);
+}
+
+
 /* helpers */
 /* console_clear */
 void console_clear(ukConsole * console)

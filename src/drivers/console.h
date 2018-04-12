@@ -13,11 +13,22 @@
 /* public */
 /* types */
 typedef struct _ukConsole ukConsole;
+
+typedef enum _ukConsoleMode
+{
+	CONSOLE_MODE_TEXT = 0,
+	CONSOLE_MODE_GRAPHICS
+} ukConsoleMode;
+
 typedef struct _ukConsoleData ukConsoleData;
 
 struct _ukConsole
 {
 	ukConsole * (*init)(ukBus * bus);
+
+	int (*set_mode)(ukConsole * console, ukConsoleMode mode,
+			unsigned int width, unsigned int height,
+			unsigned int depth);
 
 	void (*clear)(ukConsole * console);
 
@@ -32,6 +43,9 @@ ukConsole * console_init(ukBus * bus, char const * name);
 
 /* accessors */
 ukConsole * console_get_default(void);
+
+int console_set_mode(ukConsole * console, ukConsoleMode mode,
+		unsigned int width, unsigned int height, unsigned int depth);
 
 /* helpers */
 void console_clear(ukConsole * console);

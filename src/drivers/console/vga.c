@@ -74,6 +74,7 @@ static ukConsoleData _vga_console_data =
 VGAConsole vga_console =
 {
 	_vga_console_init,
+	NULL,
 	_vga_console_clear,
 	_vga_console_print,
 	&_vga_console_data
