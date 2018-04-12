@@ -38,11 +38,23 @@ static const GDT _gdt_4gb[4] =
 int multiboot(ukMultibootInfo * mi)
 {
 	ukBus * bus;
+	char const * console = LOADER_CONSOLE;
 	size_t i;
 	ukMultibootMod * mod;
 
+	/* initialize the root bus */
 	bus = bus_init(LOADER_BUS);
-	console_init(bus, LOADER_CONSOLE);
+
+#ifdef notyet
+	/* detect the video driver to use */
+	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_VBE)
+		console = "vesa";
+#endif
+
+	/* initialize the console */
+	console_init(bus, console);
+
+	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
 	if(mi->loader_name != NULL)
 		printf("Loader: %s\n", mi->loader_name);
@@ -51,6 +63,8 @@ int multiboot(ukMultibootInfo * mi)
 	printf("%u MB memory available\n",
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
+
+	/* look for modules */
 	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
 		puts("No modules provided");
@@ -65,6 +79,8 @@ int multiboot(ukMultibootInfo * mi)
 		puts("Could not setup the GDT");
 		return 4;
 	}
+
+	/* load the modules */
 	puts("Loading modules...");
 	for(i = 0; i < mi->mods_count; i++)
 	{
