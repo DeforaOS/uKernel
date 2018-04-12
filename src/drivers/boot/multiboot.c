@@ -23,36 +23,72 @@ extern int _kernel64(ukMultibootInfo * mi, vaddr_t entrypoint);
 /* public */
 /* functions */
 /* multiboot_load_module */
-static int _load_module32(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
+		vaddr_t * entrypoint);
+static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
-static int _load_module64(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr);
 
 int multiboot_load_module(ukMultibootMod * mod, unsigned char * elfclass,
 		vaddr_t * entrypoint)
 {
-	Elf32_Ehdr * ehdr;
-
-	if(mod->end < mod->start || mod->end - mod->start < sizeof(ehdr))
+	size_t len;
+	struct
 	{
-		puts("Could not load module: Invalid format");
+		int (*loader)(ukMultibootMod * mod, unsigned char * elfclass,
+				vaddr_t * entrypoint);
+		char * signature;
+		size_t signature_len;
+	} loaders[] =
+	{
+		{ _load_module_elf, ELFMAG, SELFMAG }
+	};
+	size_t i;
+
+	if(mod->end < mod->start)
+	{
+		puts("Could not load module: Invalid address");
 		return -1;
 	}
+	if((len = mod->end - mod->start) == 0)
+	{
+		puts("Could not load module: Empty size");
+		return -1;
+	}
+	for(i = 0; i < sizeof(loaders) / sizeof(*loaders); i++)
+	{
+		if(len < loaders[i].signature_len)
+			continue;
+		if(memcmp((void *)mod->start, loaders[i].signature,
+					loaders[i].signature_len) == 0)
+			return loaders[i].loader(mod, elfclass, entrypoint);
+	}
+	puts("Could not load module: Unsupported type");
+	return -1;
+}
+
+static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
+		vaddr_t * entrypoint)
+{
+	Elf32_Ehdr * ehdr;
+
 	ehdr = (Elf32_Ehdr *)mod->start;
 	if(elfclass != NULL)
 		*elfclass = ehdr->e_ident[EI_CLASS];
 	switch(ehdr->e_ident[EI_CLASS])
 	{
 		case ELFCLASS32:
-			return _load_module32(mod, entrypoint, ehdr);
+			return _load_module_elf32(mod, entrypoint, ehdr);
 		case ELFCLASS64:
-			return _load_module64(mod, entrypoint,
+			return _load_module_elf64(mod, entrypoint,
 					(Elf64_Ehdr *)ehdr);
 	}
+	puts("Could not load module: Unsupported ELF class");
 	return -1;
 }
 
-static int _load_module32(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr)
 {
 	Elf32_Phdr * phdr;
@@ -83,7 +119,7 @@ static int _load_module32(ukMultibootMod * mod, vaddr_t * entrypoint,
 	return -1;
 }
 
-static int _load_module64(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr)
 {
 	Elf64_Phdr * phdr;
