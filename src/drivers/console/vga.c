@@ -67,7 +67,11 @@ static ukConsoleData _vga_console_data =
 	NULL
 };
 
-static VGAConsole _vga_console =
+
+/* public */
+/* variables */
+/* console */
+VGAConsole vga_console =
 {
 	_vga_console_init,
 	_vga_console_clear,
@@ -82,11 +86,11 @@ static VGAConsole _vga_console =
 static ukConsole * _vga_console_init(ukBus * bus)
 {
 	_vga_console_data.bus = bus;
-	_vga_console_clear(&_vga_console);
+	_vga_console_clear(&vga_console);
 	/* reset the cursor */
-	_vga_cursor_set(&_vga_console, !_vga_console_data.cursor, 0, 0);
-	_vga_cursor_set(&_vga_console, true, 0, 0);
-	return &_vga_console;
+	_vga_cursor_set(&vga_console, !_vga_console_data.cursor, 0, 0);
+	_vga_cursor_set(&vga_console, true, 0, 0);
+	return &vga_console;
 }
 
 

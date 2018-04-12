@@ -17,20 +17,26 @@ static ukConsole * _console = NULL;
 
 /* functions */
 #if defined(__amd64__) || defined(__i386__)
-# include "console/vga.c"
+extern ukConsole vesa_console;
+extern ukConsole vga_console;
 
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
 	ukConsole * console;
 
-	if(strcmp(name, "vga") == 0)
-		console = _vga_console_init(bus);
+	if(_console != NULL)
+		return _console;
+	if(strcmp(name, "vesa") == 0)
+		console = &vesa_console;
+	else if(strcmp(name, "vga") == 0)
+		console = &vga_console;
 	else
 	{
 		errno = ENODEV;
 		return NULL;
 	}
+	console = console->init(bus);
 	if(_console == NULL)
 		_console = console;
 	return console;

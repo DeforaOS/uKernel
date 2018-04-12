@@ -50,6 +50,12 @@ int multiboot(ukMultibootInfo * mi)
 	/* initialize the root bus */
 	bus = bus_init(LOADER_BUS);
 
+#ifdef notyet
+	/* detect the video driver to use */
+	if(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_VBE)
+		console = "vesa";
+#endif
+
 	/* initialize the console */
 	console_init(bus, console);
 
