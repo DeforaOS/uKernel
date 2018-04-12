@@ -9,6 +9,23 @@
 
 /* public */
 /* functions */
+/* memcmp */
+int memcmp(void const * s1, void const * s2, size_t n)
+{
+	unsigned char const * u1 = s1;
+	unsigned char const * u2 = s2;
+
+	if(n == 0)
+		return 0;
+	while(--n && *u1 == *u2)
+	{
+		u1++;
+		u2++;
+	}
+	return *u1 - *u2;
+}
+
+
 /* memcpy */
 void * memcpy(void * dest, void const * src, size_t n)
 {
