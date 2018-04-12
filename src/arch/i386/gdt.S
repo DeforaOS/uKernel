@@ -9,7 +9,7 @@
 .section .text
 /* arch_setgdt */
 .global __arch_setgdt
-.type __arch_setgdt,function
+.type __arch_setgdt, @function
 __arch_setgdt:
 #if 0
 	lea gdt_descriptor, %ecx

@@ -49,6 +49,6 @@ multiboot_header:
 .section .text
 /* multiboot_start */
 .global _multiboot_start
-.type _multiboot_start,@function
+.type _multiboot_start, @function
 _multiboot_start:
 	jmp _start

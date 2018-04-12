@@ -9,7 +9,7 @@
 .section .text
 /* arch_setidt */
 .global __arch_setidt
-.type __arch_setidt,function
+.type __arch_setidt, @function
 __arch_setidt:
 	lidt (idt)
 	ret

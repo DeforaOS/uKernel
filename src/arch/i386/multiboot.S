@@ -18,7 +18,7 @@ k_ptr:
 /* text */
 /* multiboot_boot_kernel32 */
 .global multiboot_boot_kernel32
-.type multiboot_boot_kernel32,function
+.type multiboot_boot_kernel32, @function
 multiboot_boot_kernel32:
 	/* jump into the 32-bit kernel */
 #if 0
@@ -37,7 +37,7 @@ multiboot_boot_kernel32:
 
 
 .global multiboot_boot_kernel64
-.type multiboot_boot_kernel64,function
+.type multiboot_boot_kernel64, @function
 multiboot_boot_kernel64:
 	/* check for 64-bit capability */
 	pushf
