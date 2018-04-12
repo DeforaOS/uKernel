@@ -70,9 +70,10 @@ struct _ukBootMultibootInfo
 
 	void * vbe_control_info;
 	void * vbe_mode_info;
-	paddr_t vbe_interface_seg;
-	paddr_t vbe_interface_off;
-	uint32_t vbe_interface_len;
+	uint16_t vbe_mode;
+	uint16_t vbe_interface_seg;
+	uint16_t vbe_interface_off;
+	uint16_t vbe_interface_len;
 };
 
 struct _ukBootMultibootMod
