@@ -35,6 +35,8 @@ SECTIONS
 		*(.data)
 	}
 
+	_edata = .;
+
 	/* Read-write data (uninitialized) and stack */
 	.bss BLOCK(128K) : ALIGN(4K)
 	{

@@ -29,6 +29,8 @@ SECTIONS
 		. = ALIGN(4096);
 	}
 
+	_edata = .;
+
 	.eh_frame : AT(ADDR(.eh_frame) - 1M)
 	{
 		_ehframe = .;
