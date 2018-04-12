@@ -52,7 +52,7 @@ int multiboot(ukMultibootInfo * mi)
 
 #ifdef notyet
 	/* detect the video driver to use */
-	if(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_VBE)
+	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_VBE)
 		console = "vesa";
 #endif
 
@@ -70,7 +70,7 @@ int multiboot(ukMultibootInfo * mi)
 	printf("Booted from %#x\n", mi->boot_device_drive);
 
 	/* look for the kernel and modules */
-	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
+	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
 		puts("No modules provided");
 		return 2;

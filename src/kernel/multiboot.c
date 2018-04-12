@@ -51,7 +51,7 @@ int multiboot(ukMultibootInfo * mi)
 	printf("%u MB memory available\n",
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
-	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
+	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
 		puts("No modules provided");
 		return 2;

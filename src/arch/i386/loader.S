@@ -50,7 +50,7 @@ _start:
 
 	/* detect multiboot */
 	pop %eax
-	cmp $MAGIC2, %eax
+	cmp $BOOT_MULTIBOOT_LOADER_MAGIC, %eax
 	jne 1f
 	push %ebx
 	call multiboot

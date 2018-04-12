@@ -10,6 +10,7 @@
 # include <sys/types.h>
 # include <stdint.h>
 # include <elf.h>
+# include "multiboot/constants.h"
 
 
 /* types */
@@ -85,23 +86,6 @@ struct _ukBootMultibootMod
 	uint32_t _padding;
 };
 
-
-/* constants */
-# define BOOT_MULTIBOOT_HEADER_MAGIC		0x1badb002
-# define BOOT_MULTIBOOT_HEADER_MODS_ALIGNED	0x00000001
-# define BOOT_MULTIBOOT_HEADER_WANT_MEMORY	0x00000002
-# define BOOT_MULTIBOOT_HEADER_HAS_VBE		0x00000004
-# define BOOT_MULTIBOOT_HEADER_HAS_MODS		0x00000008
-# define BOOT_MULTIBOOT_HEADER_HAS_ADDR		0x00010000
-
-# define BOOT_MULTIBOOT_INFO_HAS_MEMORY		0x00000001
-# define BOOT_MULTIBOOT_INFO_HAS_BOOT_DEVICE	0x00000002
-# define BOOT_MULTIBOOT_INFO_HAS_CMDLINE	0x00000004
-# define BOOT_MULTIBOOT_INFO_HAS_MODS		0x00000008
-# define BOOT_MULTIBOOT_INFO_HAS_MMAP		0x00000040
-# define BOOT_MULTIBOOT_INFO_HAS_DRIVES		0x00000080
-# define BOOT_MULTIBOOT_INFO_HAS_LOADER_NAME	0x00000200
-# define BOOT_MULTIBOOT_INFO_HAS_VBE		0x00000800
 
 /* prototypes */
 int multiboot_boot_kernel32(ukMultibootInfo * info, vaddr_t entrypoint);

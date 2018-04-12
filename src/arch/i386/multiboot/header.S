@@ -4,20 +4,51 @@
 
 
 
+#include "drivers/boot/multiboot/constants.h"
+
+
 /* variables */
-#define ALIGN		(1 << 0)		/* align the modules loaded on */
-						/* page boundaries */
-#define MEMINFO		(1 << 1)		/* provide the memory map */
-#define FLAGS		ALIGN | MEMINFO		/* multiboot flags */
-#define MAGIC1		0x1badb002		/* magic number */
-#define MAGIC2		0x2badb002		/* magic number */
-#define CHECKSUM	-(MAGIC1 + FLAGS)	/* checksum for the above */
+#define FLAGS		(BOOT_MULTIBOOT_HEADER_MODS_ALIGNED \
+		| BOOT_MULTIBOOT_HEADER_WANT_MEMORY \
+		| BOOT_MULTIBOOT_HEADER_HAS_VBE)
+#define MAGIC		BOOT_MULTIBOOT_HEADER_MAGIC
+#define CHECKSUM	-(MAGIC + FLAGS)	/* checksum for the above */
 
 
 /* sections */
 /* multiboot */
 .section .multiboot
 .align 4
-.long MAGIC1
+
+multiboot_header:
+.long MAGIC
 .long FLAGS
 .long CHECKSUM
+
+#ifdef __ELF__
+.long 0
+.long 0
+.long 0
+.long 0
+.long 0
+#else
+.long multiboot_header
+.long _multiboot_start
+.long _edata
+.long _end
+.long _start
+#endif
+
+/* fail-safe video mode */
+.long 0
+.long 640
+.long 480
+.long 8
+
+
+.section .text
+/* multiboot_start */
+.global _multiboot_start
+.type _multiboot_start,@function
+_multiboot_start:
+	jmp _start
