@@ -61,9 +61,6 @@ auxv_done:
 	push	%ecx
 	push	%ebx
 	push	%eax
-#if defined(__ELF__)
-	push	%edx
-#endif
 
 #if defined(__SSP__)
 	/* initialize SSP */
