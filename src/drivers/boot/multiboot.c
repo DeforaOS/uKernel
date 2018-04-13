@@ -27,8 +27,7 @@ static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
 		vaddr_t * entrypoint);
 static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
-static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Phdr * phdr);
+static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr);
 static void _load_module_elf32_relocate_arch(Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
 static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
@@ -123,7 +122,7 @@ static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 			*entrypoint = mod->start + ehdr->e_entry
 				- phdr[i].p_vaddr + phdr[i].p_offset;
 		/* FIXME really look for main() directly? */
-		if(_load_module_elf32_relocate(mod, ehdr, phdr) != 0)
+		if(_load_module_elf32_relocate(mod, ehdr) != 0)
 		{
 			puts("Could not load 32-bit module:"
 					" Could not relocate");
@@ -135,8 +134,7 @@ static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 	return -1;
 }
 
-static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Phdr * phdr)
+static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
