@@ -14,12 +14,6 @@
 # include "drivers/boot/multiboot.h"
 
 
-/* private */
-/* prototypes */
-extern int _kernel32(ukMultibootInfo * mi, vaddr_t entrypoint);
-extern int _kernel64(ukMultibootInfo * mi, vaddr_t entrypoint);
-
-
 /* public */
 /* functions */
 /* multiboot_load_module */
