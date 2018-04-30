@@ -59,6 +59,7 @@ _start:
 	jne 1f
 	push %ebx
 	call multiboot
+	sub $0x4, %esp
 1:
 
 	/* set the interrupt descriptor */
