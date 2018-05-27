@@ -196,7 +196,7 @@ static void _vga_scroll(VGAConsole * console, size_t rows)
 
 	if(rows == 0)
 		return;
-	if(rows >= VGA_TEXT_COLUMNS)
+	if(rows >= VGA_TEXT_ROWS)
 	{
 		console_clear(console);
 		return;
