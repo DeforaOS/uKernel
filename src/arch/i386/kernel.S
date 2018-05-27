@@ -65,11 +65,11 @@ _start:
 	/* start the kernel */
 	push %ebx
 	call main
-	sub $0x4, %esp
+	add $0x4, %esp
 
 	/* exit the kernel */
 	push %eax
 	call exit
-	sub $0x4, %esp
+	add $0x4, %esp
 
 	hlt
