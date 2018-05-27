@@ -227,13 +227,13 @@ int main(ukMultibootInfo * mi)
 	bus = bus_init(LOADER_BUS);
 	console_init(bus, LOADER_CONSOLE);
 	puts("Booting DeforaOS...");
-	if(mi->loader_name != NULL)
+	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_LOADER_NAME)
 		printf("Loader: %s\n", mi->loader_name);
-	if(mi->cmdline != NULL)
+	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_CMDLINE)
 		printf("Command line: %s\n", mi->cmdline);
 	printf("%u MB memory available\n",
 			(mi->mem_upper - mi->mem_lower) / 1024);
-	if(!(mi->flags & BOOT_MULTIBOOT_HEADER_HAS_MODS))
+	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
 		puts(msg_failed2);
 		return 2;
