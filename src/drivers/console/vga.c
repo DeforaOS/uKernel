@@ -202,7 +202,8 @@ static void _vga_scroll(VGAConsole * console, size_t rows)
 		return;
 	}
 	s = rows * VGA_TEXT_COLUMNS;
-	memmove(data->buf, &data->buf[s], sizeof(data->buf)
+	memmove(data->buf, &data->buf[s],
+			sizeof(*data->buf) * VGA_TEXT_COLUMNS * VGA_TEXT_ROWS
 			- (s * sizeof(*data->buf)));
 	data->pos_x = 0;
 	data->pos_y = VGA_TEXT_ROWS - rows;
