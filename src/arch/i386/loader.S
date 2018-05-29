@@ -96,7 +96,7 @@ _start:
 	/* start the loader */
 	push %ebx
 	call main
-	sub $0x4, %esp
+	add $0x4, %esp
 
 	/* exit the kernel */
 	call _exit
