@@ -22,7 +22,7 @@ static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
 static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
 static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr);
-static void _load_module_elf32_relocate_arch(Elf32_Rela * rela,
+static int _load_module_elf32_relocate_arch(Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
 static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 		Elf32_Shdr * shdr, Elf32_Word index,
@@ -33,7 +33,7 @@ static int _load_module_elf32_symtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr);
 static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr);
-static void _load_module_elf64_relocate_arch(Elf64_Rela * rela,
+static int _load_module_elf64_relocate_arch(Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym);
 static int _load_module_elf64_strtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
 		Elf64_Shdr * shdr, Elf64_Word index,
@@ -174,14 +174,15 @@ static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
 			rela.r_addend = 0;
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
 			sym = &symtab[ELF32_R_SYM(rela.r_info)];
-			_load_module_elf32_relocate_arch(&rela, strtab,
-					strtab_cnt, sym);
+			if(_load_module_elf32_relocate_arch(&rela, strtab,
+						strtab_cnt, sym) != 0)
+				return -1;
 		}
 	}
 	return 0;
 }
 
-static void _load_module_elf32_relocate_arch(Elf32_Rela * rela,
+static int _load_module_elf32_relocate_arch(Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym)
 {
 #if defined(__i386__)
@@ -191,9 +192,15 @@ static void _load_module_elf32_relocate_arch(Elf32_Rela * rela,
 		case R_386_PC32:
 			/* FIXME implement */
 			break;
+		default:
+			printf("%u: Relocation not supported\n",
+					ELF32_R_TYPE(rela->r_info));
+			return -1;
 	}
+	return 0;
 #else
 # warning Unsupported platform: 32-bit relocations not implemented
+	return -1;
 #endif
 }
 
@@ -299,14 +306,15 @@ static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr)
 			rela.r_addend = 0;
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
 			sym = &symtab[ELF64_R_SYM(rela.r_info)];
-			_load_module_elf64_relocate_arch(&rela, strtab,
-					strtab_cnt, sym);
+			if(_load_module_elf64_relocate_arch(&rela, strtab,
+						strtab_cnt, sym) != 0)
+				return -1;
 		}
 	}
 	return 0;
 }
 
-static void _load_module_elf64_relocate_arch(Elf64_Rela * rela,
+static int _load_module_elf64_relocate_arch(Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym)
 {
 #if defined(__i386__)
@@ -322,9 +330,16 @@ static void _load_module_elf64_relocate_arch(Elf64_Rela * rela,
 			addr = (Elf64_Addr)rela->r_offset;
 			*addr = rela->r_addend;
 			break;
+		default:
+			printf("%u: Relocation not supported\n",
+					ELF64_R_TYPE(rela->r_info));
+			return -1;
 	}
+	return 0;
 #else
 # warning Unsupported platform: 64-bit relocations not implemented
+
+	return -1;
 #endif
 }
 
