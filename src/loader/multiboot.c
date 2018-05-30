@@ -87,11 +87,11 @@ int multiboot(ukMultibootInfo * mi)
 	}
 
 	/* load the kernel and modules */
-	puts("Loading modules...");
 	for(i = 0; i < mi->mods_count; i++)
 	{
 		mod = &mi->mods_addr[i];
-		printf("Loading module: %s\n", mod->cmdline);
+		printf("Loading %s: %s\n", (i == 0) ? "kernel" : "module",
+				mod->cmdline);
 		if(i == 0)
 			res = multiboot_load_module(mod, &elfclass,
 					&entrypoint);
