@@ -31,8 +31,9 @@ multiboot_boot_kernel32:
 	mov %esp, %ebp
 
 	mov 0x8(%ebp), %ebx
-	mov 0xc(%ebp), %eax
-	jmp *%eax
+	mov 0xc(%ebp), %ecx
+	mov $BOOT_MULTIBOOT_LOADER_MAGIC, %eax
+	jmp *%ecx
 #endif
 
 
