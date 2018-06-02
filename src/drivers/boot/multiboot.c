@@ -22,7 +22,8 @@ static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
 static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
 static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr);
-static int _load_module_elf32_relocate_arch(Elf32_Rela * rela,
+static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
+		Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
 static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 		Elf32_Shdr * shdr, Elf32_Word index,
@@ -33,7 +34,8 @@ static int _load_module_elf32_symtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr);
 static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr);
-static int _load_module_elf64_relocate_arch(Elf64_Rela * rela,
+static int _load_module_elf64_relocate_arch(ukMultibootMod * mod,
+		Elf64_Shdr * shdr, Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym);
 static int _load_module_elf64_strtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
 		Elf64_Shdr * shdr, Elf64_Word index,
@@ -175,23 +177,43 @@ static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
 			sym = (ELF32_R_SYM(rela.r_info) < symtab_cnt)
 				? &symtab[ELF32_R_SYM(rela.r_info)] : NULL;
-			if(_load_module_elf32_relocate_arch(&rela, strtab,
-						strtab_cnt, sym) != 0)
+			if(_load_module_elf32_relocate_arch(mod,
+						shdr[i].sh_info < ehdr->e_shnum
+						? &shdr[shdr[i].sh_info] : NULL,
+						&rela, strtab, strtab_cnt,
+						sym) != 0)
 				return -1;
 		}
 	}
 	return 0;
 }
 
-static int _load_module_elf32_relocate_arch(Elf32_Rela * rela,
+static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
+		Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym)
 {
 #if defined(__i386__)
+	Elf32_Addr * addr;
+
+	addr = (Elf32_Addr *)(mod->start + (shdr != NULL ? shdr->sh_offset : 0)
+			+ rela->r_offset);
 	switch(ELF32_R_TYPE(rela->r_info))
 	{
-		case R_386_32:
-		case R_386_PC32:
-			/* FIXME implement */
+		case R_386_32:		/* S + A */
+			*addr = sym->st_value + rela->r_addend;
+			break;
+		case R_386_GLOB_DAT:	/* S */
+		case R_386_JMP_SLOT:	/* S */
+			*addr = sym->st_value + rela->r_addend;
+			break;
+		case R_386_NONE:
+			break;
+		case R_386_PC32:	/* S + A - P */
+			*addr = sym->st_value + rela->r_addend
+				- (shdr != NULL ? shdr->sh_offset : 0);
+			break;
+		case R_386_RELATIVE:	/* B + A */
+			*addr = mod->start + rela->r_addend;
 			break;
 		default:
 			printf("%u: Relocation not supported\n",
@@ -308,29 +330,36 @@ static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr)
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
 			sym = (ELF64_R_SYM(rela.r_info) < symtab_cnt)
 				? &symtab[ELF64_R_SYM(rela.r_info)] : NULL;
-			if(_load_module_elf64_relocate_arch(&rela, strtab,
-						strtab_cnt, sym) != 0)
+			if(_load_module_elf64_relocate_arch(mod,
+						shdr[i].sh_info < ehdr->e_shnum
+						? &shdr[shdr[i].sh_info] : NULL,
+						&rela, strtab, strtab_cnt,
+						sym) != 0)
 				return -1;
 		}
 	}
 	return 0;
 }
 
-static int _load_module_elf64_relocate_arch(Elf64_Rela * rela,
+static int _load_module_elf64_relocate_arch(ukMultibootMod * mod,
+		Elf64_Shdr * shdr, Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym)
 {
 #if defined(__i386__)
 	Elf64_Addr * addr;
 
+	addr = (Elf64_Addr *)(mod->start + (shdr != NULL ? shdr->sh_offset : 0)
+			+ rela->r_offset);
 	switch(ELF64_R_TYPE(rela->r_info))
 	{
-		case R_X86_64_RELATIVE:
-		case R_X86_64_GLOB_DAT:
-			/* FIXME implement */
+		case R_X86_64_GLOB_DAT:	/* S */
+		case R_X86_64_JUMP_SLOT:/* S */
+			*addr = sym->st_value + rela->r_addend;
 			break;
-		case R_X86_64_JUMP_SLOT:
-			addr = (Elf64_Addr)rela->r_offset;
-			*addr = rela->r_addend;
+		case R_X86_64_NONE:
+			break;
+		case R_X86_64_RELATIVE:	/* B + A */
+			*addr = mod->start + rela->r_addend;
 			break;
 		default:
 			printf("%u: Relocation not supported\n",
