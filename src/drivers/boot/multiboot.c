@@ -173,7 +173,8 @@ static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
 		{
 			rela.r_addend = 0;
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
-			sym = &symtab[ELF32_R_SYM(rela.r_info)];
+			sym = (ELF32_R_SYM(rela.r_info) < symtab_cnt)
+				? &symtab[ELF32_R_SYM(rela.r_info)] : NULL;
 			if(_load_module_elf32_relocate_arch(&rela, strtab,
 						strtab_cnt, sym) != 0)
 				return -1;
@@ -305,7 +306,8 @@ static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr)
 		{
 			rela.r_addend = 0;
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
-			sym = &symtab[ELF64_R_SYM(rela.r_info)];
+			sym = (ELF64_R_SYM(rela.r_info) < symtab_cnt)
+				? &symtab[ELF64_R_SYM(rela.r_info)] : NULL;
 			if(_load_module_elf64_relocate_arch(&rela, strtab,
 						strtab_cnt, sym) != 0)
 				return -1;
