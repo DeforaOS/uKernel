@@ -72,7 +72,8 @@ static int _ioport_bus_read16(IOPortBus * bus, ukBusAddress address,
 	(void) address;
 	(void) value;
 
-	return -ENOTSUP;
+	errno = ENOTSUP;
+	return -1;
 }
 
 
@@ -84,7 +85,8 @@ static int _ioport_bus_read32(IOPortBus * bus, ukBusAddress address,
 	(void) address;
 	(void) value;
 
-	return -ENOTSUP;
+	errno = ENOTSUP;
+	return -1;
 }
 
 
@@ -106,7 +108,8 @@ static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress address,
 	(void) address;
 	(void) value;
 
-	return -ENOTSUP;
+	errno = ENOTSUP;
+	return -1;
 }
 
 
@@ -118,5 +121,6 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 	(void) address;
 	(void) value;
 
-	return -ENOTSUP;
+	errno = ENOTSUP;
+	return -1;
 }
