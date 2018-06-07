@@ -69,8 +69,11 @@ _start:
 
 	/* run the userland kernel */
 	push	$0x0
+	push	$0x0
+	push	$0x0
+	push	$0x0
 	call	main
-	add	$0x4, %esp
+	add	$0x10, %esp
 
 	/* exit the userland kernel */
 	mov	%ebp, %esp
