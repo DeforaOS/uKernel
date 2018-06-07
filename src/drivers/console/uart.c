@@ -70,7 +70,9 @@ static UARTConsole * _uart_console_init(ukBus * bus)
 				+ UART_REGISTER_INTERRUPT_ENABLE), 0x00);
 	bus->write8(bus, (ukBusAddress)(data->port
 				+ UART_REGISTER_LINE_CONTROL), 0x80);
-	bus->write8(bus, (ukBusAddress)(data->port/* + 0x0 */), 0x01);
+
+	/* set baud rate to 115200 bps */
+	bus->write8(bus, (ukBusAddress)(data->port + 0x0), 0x01);
 	bus->write8(bus, (ukBusAddress)(data->port + 0x1), 0x00);
 	bus->write8(bus, (ukBusAddress)(data->port
 			+ UART_REGISTER_LINE_CONTROL), 0x03);
