@@ -200,20 +200,20 @@ static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
 	switch(ELF32_R_TYPE(rela->r_info))
 	{
 		case R_386_32:		/* S + A */
-			*addr = sym->st_value + rela->r_addend;
+			*addr += sym->st_value + rela->r_addend;
 			break;
 		case R_386_GLOB_DAT:	/* S */
 		case R_386_JMP_SLOT:	/* S */
-			*addr = sym->st_value + rela->r_addend;
+			*addr += sym->st_value + rela->r_addend;
 			break;
 		case R_386_NONE:
 			break;
 		case R_386_PC32:	/* S + A - P */
-			*addr = sym->st_value + rela->r_addend
+			*addr += sym->st_value + rela->r_addend
 				- (shdr != NULL ? shdr->sh_offset : 0);
 			break;
 		case R_386_RELATIVE:	/* B + A */
-			*addr = mod->start + rela->r_addend;
+			*addr += mod->start + rela->r_addend;
 			break;
 		default:
 			printf("%u: Relocation not supported\n",
