@@ -90,6 +90,19 @@ int fflush(FILE * file)
 }
 
 
+/* fprintf */
+int fprintf(FILE * file, char const * format, ...)
+{
+	int ret;
+	va_list arg;
+
+	va_start(arg, format);
+	ret = vfprintf(file, format, arg);
+	va_end(arg);
+	return ret;
+}
+
+
 /* fputc */
 int fputc(int c, FILE * file)
 {
