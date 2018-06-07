@@ -12,19 +12,19 @@
 .type __arch_setgdt, @function
 __arch_setgdt:
 #if 0
-	lea gdt_descriptor, %ecx
+	lea	gdt_descriptor, %ecx
 #else
-	mov (gdt_descriptor), %ecx
+	mov	(gdt_descriptor), %ecx
 #endif
 	/* set the offset of the GDT */
-	mov 0x4(%esp), %eax
-	mov %eax, 0x2(%ecx)
+	mov	0x4(%esp), %eax
+	mov	%eax, 0x2(%ecx)
 	/* set the size of the GDT */
-	mov 0x8(%esp), %eax
-	dec %eax
-	mov %ax, (%ecx)
+	mov	0x8(%esp), %eax
+	dec	%eax
+	mov	%ax, (%ecx)
 	/* load the GDT */
-	lgdt (%ecx)
+	lgdt	(%ecx)
 	ret
 
 

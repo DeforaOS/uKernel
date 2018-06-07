@@ -11,8 +11,8 @@
 .global _init
 .type _init, @function
 _init:
-	push %rbp
-	mov %rsp, %rbp
+	push	%rbp
+	mov	%rsp, %rbp
 
 
 /* fini */
@@ -20,5 +20,5 @@ _init:
 .global _fini
 .type _fini, @function
 _fini:
-	push %rbp
-	mov %rsp, %rbp
+	push	%rbp
+	mov	%rsp, %rbp

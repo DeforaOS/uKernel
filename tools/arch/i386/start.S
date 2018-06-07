@@ -34,7 +34,7 @@ _read:
 .global _start
 .type _start, @function
 _start:
-	/* reset the stack */
+	/* initialize the stack */
 	xor	%ebp, %ebp
 
 	/* setup the environment */

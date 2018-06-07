@@ -25,7 +25,7 @@ _exit:
 	/* infinite loop */
 	cli
 1:	hlt
-	jmp 1b
+	jmp	1b
 
 
 /* start */
@@ -36,55 +36,55 @@ _start:
 	cli
 
 	/* initialize the stack */
-	mov $stack_top, %esp
-	xor %ebp, %ebp
+	mov	$stack_top, %esp
+	xor	%ebp, %ebp
 
-	push %eax
+	push	%eax
 
 	/* reset EFLAGS */
-	pushl $0x0
+	pushl	$0x0
 	popf
 
 #if defined(__SSP__)
 	/* initialize SSP */
-	call __stack_chk_setup
+	call	__stack_chk_setup
 #endif
 
 	/* call the global constructors */
-	call _init
+	call	_init
 
 	/* detect multiboot */
-	pop %eax
-	cmp $BOOT_MULTIBOOT_LOADER_MAGIC, %eax
-	jne 1f
-	push %ebx
-	call multiboot
-	add $0x4, %esp
+	pop	%eax
+	cmp	$BOOT_MULTIBOOT_LOADER_MAGIC, %eax
+	jne	1f
+	push	%ebx
+	call	multiboot
+	add	$0x4, %esp
 
 	/* start the loader */
-	push $0x0
-	push $0x0
-	push $0x0
-	mov %ebx, %eax
-	add $0x10, %eax
-	push %eax
-	push $0x1
-	call main
-	add $0x14, %esp
-	jmp 2f
+	push	$0x0
+	push	$0x0
+	push	$0x0
+	mov	%ebx, %eax
+	add	$0x10, %eax
+	push	%eax
+	push	$0x1
+	call	main
+	add	$0x14, %esp
+	jmp	2f
 
 1:
 	/* start the loader */
-	push $0x0
-	push $0x0
-	push $0x0
-	push $0x0
-	call main
-	add $0x10, %esp
+	push	$0x0
+	push	$0x0
+	push	$0x0
+	push	$0x0
+	call	main
+	add	$0x10, %esp
 
 2:
 	/* exit the kernel */
-	call _exit
+	call	_exit
 
 	hlt
 

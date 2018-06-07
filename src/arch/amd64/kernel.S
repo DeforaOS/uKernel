@@ -27,7 +27,7 @@ _exit:
 	/* infinite loop */
 	cli
 1:	hlt
-	jmp 1b
+	jmp	1b
 
 
 /* start */
@@ -38,28 +38,28 @@ _start:
 	cli
 
 	/* initialize the stack */
-	mov $stack_top, %rsp
-	xor %rbp, %rbp
+	mov	$stack_top, %rsp
+	xor	%rbp, %rbp
 
 #if defined(__SSP__)
 	/* initialize SSP */
-	call __stack_chk_setup
+	call	__stack_chk_setup
 #endif
 
 	/* call the global constructors */
-	call _init
+	call	_init
 
 	/* set the interrupt descriptor */
-	call __arch_setidt
+	call	__arch_setidt
 
 	/* FIXME setup paging */
 
 	/* start the kernel */
-	xor %rdi, %rdi
-	call main
+	xor	%rdi, %rdi
+	call	main
 
 	/* exit the kernel */
-	mov %rax, %rdi
-	call exit
+	mov	%rax, %rdi
+	call	exit
 
 	hlt
