@@ -17,6 +17,7 @@ static ukConsole * _console = NULL;
 
 /* functions */
 #if defined(__amd64__) || defined(__i386__)
+extern ukConsole uart_console;
 extern ukConsole vesa_console;
 extern ukConsole vga_console;
 
@@ -27,7 +28,9 @@ ukConsole * console_init(ukBus * bus, char const * name)
 
 	if(_console != NULL)
 		return _console;
-	if(strcmp(name, "vesa") == 0)
+	if(strcmp(name, "uart") == 0)
+		console = &uart_console;
+	else if(strcmp(name, "vesa") == 0)
 		console = &vesa_console;
 	else if(strcmp(name, "vga") == 0)
 		console = &vga_console;
