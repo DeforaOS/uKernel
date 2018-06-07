@@ -67,6 +67,9 @@ _start:
 	call	__stack_chk_setup
 #endif
 
+	/* call the global constructors */
+	call _init
+
 	/* run the userland kernel */
 	push	$0x0
 	push	$0x0
