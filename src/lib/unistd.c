@@ -10,6 +10,11 @@
 #include "drivers/console.h"
 
 
+/* private */
+/* variables */
+static ukConsole * _fildes[STDERR_FILENO + 1] = { NULL, NULL, NULL };
+
+
 /* public */
 /* variables */
 char ** environ;
@@ -19,11 +24,20 @@ char ** environ;
 /* write */
 ssize_t write(int fildes, const void * buf, size_t count)
 {
-	if(fildes != STDOUT_FILENO)
+	ukConsole * console;
+
+	if(fildes < 0)
+	{
+		errno = EINVAL;
+		return -1;
+	}
+	if((size_t)fildes < sizeof(_fildes) / sizeof(*_fildes))
+		console = _fildes[fildes];
+	else
 	{
 		errno = EBADF;
 		return -1;
 	}
-	console_print(NULL, buf, count);
+	console_print(console, buf, count);
 	return count;
 }
