@@ -63,20 +63,24 @@ _start:
 
 	/* start the loader */
 	push $0x0
+	push $0x0
+	push $0x0
 	mov %ebx, %eax
 	add $0x10, %eax
 	push %eax
 	push $0x1
 	call main
-	add $0xc, %esp
+	add $0x14, %esp
 	jmp 2f
 
 1:
 	/* start the loader */
 	push $0x0
 	push $0x0
+	push $0x0
+	push $0x0
 	call main
-	add $0x8, %esp
+	add $0x10, %esp
 
 2:
 	/* exit the kernel */
