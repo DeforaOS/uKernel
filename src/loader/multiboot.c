@@ -37,7 +37,7 @@ static const GDT _gdt_4gb[4] =
 /* public */
 /* functions */
 /* multiboot */
-int multiboot(ukMultibootInfo * mi)
+int multiboot(const ukMultibootInfo * mi)
 {
 	ukBus * bus;
 	char const * console = LOADER_CONSOLE;
@@ -46,6 +46,9 @@ int multiboot(ukMultibootInfo * mi)
 	int res = -1;
 	unsigned char elfclass;
 	vaddr_t entrypoint;
+	ukMultibootInfo kmi;
+
+	memcpy(&kmi, mi, sizeof(kmi));
 
 	/* initialize the root bus */
 	bus = bus_init(LOADER_BUS);
@@ -87,14 +90,20 @@ int multiboot(ukMultibootInfo * mi)
 	}
 
 	/* load the kernel and modules */
+	kmi.mods_count = 0;
+	kmi.mods_addr = NULL;
 	for(i = 0; i < mi->mods_count; i++)
 	{
 		mod = &mi->mods_addr[i];
 		printf("Loading %s: %s\n", (i == 0) ? "kernel" : "module",
 				mod->cmdline);
 		if(i == 0)
+		{
 			res = multiboot_load_module(mod, &elfclass,
 					&entrypoint);
+			kmi.mods_count = mi->mods_count - 1;
+			kmi.mods_addr = &mi->mods_addr[1];
+		}
 		else
 			multiboot_load_module(mod, NULL, NULL);
 	}
@@ -112,10 +121,10 @@ int multiboot(ukMultibootInfo * mi)
 	{
 		case ELFCLASS32:
 			puts("Detected 32-bit kernel");
-			return multiboot_boot_kernel32(mi, entrypoint);
+			return multiboot_boot_kernel32(&kmi, entrypoint);
 		case ELFCLASS64:
 			puts("Detected 64-bit kernel");
-			return multiboot_boot_kernel64(mi, entrypoint);
+			return multiboot_boot_kernel64(&kmi, entrypoint);
 	}
 	puts("Unsupported ELF class for the kernel");
 	return 6;
