@@ -47,12 +47,12 @@ _start:
 	mov	%ecx, environ	/* environ */
 #if defined(__ELF__)
 	mov	%ecx, %edx	/* auxv */
-auxv:
+1:
 	cmpl	$0x0, (%edx)
-	jz	auxv_done
+	jz	2f
 	add	$0x4, %edx
-	jmp	auxv
-auxv_done:
+	jmp	1b
+2:
 	add	$0x4, %edx
 #endif
 	push	%ebp
