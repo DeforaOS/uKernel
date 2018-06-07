@@ -17,41 +17,43 @@
 /* public */
 /* functions */
 /* multiboot_load_module */
-static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
-		vaddr_t * entrypoint);
-static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf(ukMultibootMod const * mod,
+		unsigned char * elfclass, vaddr_t * entrypoint);
+static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
-static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr);
-static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
+static int _load_module_elf32_relocate(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr);
+static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
 		Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
-static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Shdr * shdr, Elf32_Word index,
+static int _load_module_elf32_strtab(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		char ** strtab, size_t * strtab_cnt);
-static int _load_module_elf32_symtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Shdr * shdr, Elf32_Word index, Elf32_Word type,
-		Elf32_Sym ** symtab, size_t * symtab_cnt);
-static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf32_symtab(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Word type, Elf32_Sym ** symtab, size_t * symtab_cnt);
+static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr);
-static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr);
-static int _load_module_elf64_relocate_arch(ukMultibootMod * mod,
+static int _load_module_elf64_relocate(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr);
+static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 		Elf64_Shdr * shdr, Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym);
-static int _load_module_elf64_strtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
-		Elf64_Shdr * shdr, Elf64_Word index,
+static int _load_module_elf64_strtab(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
 		char ** strtab, size_t * strtab_cnt);
-static int _load_module_elf64_symtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
-		Elf64_Shdr * shdr, Elf64_Word index, Elf64_Word type,
-		Elf64_Sym ** symtab, size_t * symtab_cnt);
+static int _load_module_elf64_symtab(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
+		Elf64_Word type, Elf64_Sym ** symtab, size_t * symtab_cnt);
 
-int multiboot_load_module(ukMultibootMod * mod, unsigned char * elfclass,
+int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 		vaddr_t * entrypoint)
 {
 	size_t len;
 	struct
 	{
-		int (*loader)(ukMultibootMod * mod, unsigned char * elfclass,
-				vaddr_t * entrypoint);
+		int (*loader)(ukMultibootMod const * mod,
+				unsigned char * elfclass, vaddr_t * entrypoint);
 		char * signature;
 		size_t signature_len;
 	} loaders[] =
@@ -82,8 +84,8 @@ int multiboot_load_module(ukMultibootMod * mod, unsigned char * elfclass,
 	return -1;
 }
 
-static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
-		vaddr_t * entrypoint)
+static int _load_module_elf(ukMultibootMod const * mod,
+		unsigned char * elfclass, vaddr_t * entrypoint)
 {
 	Elf32_Ehdr * ehdr;
 
@@ -102,7 +104,7 @@ static int _load_module_elf(ukMultibootMod * mod, unsigned char * elfclass,
 	return -1;
 }
 
-static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr)
 {
 	Elf32_Phdr * phdr;
@@ -139,7 +141,8 @@ static int _load_module_elf32(ukMultibootMod * mod, vaddr_t * entrypoint,
 	return -1;
 }
 
-static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
+static int _load_module_elf32_relocate(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr)
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
@@ -188,7 +191,7 @@ static int _load_module_elf32_relocate(ukMultibootMod * mod, Elf32_Ehdr * ehdr)
 	return 0;
 }
 
-static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
+static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
 		Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym)
 {
@@ -227,8 +230,8 @@ static int _load_module_elf32_relocate_arch(ukMultibootMod * mod,
 #endif
 }
 
-static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Shdr * shdr, Elf32_Word index,
+static int _load_module_elf32_strtab(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		char ** strtab, size_t * strtab_cnt)
 {
 	if(index >= ehdr->e_shnum || shdr[index].sh_type != SHT_STRTAB)
@@ -241,9 +244,9 @@ static int _load_module_elf32_strtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 	return 0;
 }
 
-static int _load_module_elf32_symtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
-		Elf32_Shdr * shdr, Elf32_Word index, Elf32_Word type,
-		Elf32_Sym ** symtab, size_t * symtab_cnt)
+static int _load_module_elf32_symtab(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Word type, Elf32_Sym ** symtab, size_t * symtab_cnt)
 {
 	if(index >= ehdr->e_shnum)
 		return -1;
@@ -255,7 +258,7 @@ static int _load_module_elf32_symtab(ukMultibootMod * mod, Elf32_Ehdr * ehdr,
 	return 0;
 }
 
-static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
+static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf64_Ehdr * ehdr)
 {
 	Elf64_Phdr * phdr;
@@ -292,7 +295,8 @@ static int _load_module_elf64(ukMultibootMod * mod, vaddr_t * entrypoint,
 	return -1;
 }
 
-static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr)
+static int _load_module_elf64_relocate(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr)
 {
 	Elf64_Quarter i;
 	Elf64_Shdr * shdr;
@@ -341,7 +345,7 @@ static int _load_module_elf64_relocate(ukMultibootMod * mod, Elf64_Ehdr * ehdr)
 	return 0;
 }
 
-static int _load_module_elf64_relocate_arch(ukMultibootMod * mod,
+static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 		Elf64_Shdr * shdr, Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym)
 {
@@ -374,8 +378,8 @@ static int _load_module_elf64_relocate_arch(ukMultibootMod * mod,
 #endif
 }
 
-static int _load_module_elf64_strtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
-		Elf64_Shdr * shdr, Elf64_Half index,
+static int _load_module_elf64_strtab(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
 		char ** strtab, size_t * strtab_cnt)
 {
 	if(index >= ehdr->e_shnum || shdr[index].sh_type != SHT_STRTAB)
@@ -388,9 +392,9 @@ static int _load_module_elf64_strtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
 	return 0;
 }
 
-static int _load_module_elf64_symtab(ukMultibootMod * mod, Elf64_Ehdr * ehdr,
-		Elf64_Shdr * shdr, Elf64_Half index, Elf64_Half type,
-		Elf64_Sym ** symtab, size_t * symtab_cnt)
+static int _load_module_elf64_symtab(ukMultibootMod const * mod,
+		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
+		Elf64_Half type, Elf64_Sym ** symtab, size_t * symtab_cnt)
 {
 	if(index >= ehdr->e_shnum)
 		return -1;

@@ -88,10 +88,10 @@ struct _ukBootMultibootMod
 
 
 /* prototypes */
-int multiboot_boot_kernel32(ukMultibootInfo * info, vaddr_t entrypoint);
-int multiboot_boot_kernel64(ukMultibootInfo * info, vaddr_t entrypoint);
+int multiboot_boot_kernel32(ukMultibootInfo const * info, vaddr_t entrypoint);
+int multiboot_boot_kernel64(ukMultibootInfo const * info, vaddr_t entrypoint);
 
-int multiboot_load_module(ukMultibootMod * mod, unsigned char * elfclass,
+int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 		vaddr_t * entrypoint);
 
 #endif /* !UKERNEL_DRIVERS_BOOT_MULTIBOOT_H */
