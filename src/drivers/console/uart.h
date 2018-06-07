@@ -9,7 +9,8 @@
 
 
 /* constants */
-# define UART_ADDRESS_BASE		0x3f8
+# define UART_ADDRESS_BASE_COM0		0x3f8
+# define UART_ADDRESS_BASE_COM1		0x2f8
 
 # define UART_REGISTER_DATA		0x0
 # define UART_REGISTER_INTERRUPT_ENABLE	0x1
