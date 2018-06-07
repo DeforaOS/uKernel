@@ -162,7 +162,7 @@ _platform_variable_i386()
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
-			echo "-nostdlib -shared -static -T ${prepend}src/arch/i386/uKernel.ld"
+			echo "-nostdlib -pie -static -T ${prepend}src/arch/i386/uKernel.ld"
 			;;
 		ULOADER_LDFLAGS)
 			echo "-nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld"
