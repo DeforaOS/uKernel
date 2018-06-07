@@ -113,7 +113,7 @@ static void _uart_console_print(UARTConsole * console, char const * str,
 		while(data->bus->read8(data->bus, (ukBusAddress)(data->port
 						+ UART_REGISTER_LINE_STATUS),
 					&u8) == 0)
-			if((u8 & 0x20) == 0)
+			if((u8 & 0x20) != 0)
 				break;
 		data->bus->write8(data->bus, (ukBusAddress)(data->port
 					+ UART_REGISTER_DATA), (uint8_t)str[i]);
