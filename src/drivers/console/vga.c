@@ -73,6 +73,7 @@ static ukConsoleData _vga_console_data =
 /* console */
 VGAConsole vga_console =
 {
+	"vga",
 	_vga_console_init,
 	NULL,
 	_vga_console_clear,

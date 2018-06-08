@@ -45,6 +45,7 @@ static ukConsoleData _vesa_console_data =
 /* console */
 VESAConsole vesa_console =
 {
+	"vesa",
 	_vesa_console_init,
 	NULL,
 	_vesa_console_clear,

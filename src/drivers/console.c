@@ -20,42 +20,36 @@ static ukConsole * _console = NULL;
 extern ukConsole uart_console;
 extern ukConsole vesa_console;
 extern ukConsole vga_console;
+#endif
 
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
+	ukConsole * drivers[] = {
+#if defined(__amd64__) || defined(__i386__)
+		&uart_console,
+		&vesa_console,
+		&vga_console
+#endif
+	};
+	size_t i;
 	ukConsole * console;
 
 	if(_console != NULL)
 		return _console;
-	if(strcmp(name, "uart") == 0)
-		console = &uart_console;
-	else if(strcmp(name, "vesa") == 0)
-		console = &vesa_console;
-	else if(strcmp(name, "vga") == 0)
-		console = &vga_console;
-	else
-	{
-		errno = ENODEV;
-		return NULL;
-	}
-	console = console->init(bus);
+	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
+		if(strncmp(drivers[i]->name, name,
+					strlen(drivers[i]->name)) == 0
+				&& drivers[i]->init != NULL)
+		{
+			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
+					(bus != NULL) ? bus->name : "");
+			_console = drivers[i]->init(bus);
+		}
 	if(_console == NULL)
-		_console = console;
-	return console;
+		errno = ENODEV;
+	return _console;
 }
-#else
-# warning Unsupported platform: missing console
-/* console_init */
-ukConsole * console_init(ukBus * bus, char const * name)
-{
-	(void) bus;
-	(void) name;
-
-	errno = ENODEV;
-	return NULL;
-}
-#endif
 
 
 /* accessors */

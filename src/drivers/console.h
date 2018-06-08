@@ -24,6 +24,8 @@ typedef struct _ukConsoleData ukConsoleData;
 
 struct _ukConsole
 {
+	char name[16];
+
 	ukConsole * (*init)(ukBus * bus);
 
 	int (*set_mode)(ukConsole * console, ukConsoleMode mode,

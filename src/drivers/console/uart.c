@@ -49,6 +49,7 @@ static ukConsoleData _uart_console_data =
 /* console */
 UARTConsole uart_console =
 {
+	"uart",
 	_uart_console_init,
 	_uart_console_set_mode,
 	NULL,
