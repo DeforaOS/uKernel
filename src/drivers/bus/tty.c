@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <errno.h>
+#include "../bus.h"
 
 
 /* private */

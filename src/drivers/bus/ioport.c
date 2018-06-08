@@ -7,8 +7,10 @@
 #include <stddef.h>
 #include <errno.h>
 #include "arch/arch.h"
+#include "../bus.h"
 
 
+#if defined(__amd64__) || defined(__i386__)
 /* private */
 /* types */
 typedef struct _ukBus IOPortBus;
@@ -128,3 +130,4 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 	errno = ENOTSUP;
 	return -1;
 }
+#endif

@@ -4,6 +4,7 @@
 
 
 
+#include <stddef.h>
 #include "drivers/bus.h"
 #include "drivers/console.h"
 
@@ -15,7 +16,7 @@ int _init(void)
 {
 	ukBus * bus;
 
-	bus = bus_init(TOOLS_BUS);
+	bus = bus_init(NULL, TOOLS_BUS);
 	console_init(bus, TOOLS_CONSOLE);
 	return 0;
 }

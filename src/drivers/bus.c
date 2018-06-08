@@ -6,14 +6,18 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "bus.h"
 
 
+/* public */
+/* variables */
 #if defined(__amd64__) || defined(__i386__)
-# include "bus/ioport.c"
+extern ukBus ioport_bus;
 #endif
 
 
+/* functions */
 /* bus_init */
 ukBus * bus_init(ukBus * parent, char const * name)
 {

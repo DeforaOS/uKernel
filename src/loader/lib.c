@@ -16,7 +16,3 @@
 #include "lib/stdlib.c"
 #include "lib/string.c"
 #include "lib/unistd.c"
-
-#include "drivers/boot/multiboot.c"
-#include "drivers/bus.c"
-#include "drivers/console.c"

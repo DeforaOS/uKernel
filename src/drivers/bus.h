@@ -19,7 +19,7 @@ struct _ukBus
 {
 	char const name[16];
 
-	ukBus * (*init)(ukBus * bus);
+	ukBus * (*init)(ukBus * parent);
 	void (*destroy)(ukBus * bus);
 
 	int (*read8)(ukBus * bus, ukBusAddress address, uint8_t * value);
