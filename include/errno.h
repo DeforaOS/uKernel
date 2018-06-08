@@ -10,6 +10,7 @@
 
 /* constants */
 # define EBADF		9
+# define ENOMEM		12
 # define ENODEV		19
 # define EINVAL		22
 # define ERANGE		34

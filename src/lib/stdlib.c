@@ -5,6 +5,7 @@
 
 
 #include <unistd.h>
+#include <errno.h>
 #include <stdlib.h>
 
 
@@ -39,6 +40,12 @@ void exit(int status)
 }
 
 
+/* free */
+void free(void * ptr)
+{
+}
+
+
 /* labs */
 long labs(long x)
 {
@@ -50,4 +57,14 @@ long labs(long x)
 long long llabs(long long x)
 {
 	return (x >= 0) ? x : -x;
+}
+
+
+/* malloc */
+void * malloc(size_t size)
+{
+	if(size == 0)
+		return NULL;
+	errno = ENOMEM;
+	return NULL;
 }
