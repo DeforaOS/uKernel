@@ -13,6 +13,7 @@
 
 /* prototypes */
 void abort(void);
+int abs(int x);
 uint32_t arc4random(void);
 void exit(int status);
 long labs(long x);

@@ -17,6 +17,13 @@ void abort(void)
 }
 
 
+/* abs */
+int abs(int x)
+{
+	return (x >= 0) ? x : -x;
+}
+
+
 /* arc4random */
 uint32_t arc4random(void)
 {
