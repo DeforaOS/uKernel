@@ -14,6 +14,9 @@
 /* variables */
 static ukConsole * _console = NULL;
 
+static char _console_buf[1024];
+static size_t _console_buf_cnt = 0;
+
 
 /* functions */
 #if defined(__amd64__) || defined(__i386__)
@@ -47,7 +50,11 @@ ukConsole * console_init(ukBus * bus, char const * name)
 			_console = drivers[i]->init(bus);
 		}
 	if(_console == NULL)
+	{
 		errno = ENODEV;
+		return NULL;
+	}
+	_console->print(_console, _console_buf, _console_buf_cnt);
 	return _console;
 }
 
@@ -92,8 +99,16 @@ void console_clear(ukConsole * console)
 /* console_print */
 void console_print(ukConsole * console, char const * str, size_t len)
 {
+	size_t s;
+
 	if(console == NULL
 			&& (console = console_get_default()) == NULL)
-		return;
-	console->print(console, str, len);
+	{
+		s = sizeof(_console_buf) - _console_buf_cnt;
+		s = (s > len) ? len : s;
+		strncpy(&_console_buf[_console_buf_cnt], str, s);
+		_console_buf_cnt += s;
+	}
+	else
+		console->print(console, str, len);
 }
