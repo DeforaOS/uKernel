@@ -20,5 +20,6 @@ int strcmp(char const * s1, char const * s2);
 char * strcpy(char * dest, char const * src);
 size_t strlen(char const * s);
 int strncmp(char const * s1, char const * s2, size_t n);
+char * strncpy(char * dest, char const * src, size_t n);
 
 #endif /* !UKERNEL_STRING_H */

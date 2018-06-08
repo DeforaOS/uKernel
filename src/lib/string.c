@@ -124,3 +124,18 @@ int strncmp(char const * s1, char const * s2, size_t n)
 	}
 	return *u1 - *u2;
 }
+
+
+/* strncpy */
+char * strncpy(char * dest, char const * src, size_t n)
+{
+	char * d;
+
+	for(d = dest; n > 0; n--)
+		if(*src != '\0')
+			*(d++) = *(src++);
+		else
+			/* pad the remainder of dest */
+			*(d++) = '\0';
+	return dest;
+}
