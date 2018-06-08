@@ -14,7 +14,7 @@ typedef struct _ukBus TTYBus;
 
 
 /* prototypes */
-static TTYBus * _tty_bus_init(void);
+static TTYBus * _tty_bus_init(ukBus * parent);
 
 static int _tty_bus_read8(TTYBus * bus, ukBusAddress address,
 		uint8_t * value);
@@ -35,9 +35,11 @@ extern int _write(int fildes, void const * buf, size_t count);
 
 
 /* variables */
-static TTYBus _tty_bus =
+TTYBus tty_bus =
 {
+	"tty",
 	_tty_bus_init,
+	NULL,
 	_tty_bus_read8,
 	_tty_bus_read16,
 	_tty_bus_read32,
@@ -52,9 +54,11 @@ static TTYBus _tty_bus =
 /* functions */
 /* bus */
 /* tty_bus_init */
-static TTYBus * _tty_bus_init(void)
+static TTYBus * _tty_bus_init(ukBus * parent)
 {
-	return &_tty_bus;
+	(void) parent;
+
+	return &tty_bus;
 }
 
 

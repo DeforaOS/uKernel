@@ -15,7 +15,7 @@ typedef struct _ukBus IOPortBus;
 
 
 /* prototypes */
-static IOPortBus * _ioport_bus_init(void);
+static IOPortBus * _ioport_bus_init(ukBus * parent);
 static int _ioport_bus_read8(IOPortBus * bus, ukBusAddress address,
 		uint8_t * value);
 static int _ioport_bus_read16(IOPortBus * bus, ukBusAddress address,
@@ -31,9 +31,11 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 
 
 /* variables */
-static IOPortBus _ioport_bus =
+IOPortBus ioport_bus =
 {
+	"ioport",
 	_ioport_bus_init,
+	NULL,
 	_ioport_bus_read8,
 	_ioport_bus_read16,
 	_ioport_bus_read32,
@@ -48,9 +50,11 @@ static IOPortBus _ioport_bus =
 /* functions */
 /* bus */
 /* ioport_bus_init */
-static IOPortBus * _ioport_bus_init(void)
+static IOPortBus * _ioport_bus_init(ukBus * parent)
 {
-	return &_ioport_bus;
+	(void) parent;
+
+	return &ioport_bus;
 }
 
 

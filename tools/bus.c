@@ -11,10 +11,12 @@
 
 
 /* bus_init */
-ukBus * bus_init(char const * name)
+ukBus * bus_init(ukBus * parent, char const * name)
 {
-	if(strcmp(name, "tty") == 0)
-		return _tty_bus_init();
+	char tty[] = "tty";
+
+	if(strncmp(name, tty, sizeof(tty) - 1) == 0)
+		return tty_bus.init(parent);
 	errno = ENODEV;
 	return NULL;
 }

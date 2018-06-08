@@ -42,8 +42,8 @@ int multiboot(ukMultibootInfo * mi)
 	size_t i;
 	ukMultibootMod * mod;
 
-	/* initialize the root bus */
-	bus = bus_init(LOADER_BUS);
+	/* initialize the main bus */
+	bus = bus_init(NULL, LOADER_BUS);
 
 #ifdef notyet
 	/* detect the video driver to use */

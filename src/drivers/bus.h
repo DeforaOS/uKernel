@@ -17,7 +17,10 @@ typedef struct _ukBusData ukBusData;
 
 struct _ukBus
 {
-	ukBus * (*init)(void);
+	char const name[16];
+
+	ukBus * (*init)(ukBus * bus);
+	void (*destroy)(ukBus * bus);
 
 	int (*read8)(ukBus * bus, ukBusAddress address, uint8_t * value);
 	int (*read16)(ukBus * bus, ukBusAddress address, uint16_t * value);
@@ -32,6 +35,6 @@ struct _ukBus
 
 
 /* prototypes */
-ukBus * bus_init(char const * name);
+ukBus * bus_init(ukBus * parent, char const * name);
 
 #endif /* !UKERNEL_DRIVERS_BUS_H */

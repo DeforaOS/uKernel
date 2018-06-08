@@ -50,8 +50,8 @@ int multiboot(const ukMultibootInfo * mi)
 
 	memcpy(&kmi, mi, sizeof(kmi));
 
-	/* initialize the root bus */
-	bus = bus_init(LOADER_BUS);
+	/* initialize the main bus */
+	bus = bus_init(NULL, LOADER_BUS);
 
 #ifdef notyet
 	/* detect the video driver to use */
