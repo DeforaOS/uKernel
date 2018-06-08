@@ -1,2 +1,6 @@
 Makefile
+*.a
 *.o
+*.so
+*.so.*
+*.core
