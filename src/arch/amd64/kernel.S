@@ -6,7 +6,6 @@
 
 
 #include "../i386/multiboot/header.S"
-#include "../i386/idt.S"
 
 
 /* sections */

@@ -11,8 +11,8 @@
 .global __arch_setidt
 .type __arch_setidt, @function
 __arch_setidt:
-	lea	idt, %eax
-	lidt	(%eax)
+	lea	idt@GOTPCREL, %rax
+	lidt	(%rax)
 	ret
 
 
