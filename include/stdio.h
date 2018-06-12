@@ -39,6 +39,7 @@ extern FILE * stderr;
 
 
 /* prototypes */
+int fprintf(FILE * file, char const * format, ...);
 int fputc(int c, FILE * file);
 size_t fwrite(void const * ptr, size_t size, size_t nb, FILE * file);
 int printf(char const * format, ...);
