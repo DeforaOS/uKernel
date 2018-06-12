@@ -36,7 +36,6 @@ ukConsole * console_init(ukBus * bus, char const * name)
 #endif
 	};
 	size_t i;
-	ukConsole * console;
 
 	if(_console != NULL)
 		return _console;
