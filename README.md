@@ -26,8 +26,8 @@ Once this done, to build uKernel, simply run:
 
     $ make ARCH="i386" CC="/path/to/cross/compiler"
 
-The resulting kernel is located in `src/uKernel.bin`. On the i386 platform, it
-produces a multiboot-compliant kernel file.
+The resulting kernel is located in `src/kernel/uKernel.bin`. On the i386
+platform, it produces a multiboot-compliant kernel file.
 
 Testing uKernel
 ---------------
