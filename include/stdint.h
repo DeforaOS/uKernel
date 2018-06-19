@@ -50,6 +50,11 @@ typedef __UINT64_TYPE__ uint64_t;
 typedef unsigned long long uint64_t;
 # endif
 
+# ifndef uintptr_t
+#  define uintptr_t uintptr_t
+typedef unsigned long uintptr_t;
+# endif
+
 typedef unsigned long size_t;
 
 # ifndef SIZE_MAX
