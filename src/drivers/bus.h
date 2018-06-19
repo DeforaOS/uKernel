@@ -12,7 +12,7 @@
 /* public */
 /* types */
 typedef struct _ukBus ukBus;
-typedef void * ukBusAddress;
+typedef uintptr_t ukBusAddress;
 typedef struct _ukBusData ukBusData;
 
 struct _ukBus
