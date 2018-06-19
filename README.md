@@ -31,6 +31,10 @@ To build uKernel for the Intel 64-bit architecture, this would be:
 
     $ make ARCH="amd64" CC="/path/to/compiler"
 
+The "CC" parameter is only required if a compiler other than the default is
+necessary. When using GCC, it is normally recommended to use a compiler
+specifically targeted for this purpose.
+
 The resulting kernel is located in `src/kernel/uKernel.bin`. On the i386 and
 amd64 platforms, it produces a multiboot-compliant kernel file.
 
