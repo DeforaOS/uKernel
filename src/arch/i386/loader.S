@@ -64,13 +64,12 @@ _start:
 	/* start the loader */
 	push	$0x0
 	push	$0x0
-	push	$0x0
 	mov	%ebx, %eax
 	add	$0x10, %eax
 	push	%eax
 	push	$0x1
 	call	main
-	add	$0x14, %esp
+	add	$0x10, %esp
 	jmp	2f
 
 1:
@@ -83,7 +82,7 @@ _start:
 	add	$0x10, %esp
 
 2:
-	/* exit the kernel */
+	/* exit the loader */
 	call	_exit
 
 	hlt

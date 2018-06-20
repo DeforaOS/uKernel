@@ -60,6 +60,20 @@ _start:
 	push	%ebx
 	call	multiboot
 	add	$0x4, %esp
+
+	/* set the interrupt descriptor */
+	call	__arch_setidt
+
+	/* start the kernel */
+	push	$0x0
+	push	$0x0
+	mov	%ebx, %eax
+	add	$0x10, %eax
+	push	%eax
+	push	$0x1
+	call	main
+	add	$0x10, %esp
+	jmp	2f
 1:
 
 	/* set the interrupt descriptor */
@@ -69,9 +83,13 @@ _start:
 
 	/* start the kernel */
 	push	$0x0
+	push	$0x0
+	push	$0x0
+	push	$0x0
 	call	main
-	add	$0x4, %esp
+	add	$0x10, %esp
 
+2:
 	/* exit the kernel */
 	push	%eax
 	call	exit
