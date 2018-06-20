@@ -100,8 +100,7 @@ void console_print(ukConsole * console, char const * str, size_t len)
 {
 	size_t s;
 
-	if(console == NULL
-			&& (console = console_get_default()) == NULL)
+	if(console == NULL && (console = console_get_default()) == NULL)
 	{
 		s = sizeof(_console_buf) - _console_buf_cnt;
 		s = (s > len) ? len : s;
