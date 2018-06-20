@@ -24,23 +24,29 @@ static size_t _console_buf_cnt = 0;
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
-	ukConsole * console = NULL;
+	ukConsole * drivers[] = {
+		&_stdio_console
+	};
+	size_t i;
 
-	if(strcmp(name, "stdio") == 0)
-	{
-		printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
-				(bus != NULL) ? bus->name : "");
-		console = _stdio_console_init(bus);
-	}
-	else
+	if(_console != NULL)
+		return _console;
+	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
+		if(strncmp(drivers[i]->name, name,
+					strlen(drivers[i]->name)) == 0
+				&& drivers[i]->init != NULL)
+		{
+			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
+					(bus != NULL) ? bus->name : "");
+			_console = _stdio_console_init(bus);
+		}
+	if(_console == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	if(_console == NULL)
-		_console = console;
 	_console->print(_console, _console_buf, _console_buf_cnt);
-	return console;
+	return _console;
 }
 
 
@@ -49,6 +55,8 @@ ukConsole * console_init(ukBus * bus, char const * name)
 /* console_get_default */
 ukConsole * console_get_default(void)
 {
+	if(_console == NULL)
+		errno = ENODEV;
 	return _console;
 }
 
@@ -57,8 +65,9 @@ ukConsole * console_get_default(void)
 /* console_clear */
 void console_clear(ukConsole * console)
 {
-	if(console == NULL)
-		console = console_get_default();
+	if(console == NULL
+			&& (console = console_get_default()) == NULL)
+		return;
 	console->clear(console);
 }
 
