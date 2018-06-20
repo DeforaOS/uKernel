@@ -11,6 +11,6 @@
 
 
 /* constants */
-# define STDIO_ADDRESS_STDOUT		(ukBusAddress *)STDOUT_FILENO
+# define STDIO_ADDRESS_STDOUT		(ukBusAddress)STDOUT_FILENO
 
 #endif /* !UKERNEL_DRIVERS_CONSOLE_STDIO_H */
