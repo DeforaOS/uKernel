@@ -18,6 +18,7 @@ static char _console_buf[1024];
 static size_t _console_buf_cnt = 0;
 
 
+/* public */
 /* functions */
 #if defined(__amd64__) || defined(__i386__)
 extern ukConsole uart_console;
@@ -25,6 +26,8 @@ extern ukConsole vesa_console;
 extern ukConsole vga_console;
 #endif
 
+
+/* functions */
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
