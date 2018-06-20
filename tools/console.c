@@ -38,7 +38,7 @@ ukConsole * console_init(ukBus * bus, char const * name)
 		{
 			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus->name : "");
-			_console = _stdio_console_init(bus);
+			_console = drivers[i]->init(bus);
 		}
 	if(_console == NULL)
 	{
