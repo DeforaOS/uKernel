@@ -14,10 +14,16 @@
 /* bus_init */
 ukBus * bus_init(ukBus * parent, char const * name)
 {
-	char tty[] = "tty";
+	ukBus * drivers[] = {
+		&tty_bus
+	};
+	size_t i;
 
-	if(strncmp(name, tty, sizeof(tty) - 1) == 0)
-		return tty_bus.init(parent);
+	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
+		if(strncmp(drivers[i]->name, name,
+					strlen(drivers[i]->name)) == 0
+				&& drivers[i]->init != NULL)
+			return drivers[i]->init(parent);
 	errno = ENODEV;
 	return NULL;
 }
