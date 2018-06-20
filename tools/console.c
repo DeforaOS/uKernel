@@ -9,8 +9,6 @@
 #include <errno.h>
 #include "drivers/console.h"
 
-#include "drivers/console/stdio.c"
-
 
 /* private */
 /* variables */
@@ -20,12 +18,17 @@ static char _console_buf[1024];
 static size_t _console_buf_cnt = 0;
 
 
+/* public */
+/* variables */
+extern ukConsole stdio_console;
+
+
 /* functions */
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
 	ukConsole * drivers[] = {
-		&_stdio_console
+		&stdio_console
 	};
 	size_t i;
 
