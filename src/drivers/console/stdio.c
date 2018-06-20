@@ -5,6 +5,7 @@
 
 
 #include <string.h>
+#include "drivers/console.h"
 #include "stdio.h"
 
 
@@ -34,7 +35,7 @@ static ukConsoleData _stdio_console_data =
 	NULL
 };
 
-static STDIOConsole _stdio_console =
+STDIOConsole stdio_console =
 {
 	"stdio",
 	_stdio_console_init,
@@ -51,8 +52,8 @@ static STDIOConsole _stdio_console =
 static ukConsole * _stdio_console_init(ukBus * bus)
 {
 	_stdio_console_data.bus = bus;
-	_stdio_console_clear(&_stdio_console);
-	return &_stdio_console;
+	_stdio_console_clear(&stdio_console);
+	return &stdio_console;
 }
 
 
