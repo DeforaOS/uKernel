@@ -5,8 +5,23 @@
 
 
 #include <unistd.h>
+#include <limits.h>
 #include <errno.h>
 #include <stdlib.h>
+
+
+/* private */
+/* types */
+typedef struct _Alloc
+{
+	size_t size;
+	struct _Alloc * prev;
+	struct _Alloc * next;
+} Alloc;
+
+
+/* variables */
+static Alloc _alloc = { 0, NULL, NULL };
 
 
 /* public */
@@ -43,6 +58,26 @@ void exit(int status)
 /* free */
 void free(void * ptr)
 {
+	const char buf[] = "invalid free detected: terminated\n";
+	Alloc * a = (Alloc*)((char*)ptr - sizeof(*a));
+	Alloc * b;
+
+	if(ptr == NULL)
+		return;
+	b = a->prev;
+	if(b->next != a)
+	{
+		write(2, buf, sizeof(buf) - 1);
+		abort();
+		return;
+	}
+	b->next = a->next;
+	if(a->next != NULL) /* return if memory is alloc'd past a */
+	{
+		a->next->prev = b;
+		return;
+	}
+	sbrk(-(a->size + sizeof(*a)));
 }
 
 
@@ -63,8 +98,36 @@ long long llabs(long long x)
 /* malloc */
 void * malloc(size_t size)
 {
-	if(size == 0)
+	Alloc * a = &_alloc;
+	Alloc * b = NULL;
+	intptr_t inc;
+
+	if(size >= LONG_MAX - sizeof(*b) - 0x8)
+	{
+		errno = ENOMEM;
 		return NULL;
-	errno = ENOMEM;
-	return NULL;
+	}
+	size = (size | 0x7) + 1; /* round up to 64 bits */
+	inc = size + sizeof(*b);
+	if(_alloc.next != NULL) /* look for available space */
+		for(a = _alloc.next; a->next != NULL; a = a->next)
+			if(inc <= (intptr_t)(a->next) - (intptr_t)a
+					- (intptr_t)sizeof(*a)
+					- (intptr_t)a->size)
+			{
+				b = (Alloc*)((char*)a + sizeof(*a) + a->size);
+				b->size = size;
+				a->next->prev = b;
+				break;
+			}
+	if(b == NULL) /* increase process size to allocate memory */
+	{
+		if((b = sbrk(inc)) == (void *)-1)
+			return NULL;
+		b->size = size;
+	}
+	b->prev = a;
+	b->next = a->next;
+	a->next = b;
+	return (char *)b + sizeof(*b);
 }

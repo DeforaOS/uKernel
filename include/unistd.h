@@ -9,6 +9,10 @@
 
 
 /* types */
+# ifndef intptr_t
+#  define intptr_t intptr_t
+typedef long intptr_t;
+# endif
 # ifndef size_t
 #  define size_t size_t
 typedef unsigned long size_t;
@@ -29,6 +33,7 @@ typedef long ssize_t;
 /* prototypes */
 void _exit(int status);
 ssize_t read(int fildes, void * buf, size_t count);
+void * sbrk(intptr_t increment);
 ssize_t write(int fildes, const void * buf, size_t count);
 
 #endif /* !UKERNEL_UNISTD_H */

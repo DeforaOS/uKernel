@@ -17,6 +17,8 @@ static ukConsole * _fildes[STDERR_FILENO + 1] = { NULL, NULL, NULL };
 
 /* public */
 /* variables */
+extern void * end;
+
 char ** environ;
 
 
@@ -37,6 +39,31 @@ ssize_t read(int fildes, void * buf, size_t count)
 	if(count == 0)
 		return 0;
 	errno = ENOSYS;
+	return -1;
+}
+
+
+/* sbrk */
+static int _brk(void * addr);
+
+void * sbrk(intptr_t increment)
+{
+	static void * cur = &end;
+	void * ptr;
+
+	if(increment == 0)
+		return cur;
+	if(_brk(cur + increment) == -1)
+		return (void *)-1;
+	ptr = cur;
+	cur += increment;
+	return ptr;
+}
+
+static int _brk(void * addr)
+{
+	/* FIXME implement */
+	errno = ENOMEM;
 	return -1;
 }
 
