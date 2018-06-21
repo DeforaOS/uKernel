@@ -74,6 +74,8 @@ _start:
 	push	%ebx
 	call	multiboot
 	add	$0x4, %esp
+	cmp	$0x0, %eax
+	jne	2f
 
 	/* set the interrupt descriptor */
 	call	__arch_setidt
