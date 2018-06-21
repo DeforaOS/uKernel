@@ -14,6 +14,19 @@ _syscall:
 	ret
 
 
+/* brk */
+.global _brk
+.type _brk, @function
+_brk:
+	/* FIXME this syscall may differ on different kernels */
+#ifdef __linux__
+	mov	$0x2d, %eax
+#else
+	mov	$0x11, %eax
+#endif
+	jmp	_syscall
+
+
 /* exit */
 .global _exit
 .type _exit, @function

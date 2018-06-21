@@ -44,7 +44,7 @@ ssize_t read(int fildes, void * buf, size_t count)
 
 
 /* sbrk */
-static int _brk(void * addr);
+extern int _brk(void * addr);
 
 void * sbrk(intptr_t increment)
 {
@@ -58,13 +58,6 @@ void * sbrk(intptr_t increment)
 	ptr = cur;
 	cur += increment;
 	return ptr;
-}
-
-static int _brk(void * addr)
-{
-	/* FIXME implement */
-	errno = ENOMEM;
-	return -1;
 }
 
 
