@@ -64,12 +64,7 @@ int multiboot(ukMultibootInfo * mi)
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
 
-	/* look for modules */
-	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
-	{
-		puts("No modules provided");
-		return 2;
-	}
+	/* load the modules */
 #if defined(__amd64__)
 	if(_arch_setgdt64(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 #else
@@ -77,15 +72,19 @@ int multiboot(ukMultibootInfo * mi)
 #endif
 	{
 		puts("Could not setup the GDT");
-		return 4;
+		return 2;
 	}
 
-	/* load the modules */
-	puts("Loading modules...");
-	for(i = 0; i < mi->mods_count; i++)
+	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
+		puts("No modules provided");
+	else
 	{
-		mod = &mi->mods_addr[i];
-		multiboot_load_module(mod, NULL, NULL);
+		puts("Loading modules...");
+		for(i = 0; i < mi->mods_count; i++)
+		{
+			mod = &mi->mods_addr[i];
+			multiboot_load_module(mod, NULL, NULL);
+		}
 	}
 	return 0;
 }
