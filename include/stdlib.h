@@ -15,6 +15,7 @@
 void abort(void);
 int abs(int x);
 uint32_t arc4random(void);
+void * calloc(size_t nmemb, size_t size);
 void exit(int status);
 void free(void * ptr);
 long labs(long x);

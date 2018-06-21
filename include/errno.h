@@ -9,6 +9,7 @@
 
 
 /* constants */
+# define EPERM		1
 # define EBADF		9
 # define ENOMEM		12
 # define ENODEV		19

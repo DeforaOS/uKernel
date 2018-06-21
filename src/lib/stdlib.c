@@ -4,7 +4,9 @@
 
 
 
+#include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 #include <limits.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -45,6 +47,25 @@ uint32_t arc4random(void)
 {
 	/* FIXME really implement */
 	return 0x41414141;
+}
+
+
+/* calloc */
+void * calloc(size_t nmemb, size_t size)
+{
+	void * ptr;
+	size_t sz;
+
+	if(nmemb != 0 && size != 0 && SIZE_MAX / nmemb < size)
+	{
+		errno = ENOMEM;
+		return NULL;
+	}
+	sz = nmemb * size;
+	if((ptr = malloc(sz)) == NULL)
+		return NULL;
+	memset(ptr, 0, sz);
+	return ptr;
 }
 
 

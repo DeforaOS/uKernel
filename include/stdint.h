@@ -57,6 +57,31 @@ typedef unsigned long uintptr_t;
 
 typedef unsigned long size_t;
 
+
+/* constants */
+# define INT8_MAX	0x7f
+# define INT16_MAX	0x7fff
+# define INT32_MAX	0x7fffffff
+# define INT64_MAX	0x7fffffffffffffff
+
+# define INT8_MIN	(-INT8_MAX - 1)
+# define INT16_MIN	(-INT16_MAX - 1)
+# define INT32_MIN	(-INT32_MAX - 1)
+# define INT64_MIN	(-INT64_MAX - 1)
+
+# define UINT8_MAX	0xff
+# define UINT16_MAX	0xffff
+# define UINT32_MAX	0xffffffff
+# define UINT64_MAX	0xffffffffffffffff
+
+# ifndef ULONG_MAX
+#  ifdef _LP64 /* FIXME probably sometimes wrong */
+#   define ULONG_MAX 0xffffffffffffffff
+#  else
+#   define ULONG_MAX 0xffffffff
+#  endif
+# endif
+
 # ifndef SIZE_MAX
 #  define SIZE_MAX	ULONG_MAX
 # endif
