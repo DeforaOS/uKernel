@@ -121,6 +121,12 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 	{
 		if(phdr[i].p_type != PT_LOAD)
 			continue;
+		if(phdr[i].p_filesz > phdr[i].p_memsz)
+		{
+			puts("Could not load 32-bit module:"
+					" Invalid program header");
+			return -1;
+		}
 		if(phdr[i].p_vaddr > ehdr->e_entry
 				|| phdr[i].p_vaddr + phdr[i].p_filesz
 				<= ehdr->e_entry)
@@ -275,6 +281,12 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 	{
 		if(phdr[i].p_type != PT_LOAD)
 			continue;
+		if(phdr[i].p_filesz > phdr[i].p_memsz)
+		{
+			puts("Could not load 64-bit module:"
+					" Invalid program header");
+			return -1;
+		}
 		if(phdr[i].p_vaddr > ehdr->e_entry
 				|| phdr[i].p_vaddr + phdr[i].p_filesz
 				<= ehdr->e_entry)
