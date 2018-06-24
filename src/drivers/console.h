@@ -3,6 +3,7 @@
 /* This file is part of DeforaOS uKernel */
 
 
+
 #ifndef UKERNEL_DRIVERS_CONSOLE_H
 # define UKERNEL_DRIVERS_CONSOLE_H
 
