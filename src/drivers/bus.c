@@ -13,6 +13,7 @@
 /* public */
 /* variables */
 #if defined(__amd64__) || defined(__i386__)
+extern ukBus cmos_bus;
 extern ukBus ioport_bus;
 #endif
 
@@ -23,6 +24,7 @@ ukBus * bus_init(ukBus * parent, char const * name)
 {
 	ukBus * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
+		&cmos_bus,
 		&ioport_bus
 #endif
 	};
