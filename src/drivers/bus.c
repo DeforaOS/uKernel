@@ -22,7 +22,7 @@ extern ukBus ioport_bus;
 /* bus_init */
 ukBus * bus_init(ukBus * parent, char const * name)
 {
-	ukBus * drivers[] = {
+	const ukBus * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&cmos_bus,
 		&ioport_bus

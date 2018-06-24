@@ -31,7 +31,7 @@ extern ukConsole vga_console;
 /* console_init */
 ukConsole * console_init(ukBus * bus, char const * name)
 {
-	ukConsole * drivers[] = {
+	const ukConsole * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&uart_console,
 		&vesa_console,
