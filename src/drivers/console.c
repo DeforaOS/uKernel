@@ -19,7 +19,7 @@ static size_t _console_buf_cnt = 0;
 
 
 /* public */
-/* functions */
+/* variables */
 #if defined(__amd64__) || defined(__i386__)
 extern ukConsole uart_console;
 extern ukConsole vesa_console;
