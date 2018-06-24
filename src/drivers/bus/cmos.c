@@ -25,6 +25,7 @@ typedef struct _ukBusData
 /* prototypes */
 static CMOSBus * _cmos_bus_init(ukBus * parent);
 static void _cmos_bus_destroy(CMOSBus * bus);
+
 static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address,
 		uint8_t * value);
 static int _cmos_bus_read16(CMOSBus * bus, ukBusAddress address,
