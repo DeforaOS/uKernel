@@ -15,4 +15,5 @@
 #include "lib/stdio.c"
 #include "lib/stdlib.c"
 #include "lib/string.c"
+#include "lib/sys/mman.c"
 #include "lib/unistd.c"
