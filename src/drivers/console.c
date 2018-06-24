@@ -62,6 +62,17 @@ ukConsole * console_init(ukBus * bus, char const * name)
 }
 
 
+/* console_destroy */
+void console_destroy(ukConsole * console)
+{
+	if(console == NULL
+			&& (console = console_get_default()) == NULL)
+		return;
+	if(console->destroy != NULL)
+		console->destroy(console);
+}
+
+
 /* accessors */
 /* console_get_default */
 ukConsole * console_get_default(void)

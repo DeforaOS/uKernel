@@ -48,6 +48,7 @@ VESAConsole vesa_console =
 	"vesa",
 	_vesa_console_init,
 	NULL,
+	NULL,
 	_vesa_console_clear,
 	_vesa_console_print,
 	&_vesa_console_data

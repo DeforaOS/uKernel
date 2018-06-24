@@ -76,6 +76,7 @@ VGAConsole vga_console =
 	"vga",
 	_vga_console_init,
 	NULL,
+	NULL,
 	_vga_console_clear,
 	_vga_console_print,
 	&_vga_console_data

@@ -27,6 +27,7 @@ struct _ukConsole
 	char name[16];
 
 	ukConsole * (*init)(ukBus * bus);
+	void (*destroy)(ukConsole * console);
 
 	int (*set_mode)(ukConsole * console, ukConsoleMode mode,
 			unsigned int width, unsigned int height,
@@ -42,6 +43,7 @@ struct _ukConsole
 
 /* prototypes */
 ukConsole * console_init(ukBus * bus, char const * name);
+void console_destroy(ukConsole * console);
 
 /* accessors */
 ukConsole * console_get_default(void);

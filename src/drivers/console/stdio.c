@@ -40,6 +40,7 @@ STDIOConsole stdio_console =
 	"stdio",
 	_stdio_console_init,
 	NULL,
+	NULL,
 	_stdio_console_clear,
 	_stdio_console_print,
 	&_stdio_console_data

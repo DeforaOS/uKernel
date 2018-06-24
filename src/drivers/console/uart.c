@@ -51,6 +51,7 @@ UARTConsole uart_console =
 {
 	"uart",
 	_uart_console_init,
+	NULL,
 	_uart_console_set_mode,
 	NULL,
 	_uart_console_print,
