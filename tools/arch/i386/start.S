@@ -63,6 +63,7 @@ _start:
 	mov	%esp, %ebx	/* argv */
 	add	$0x4, %ebx
 	mov	%eax, %ecx	/* envp */
+	inc	%ecx
 	shl	$2, %ecx
 	add	%ebx, %ecx
 	mov	%ecx, environ	/* environ */
@@ -75,10 +76,8 @@ _start:
 	jmp	1b
 2:
 	add	$0x4, %edx
+	push	%edx
 #endif
-	push	%ebp
-	push	%esp
-	mov	%esp, %ebp
 	push	%ecx
 	push	%ebx
 	push	%eax
@@ -89,18 +88,17 @@ _start:
 #endif
 
 	/* call the global constructors */
-	call _init
+	call	_init
 
 	/* run the userland kernel */
-	push	$0x0
-	push	$0x0
-	push	$0x0
-	push	$0x0
 	call	main
+#if defined(__ELF__)
 	add	$0x10, %esp
+#else
+	add	$0xc, %esp
+#endif
 
 	/* exit the userland kernel */
-	mov	%ebp, %esp
 	push	%eax
 	call	exit
 
