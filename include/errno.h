@@ -15,6 +15,7 @@
 # define ENODEV		19
 # define EINVAL		22
 # define ERANGE		34
+# define EAGAIN		35
 # define ENOSYS		78
 # define ENOTSUP	86
 

@@ -35,6 +35,14 @@ _exit:
 	jmp	_syscall
 
 
+/* gettimeofday */
+.global _gettimeofday
+.type _gettimeofday, @function
+_gettimeofday:
+	mov	$0x1a2, %eax
+	jmp	_syscall
+
+
 /* read */
 .global _read
 .type _read, @function
@@ -97,6 +105,23 @@ _start:
 	call	exit
 
 	hlt
+
+
+/* time */
+.global _time
+.type _time, @function
+_time:
+	push	$0x0
+	sub	$0xc, %esp
+	push	%esp
+	call	_gettimeofday
+	cmp	$-1, %eax
+	je	1f
+	mov	0xc(%esp), %eax
+	mov	0x8(%esp), %edx
+1:
+	add	$0x14, %esp
+	ret
 
 
 /* write */
