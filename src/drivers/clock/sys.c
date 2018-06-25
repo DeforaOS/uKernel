@@ -50,6 +50,7 @@ static SysClock * _sys_clock_init(ukBus * bus)
 static int _sys_clock_get_time(SysClock * clock, time_t * time)
 {
 	time_t t;
+	(void) clock;
 
 	if(_time(&t) == -1)
 		return -1;
