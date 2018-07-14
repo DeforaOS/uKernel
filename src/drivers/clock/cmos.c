@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "drivers/clock.h"
+#include "drivers/clock/cmos.h"
 
 
 /* private */
@@ -17,16 +18,6 @@ typedef struct _ukClockData
 {
 	ukBus * bus;
 } CMOSClockData;
-
-
-/* constants */
-#define CMOS_REGISTER_SECONDS	0x00
-#define CMOS_REGISTER_MINUTES	0x02
-#define CMOS_REGISTER_HOURS	0x04
-#define CMOS_REGISTER_WEEKDAY	0x06
-#define CMOS_REGISTER_DAY	0x07
-#define CMOS_REGISTER_MONTH	0x08
-#define CMOS_REGISTER_YEAR	0x09
 
 
 /* prototypes */
