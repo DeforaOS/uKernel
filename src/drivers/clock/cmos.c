@@ -30,16 +30,16 @@ typedef struct _ukClockData
 
 
 /* prototypes */
-/* console */
+/* clock */
 static CMOSClock * _cmos_clock_init(ukBus * bus);
 static void _cmos_clock_destroy(CMOSClock * clock);
 
-static int _cmos_clock_get_time(CMOSClock * console, time_t * time);
+static int _cmos_clock_get_time(CMOSClock * clock, time_t * time);
 
 
 /* public */
 /* variables */
-/* console */
+/* clock */
 CMOSClock cmos_clock =
 {
 	"cmos",
@@ -51,7 +51,7 @@ CMOSClock cmos_clock =
 
 
 /* functions */
-/* console */
+/* clock */
 /* cmos_clock_init */
 static CMOSClock * _cmos_clock_init(ukBus * bus)
 {
