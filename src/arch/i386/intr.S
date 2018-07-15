@@ -18,5 +18,7 @@ intr_disable:
 .global intr_enable
 .type intr_enable, @function
 intr_enable:
+#if 0 /* FIXME requires an interrupt handler */
 	sti
+#endif
 	ret
