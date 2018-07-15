@@ -40,8 +40,10 @@ struct _ukBus
 /* constants */
 typedef enum _ukBusCommand
 {
-	BUS_COMMAND_WAIT
+	BUS_COMMAND_WAIT = 0
 } ukBusCommand;
+# define BUS_COMMAND_LAST BUS_COMMAND_WAIT
+# define BUS_COMMAND_COUNT (BUS_COMMAND_LAST + 1)
 
 
 /* prototypes */
