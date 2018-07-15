@@ -72,8 +72,10 @@ static int _get_time_do(ukBus * bus, unsigned char * seconds,
 		unsigned char * minutes, unsigned char * hours,
 		unsigned char * day, unsigned char * month,
 		unsigned char * year);
+
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
+	const size_t tries = 3;
 	CMOSClockData * data = clock->data;
 	unsigned char seconds, s;
 	unsigned char minutes, m;
@@ -88,7 +90,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 		errno = EINVAL;
 		return -1;
 	}
-	for(i = 0; i < 3; i++)
+	for(i = 0; i < tries; i++)
 	{
 		if(_get_time_do(data->bus, &seconds, &minutes, &hours, &day,
 					&month, &year) != 0
@@ -99,7 +101,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 				&& day == d && month == M && year == y)
 			break;
 	}
-	if(i == 3)
+	if(i == tries)
 	{
 		errno = EAGAIN;
 		return -1;
