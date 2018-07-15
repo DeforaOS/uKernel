@@ -8,6 +8,7 @@
 # include <stdio.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
+# include "arch/i386/idt.h"
 # include "drivers/boot/multiboot.h"
 # include "drivers/bus.h"
 # include "drivers/clock.h"
@@ -28,6 +29,10 @@ static const GDT _gdt_4gb[4] =
 	{ 0x00000000, 0xffffffff, 0x9a },
 	{ 0x00000000, 0xffffffff, 0x92 },
 	{ 0x00000000, 0x00000000, 0x89 }
+};
+
+static const IDT _idt[] =
+{
 };
 
 
@@ -71,7 +76,7 @@ int multiboot(ukMultibootInfo * mi)
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
 
-	/* load the modules */
+	/* setup the GDT */
 #if defined(__amd64__)
 	if(_arch_setgdt64(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 #else
@@ -82,6 +87,7 @@ int multiboot(ukMultibootInfo * mi)
 		return 2;
 	}
 
+	/* load the modules */
 	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 		puts("No modules provided");
 	else
@@ -93,6 +99,14 @@ int multiboot(ukMultibootInfo * mi)
 			multiboot_load_module(mod, NULL, NULL);
 		}
 	}
+
+	/* setup the IDT */
+	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
+	{
+		puts("Could not setup the IDT");
+		return 2;
+	}
+
 	return 0;
 }
 #endif

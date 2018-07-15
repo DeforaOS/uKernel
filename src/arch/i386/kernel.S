@@ -77,9 +77,6 @@ _start:
 	cmp	$0x0, %eax
 	jne	2f
 
-	/* set the interrupt descriptor */
-	call	__arch_setidt
-
 	/* start the kernel */
 	push	$0x0
 	push	$0x0
@@ -90,11 +87,8 @@ _start:
 	call	main
 	add	$0x10, %esp
 	jmp	2f
+
 1:
-
-	/* set the interrupt descriptor */
-	call	__arch_setidt
-
 	/* FIXME setup paging */
 
 	/* start the kernel */

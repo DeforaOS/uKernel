@@ -62,7 +62,9 @@ _start:
 	call	_init
 
 	/* set the interrupt descriptor */
+#if 0 /* FIXME rework */
 	call	__arch_setidt
+#endif
 
 	/* FIXME setup paging */
 

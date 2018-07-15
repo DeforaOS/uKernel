@@ -11,7 +11,7 @@
 .global __arch_setgdt
 .type __arch_setgdt, @function
 __arch_setgdt:
-#if 0
+#if 1
 	lea	gdt_descriptor, %ecx
 #else
 	mov	(gdt_descriptor), %ecx

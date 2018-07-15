@@ -7,9 +7,20 @@
 #ifndef UKERNEL_ARCH_I386_IDT_H
 # define UKERNEL_ARCH_I386_IDT_H
 
+# include <stdint.h>
+
 
 /* public */
+/* types */
+typedef struct _IDT
+{
+	uint32_t base;
+	uint16_t selector;
+	uint8_t flags;
+} IDT;
+
+
 /* prototypes */
-int _arch_setidt(void);
+int _arch_setidt(IDT const * idt, size_t count);
 
 #endif /* !UKERNEL_ARCH_I386_IDT_H */
