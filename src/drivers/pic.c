@@ -15,11 +15,21 @@
 static ukPIC * _pic = NULL;
 
 
+/* public */
+/* variables */
+#if defined(__amd64__) || defined(__i386__)
+extern ukPIC i8259a_pic;
+#endif
+
+
 /* functions */
 /* pic_init */
 ukPIC * pic_init(ukBus * bus, char const * name)
 {
 	const ukPIC * drivers[] = {
+#if defined(__amd64__) || defined(__i386__)
+		&i8259a_pic
+#endif
 	};
 	size_t i;
 	ukPIC * pic = NULL;
