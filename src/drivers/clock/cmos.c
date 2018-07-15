@@ -91,16 +91,15 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 		return -1;
 	}
 	for(i = 0; i < tries; i++)
-	{
+		/* try to obtain the same results twice for consistency */
 		if(_get_time_do(data->bus, &seconds, &minutes, &hours, &day,
 					&month, &year) != 0
 				|| _get_time_do(data->bus, &s, &m, &h, &d, &M,
 					&y) != 0)
 			return -1;
-		if(seconds == s && minutes == m && hours == h
+		else if(seconds == s && minutes == m && hours == h
 				&& day == d && month == M && year == y)
 			break;
-	}
 	if(i == tries)
 	{
 		errno = EAGAIN;
