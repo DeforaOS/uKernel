@@ -47,17 +47,15 @@ CMOSClock cmos_clock =
 static CMOSClock * _cmos_clock_init(ukBus * bus)
 {
 	CMOSClock * clock = &cmos_clock;
-	CMOSClockData * data;
 
 	if(bus == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	if((data = malloc(sizeof(*data))) == NULL)
+	if((clock->data = malloc(sizeof(*clock->data))) == NULL)
 		return NULL;
-	data->bus = bus;
-	clock->data = data;
+	clock->data->bus = bus;
 	return clock;
 }
 
