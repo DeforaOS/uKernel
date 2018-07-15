@@ -119,13 +119,28 @@ static int _get_time_do(ukBus * bus, unsigned char * seconds,
 		unsigned char * day, unsigned char * month,
 		unsigned char * year)
 {
-	/* FIXME check first if the data is available */
-	if(bus->read8(bus, CMOS_REGISTER_SECONDS, seconds) != 0
+	const size_t tries = 3;
+	size_t i;
+	unsigned char status;
+
+	/* check if the time and date are available */
+	for(i = 0; i < tries; i++)
+		if(bus->read8(bus, CMOS_REGISTER_STATUS0, &status) != 0)
+			return -1;
+		else if((status & 0x80) == 0x00)
+			break;
+	if(i == tries)
+		return -1;
+	if(bus->read8(bus, CMOS_REGISTER_STATUS1, &status) != 0
+			|| bus->read8(bus, CMOS_REGISTER_SECONDS, seconds) != 0
 			|| bus->read8(bus, CMOS_REGISTER_MINUTES, minutes) != 0
 			|| bus->read8(bus, CMOS_REGISTER_HOURS, hours) != 0
 			|| bus->read8(bus, CMOS_REGISTER_DAY, day) != 0
 			|| bus->read8(bus, CMOS_REGISTER_MONTH, month) != 0
 			|| bus->read8(bus, CMOS_REGISTER_YEAR, year) != 0)
 		return -1;
+	/* convert to a 24-hour clock if necessary */
+	if((status & 0x02) != 0x00 && (*hours & 0x80))
+		*hours = ((*hours & 0x7f) + 12) % 24;
 	return 0;
 }
