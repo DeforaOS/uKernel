@@ -109,9 +109,6 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 		+ (day * 60 * 60 * 24) + (month * 60 * 60 * 24)
 		+ (((year >= 70) ? (year + 1900) : (year + 2000))
 				* 60 * 60 * 24 * 365);
-#if 1
-	fprintf(stderr, "%s() => %d\n", __func__, 0);
-#endif
 	return 0;
 }
 
