@@ -39,10 +39,21 @@ static int _cmos_bus_write16(CMOSBus * bus, ukBusAddress address,
 static int _cmos_bus_write32(CMOSBus * bus, ukBusAddress address,
 		uint32_t value);
 
+static int _cmos_bus_command(CMOSBus * bus, uint32_t command, va_list ap);
+
 
 /* constants */
 #define BUS_CMOS_REGISTER_ADDRESS	0x70
 #define BUS_CMOS_REGISTER_DATA		0x71
+
+#define BUS_CMOS_NMI_ENABLE		0x00
+#define BUS_CMOS_NMI_DISABLE		0x80
+
+typedef enum _CMOSBusCommand
+{
+	BUS_CMOS_COMMAND_NMI_ENABLE = BUS_COMMAND_COUNT,
+	BUS_CMOS_COMMAND_NMI_DISABLE
+} CMOSBusCommand;
 
 
 /* variables */
@@ -57,7 +68,7 @@ CMOSBus cmos_bus =
 	_cmos_bus_write8,
 	_cmos_bus_write16,
 	_cmos_bus_write32,
-	NULL,
+	_cmos_bus_command,
 	NULL
 };
 
@@ -173,5 +184,38 @@ static int _cmos_bus_write32(CMOSBus * bus, ukBusAddress address,
 
 	errno = ENOTSUP;
 	return -1;
+}
+
+
+/* cmos_bus_command */
+static int _cmos_bus_command(CMOSBus * bus, uint32_t command, va_list ap)
+{
+	ukBus * parent = bus->data->parent;
+	uint8_t u8;
+
+	switch(command)
+	{
+		case BUS_CMOS_COMMAND_NMI_ENABLE:
+			return bus->read8(bus, BUS_CMOS_REGISTER_ADDRESS,
+					&u8) == 0
+				&& bus->write8(bus, BUS_CMOS_REGISTER_ADDRESS,
+						BUS_CMOS_COMMAND_NMI_ENABLE
+						| (u8 & 0x7f)) == 0
+				? 0 : -1;
+		case BUS_CMOS_COMMAND_NMI_DISABLE:
+			return bus->read8(bus, BUS_CMOS_REGISTER_ADDRESS,
+					&u8) == 0
+				&& bus->write8(bus, BUS_CMOS_REGISTER_ADDRESS,
+						BUS_CMOS_COMMAND_NMI_DISABLE
+						| (u8 & 0x7f)) == 0
+				? 0 : -1;
+		default:
+			if(parent->command == NULL)
+			{
+				errno = ENODEV;
+				return -1;
+			}
+			return parent->command(parent, command, ap);
+	}
 }
 #endif
