@@ -12,6 +12,7 @@
 # include "drivers/bus.h"
 # include "drivers/clock.h"
 # include "drivers/console.h"
+# include "drivers/pic.h"
 
 # ifndef KERNEL_CONSOLE
 #  define KERNEL_CONSOLE	"vga"
@@ -53,6 +54,9 @@ int multiboot(ukMultibootInfo * mi)
 
 	/* initialize the console */
 	console_init(ioportbus, console);
+
+	/* initialize the PIC */
+	pic_init(ioportbus, "i8259a");
 
 	/* initialize the clock */
 	clock_init(cmosbus, "cmos");
