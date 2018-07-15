@@ -68,10 +68,9 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 
 
 /* cmos_clock_get_time */
-static int _get_time_do(ukBus * bus, unsigned char * seconds,
-		unsigned char * minutes, unsigned char * hours,
-		unsigned char * day, unsigned char * month,
-		unsigned char * year);
+static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
+		unsigned char * year, unsigned char * hours,
+		unsigned char * minutes, unsigned char * seconds);
 
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
@@ -92,10 +91,10 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	}
 	for(i = 0; i < tries; i++)
 		/* try to obtain the same results twice for consistency */
-		if(_get_time_do(data->bus, &seconds, &minutes, &hours, &day,
-					&month, &year) != 0
-				|| _get_time_do(data->bus, &s, &m, &h, &d, &M,
-					&y) != 0)
+		if(_get_time_do(data->bus, &day, &month, &year,
+					&hours, &minutes, &seconds) != 0
+				|| _get_time_do(data->bus, &d, &M, &y,
+					&h, &m, &s) != 0)
 			return -1;
 		else if(seconds == s && minutes == m && hours == h
 				&& day == d && month == M && year == y)
@@ -106,17 +105,19 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 		return -1;
 	}
 	/* FIXME this is not correct */
-	*time = seconds + (minutes * 60) + (hours * 60 * 24)
-		+ (day * 60 * 24 * 30) + (month * 60 * 24 * 12)
-		+ (((year >= 70) ? (year - 1970) : (year + 30))
-				* 60 * 24 * 365);
+	*time = seconds + (minutes * 60) + (hours * 60 * 60)
+		+ (day * 60 * 60 * 24) + (month * 60 * 60 * 24)
+		+ (((year >= 70) ? (year + 1900) : (year + 2000))
+				* 60 * 60 * 24 * 365);
+#if 1
+	fprintf(stderr, "%s() => %d\n", __func__, 0);
+#endif
 	return 0;
 }
 
-static int _get_time_do(ukBus * bus, unsigned char * seconds,
-		unsigned char * minutes, unsigned char * hours,
-		unsigned char * day, unsigned char * month,
-		unsigned char * year)
+static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
+		unsigned char * year, unsigned char * hours,
+		unsigned char * minutes, unsigned char * seconds)
 {
 	const size_t tries = 3;
 	size_t i;
