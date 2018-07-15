@@ -6,6 +6,7 @@
 #ifndef UKERNEL_DRIVERS_BUS_H
 # define UKERNEL_DRIVERS_BUS_H
 
+# include <stdarg.h>
 # include <stdint.h>
 
 
@@ -30,8 +31,17 @@ struct _ukBus
 	int (*write16)(ukBus * bus, ukBusAddress address, uint16_t value);
 	int (*write32)(ukBus * bus, ukBusAddress address, uint32_t value);
 
+	int (*command)(ukBus * bus, uint32_t command, va_list ap);
+
 	ukBusData * data;
 };
+
+
+/* constants */
+typedef enum _ukBusCommand
+{
+	BUS_COMMAND_WAIT
+} ukBusCommand;
 
 
 /* prototypes */

@@ -47,6 +47,7 @@ TTYBus tty_bus =
 	_tty_bus_write8,
 	_tty_bus_write16,
 	_tty_bus_write32,
+	NULL,
 	NULL
 };
 

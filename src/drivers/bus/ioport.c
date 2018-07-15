@@ -30,6 +30,7 @@ static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress address,
 		uint16_t value);
 static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 		uint32_t value);
+static int _ioport_bus_command(IOPortBus * bus, uint32_t command, va_list ap);
 
 
 /* variables */
@@ -44,6 +45,7 @@ IOPortBus ioport_bus =
 	_ioport_bus_write8,
 	_ioport_bus_write16,
 	_ioport_bus_write32,
+	_ioport_bus_command,
 	NULL
 };
 
@@ -129,5 +131,19 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 
 	errno = ENOTSUP;
 	return -1;
+}
+
+
+/* ioport_bus_command */
+static int _ioport_bus_command(IOPortBus * bus, uint32_t command, va_list ap)
+{
+	switch(command)
+	{
+		case BUS_COMMAND_WAIT:
+			return iowait();
+		default:
+			errno = ENOTSUP;
+			return -1;
+	}
 }
 #endif

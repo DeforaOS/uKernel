@@ -57,6 +57,7 @@ CMOSBus cmos_bus =
 	_cmos_bus_write8,
 	_cmos_bus_write16,
 	_cmos_bus_write32,
+	NULL,
 	NULL
 };
 
