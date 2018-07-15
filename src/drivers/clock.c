@@ -39,9 +39,10 @@ ukClock * clock_init(ukBus * bus, char const * name)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s clock%s%s\n", name, (bus != NULL)
-					? " at " : "",
-					(bus != NULL) ? bus->name : "");
+			fprintf(stderr, "%s clock%s%s%s\n", name,
+					(bus != NULL) ? " at " : "",
+					(bus != NULL) ? bus->name : "",
+					(bus != NULL) ? " bus" : "");
 			clock = drivers[i]->init(bus);
 		}
 	if(clock == NULL)

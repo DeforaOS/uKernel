@@ -35,9 +35,10 @@ ukBus * bus_init(ukBus * parent, char const * name)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s bus%s%s\n", name,
+			fprintf(stderr, "%s bus%s%s%s\n", name,
 					(parent != NULL) ? " at " : "",
-					(parent != NULL) ? parent->name : "");
+					(parent != NULL) ? parent->name : "",
+					(parent != NULL) ? " bus" : "");
 			return drivers[i]->init(parent);
 		}
 	errno = ENODEV;
