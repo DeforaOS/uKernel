@@ -20,9 +20,6 @@ typedef struct _ukPICData
 } i8259aPICData;
 
 
-/* constants */
-
-
 /* prototypes */
 /* pic */
 static i8259aPIC * _i8259a_pic_init(ukBus * bus);
