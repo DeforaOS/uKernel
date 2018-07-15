@@ -14,4 +14,6 @@
 int inb(uint16_t addr, uint8_t * value);
 int outb(uint16_t addr, uint8_t value);
 
+int iowait(void);
+
 #endif /* !UKERNEL_ARCH_I386_H */
