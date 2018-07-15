@@ -99,6 +99,7 @@ static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address,
 
 	intr_disable();
 	ret = (parent->write8(parent, BUS_CMOS_REGISTER_ADDRESS, address) == 0
+			&& parent->command(parent, BUS_COMMAND_WAIT, NULL) == 0
 			&& parent->read8(parent, BUS_CMOS_REGISTER_DATA,
 				value) == 0) ? 0 : -1;
 	intr_enable();
