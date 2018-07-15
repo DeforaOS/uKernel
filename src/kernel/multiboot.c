@@ -10,6 +10,7 @@
 # include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
 # include "drivers/bus.h"
+# include "drivers/clock.h"
 # include "drivers/console.h"
 
 # ifndef KERNEL_CONSOLE
@@ -52,6 +53,9 @@ int multiboot(ukMultibootInfo * mi)
 
 	/* initialize the console */
 	console_init(ioportbus, console);
+
+	/* initialize the clock */
+	clock_init(cmosbus, "cmos");
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
