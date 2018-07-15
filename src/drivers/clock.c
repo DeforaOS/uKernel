@@ -26,13 +26,13 @@ extern ukClock cmos_clock;
 /* clock_init */
 ukClock * clock_init(ukBus * bus, char const * name)
 {
-	ukClock * clock = NULL;
 	const ukClock * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&cmos_clock
 #endif
 	};
 	size_t i;
+	ukClock * clock = NULL;
 
 	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
 		if(strncmp(drivers[i]->name, name,
