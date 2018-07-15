@@ -95,13 +95,12 @@ static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address,
 		uint8_t * value)
 {
 	int ret;
-	CMOSBusData * data = bus->data;
+	ukBus * parent = bus->data->parent;
 
 	intr_disable();
-	ret = (data->parent->write8(data->parent, BUS_CMOS_REGISTER_ADDRESS,
-				address) == 0
-			&& data->parent->read8(data->parent,
-				BUS_CMOS_REGISTER_DATA, value) == 0) ? 0 : -1;
+	ret = (parent->write8(parent, BUS_CMOS_REGISTER_ADDRESS, address) == 0
+			&& parent->read8(parent, BUS_CMOS_REGISTER_DATA,
+				value) == 0) ? 0 : -1;
 	intr_enable();
 	return ret;
 }
