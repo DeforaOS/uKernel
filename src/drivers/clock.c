@@ -43,7 +43,9 @@ ukClock * clock_init(ukBus * bus, char const * name)
 					(bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus->name : "",
 					(bus != NULL) ? " bus" : "");
-			clock = drivers[i]->init(bus);
+			if((clock = drivers[i]->init(bus)) == NULL)
+				return NULL;
+			break;
 		}
 	if(clock == NULL)
 		errno = ENODEV;

@@ -51,14 +51,14 @@ ukConsole * console_init(ukBus * bus, char const * name)
 					(bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus->name : "",
 					(bus != NULL) ? " bus" : "");
-			_console = drivers[i]->init(bus);
+			if((_console = drivers[i]->init(bus)) == NULL)
+				return NULL;
+			break;
 		}
 	if(_console == NULL)
-	{
 		errno = ENODEV;
-		return NULL;
-	}
-	_console->print(_console, _console_buf, _console_buf_cnt);
+	else
+		_console->print(_console, _console_buf, _console_buf_cnt);
 	return _console;
 }
 

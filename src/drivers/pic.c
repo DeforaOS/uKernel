@@ -43,7 +43,9 @@ ukPIC * pic_init(ukBus * bus, char const * name)
 					(bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus->name : "",
 					(bus != NULL) ? " bus" : "");
-			pic = drivers[i]->init(bus);
+			if((pic = drivers[i]->init(bus)) == NULL)
+				return NULL;
+			break;
 		}
 	if(pic == NULL)
 		errno = ENODEV;
