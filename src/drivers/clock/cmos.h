@@ -22,6 +22,8 @@
 
 # define CMOS_HOUR_PM			0x80
 
+# define CMOS_STATUS0_UPDATING		0x80
+
 # define CMOS_STATUS1_24HOUR		0x02
 # define CMOS_STATUS1_BINARY_MODE	0x04
 

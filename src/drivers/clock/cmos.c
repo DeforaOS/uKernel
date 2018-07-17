@@ -124,7 +124,7 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 	for(i = 0; i < tries; i++)
 		if(bus->read8(bus, CMOS_REGISTER_STATUS0, &status) != 0)
 			return -1;
-		else if((status & 0x80) == 0x00)
+		else if((status & CMOS_STATUS0_UPDATING) == 0x00)
 			break;
 	if(i == tries)
 		return -1;
