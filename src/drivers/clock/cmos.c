@@ -108,8 +108,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	/* FIXME this is not correct */
 	*time = seconds + (minutes * 60) + (hours * 60 * 60)
 		+ (day * 60 * 60 * 24) + (month * 60 * 60 * 24)
-		+ (((year >= 70) ? (year + 1900) : (year + 2000))
-				* 60 * 60 * 24 * 365);
+		+ (((year >= 70) ? year : year + 30) * 60 * 60 * 24 * 365);
 	return 0;
 }
 
