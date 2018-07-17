@@ -71,6 +71,7 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 		unsigned char * year, unsigned char * hours,
 		unsigned char * minutes, unsigned char * seconds);
+static void _time_do_decode(unsigned char * value);
 
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
@@ -139,5 +140,20 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 	/* convert to a 24-hour clock if necessary */
 	if((status & 0x02) && (*hours & 0x80))
 		*hours = ((*hours & 0x7f) + 12) % 24;
+	/* convert to decimal if necessary */
+	if((status & 0x04) != 0x04)
+	{
+		_time_do_decode(seconds);
+		_time_do_decode(minutes);
+		_time_do_decode(hours);
+		_time_do_decode(day);
+		_time_do_decode(month);
+		_time_do_decode(year);
+	}
 	return 0;
+}
+
+static void _time_do_decode(unsigned char * value)
+{
+	*value = (*value & 0xf) + (*value >> 4) * 10;
 }
