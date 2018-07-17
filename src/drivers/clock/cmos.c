@@ -137,10 +137,10 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 			|| bus->read8(bus, CMOS_REGISTER_YEAR, year) != 0)
 		return -1;
 	/* convert to a 24-hour clock if necessary */
-	if((status & 0x02) && (*hours & 0x80))
-		*hours = ((*hours & 0x7f) + 12) % 24;
+	if((status & CMOS_STATUS1_24HOUR) && (*hours & CMOS_HOUR_PM))
+		*hours = ((*hours & ~CMOS_HOUR_PM) + 12) % 24;
 	/* convert to decimal if necessary */
-	if((status & 0x04) != 0x04)
+	if((status & CMOS_STATUS1_BINARY_MODE) != CMOS_STATUS1_BINARY_MODE)
 	{
 		_time_do_decode(seconds);
 		_time_do_decode(minutes);
