@@ -8,7 +8,7 @@
 #include <errno.h>
 #include "arch/arch.h"
 #include "kernel/intr.h"
-#include "../bus.h"
+#include "drivers/bus/cmos.h"
 
 
 #if defined(__amd64__) || defined(__i386__)
@@ -40,20 +40,6 @@ static int _cmos_bus_write32(CMOSBus * bus, ukBusAddress address,
 		uint32_t value);
 
 static int _cmos_bus_command(CMOSBus * bus, uint32_t command, va_list ap);
-
-
-/* constants */
-#define BUS_CMOS_REGISTER_ADDRESS	0x70
-#define BUS_CMOS_REGISTER_DATA		0x71
-
-#define BUS_CMOS_NMI_ENABLE		0x00
-#define BUS_CMOS_NMI_DISABLE		0x80
-
-typedef enum _CMOSBusCommand
-{
-	BUS_CMOS_COMMAND_NMI_ENABLE = BUS_COMMAND_COUNT,
-	BUS_CMOS_COMMAND_NMI_DISABLE
-} CMOSBusCommand;
 
 
 /* variables */
