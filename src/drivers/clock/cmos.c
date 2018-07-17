@@ -137,7 +137,7 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 			|| bus->read8(bus, CMOS_REGISTER_YEAR, year) != 0)
 		return -1;
 	/* convert to a 24-hour clock if necessary */
-	if((status & 0x02) != 0x00 && (*hours & 0x80))
+	if((status & 0x02) && (*hours & 0x80))
 		*hours = ((*hours & 0x7f) + 12) % 24;
 	return 0;
 }
