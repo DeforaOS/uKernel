@@ -6,7 +6,6 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "arch/arch.h"
 #include "kernel/intr.h"
 #include "drivers/bus/cmos.h"
 
