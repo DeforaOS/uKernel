@@ -127,6 +127,11 @@ static void _vga_console_print(VGAConsole * console, char const * str,
 			data->pos_y++;
 			continue;
 		}
+		else if(str[i] == '\r')
+		{
+			data->pos_x = 0;
+			continue;
+		}
 		if(data->pos_y == VGA_TEXT_ROWS)
 			_vga_scroll(console, 1);
 		_vga_print(console, str[i], data->pos_y, data->pos_x++);
