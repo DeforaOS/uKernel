@@ -33,9 +33,7 @@ static void _uart_console_print(UARTConsole * console, char const * str,
 static ukConsoleData _uart_console_data =
 {
 	NULL,
-	UART_ADDRESS_BASE_COM0,
-	80,
-	25
+	UART_ADDRESS_BASE_COM0
 };
 
 
