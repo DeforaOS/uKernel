@@ -156,7 +156,7 @@ static void _vga_cursor_set(VGAConsole * console, bool enabled,
 		/* disable the cursor if necessary */
 		if(data->cursor == false)
 			return;
-		data->bus->write8(data->bus, 0x3d4, 0x0a);
+		data->bus->write8(data->bus, 0x3d4, VGA_REGISTER_CURSOR_START);
 		data->bus->read8(data->bus, 0x3d5, &u8);
 		data->bus->write8(data->bus, 0x3d5, u8 | 0x20);
 	}
@@ -165,14 +165,17 @@ static void _vga_cursor_set(VGAConsole * console, bool enabled,
 	else
 	{
 		/* position the cursor */
-		data->bus->write8(data->bus, 0x3d4, 0x0f);
+		data->bus->write8(data->bus, 0x3d4,
+				VGA_REGISTER_CURSOR_LOCATION_LOW);
 		data->bus->write8(data->bus, 0x3d5, pos & 0xff);
-		data->bus->write8(data->bus, 0x3d4, 0x0e);
+		data->bus->write8(data->bus, 0x3d4,
+				VGA_REGISTER_CURSOR_LOCATION_HIGH);
 		data->bus->write8(data->bus, 0x3d5, pos >> 8);
 		/* enable the cursor if necessary */
 		if(data->cursor == false)
 		{
-			data->bus->write8(data->bus, 0x3d4, 0x0a);
+			data->bus->write8(data->bus, 0x3d4,
+					VGA_REGISTER_CURSOR_START);
 			data->bus->read8(data->bus, 0x3d5, &u8);
 			data->bus->write8(data->bus, 0x3d5, u8 & ~0x20);
 		}
