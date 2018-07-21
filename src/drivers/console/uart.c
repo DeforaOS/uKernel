@@ -18,17 +18,12 @@ typedef struct _ukConsoleData
 {
 	ukBus * bus;
 	uint16_t port;
-
-	unsigned int width;
-	unsigned int height;
 } UARTConsoleData;
 
 
 /* prototypes */
 /* console */
 static UARTConsole * _uart_console_init(ukBus * bus);
-static int _uart_console_set_mode(UARTConsole * console, ukConsoleMode mode,
-		unsigned int width, unsigned int height, unsigned int depth);
 
 static void _uart_console_print(UARTConsole * console, char const * str,
 		size_t len);
@@ -52,7 +47,6 @@ UARTConsole uart_console =
 	"uart",
 	_uart_console_init,
 	NULL,
-	_uart_console_set_mode,
 	NULL,
 	_uart_console_print,
 	&_uart_console_data
@@ -83,24 +77,6 @@ static UARTConsole * _uart_console_init(ukBus * bus)
 	bus->write8(bus, (ukBusAddress)(data->port
 			+ UART_REGISTER_MODEM_CONTROL), 0x0b);
 	return &uart_console;
-}
-
-
-/* uart_console_set_mode */
-static int _uart_console_set_mode(UARTConsole * console, ukConsoleMode mode,
-		unsigned int width, unsigned int height, unsigned int depth)
-{
-	UARTConsoleData * data = console->data;
-	(void) depth;
-
-	if(mode != CONSOLE_MODE_TEXT)
-	{
-		errno = ENOSYS;
-		return -1;
-	}
-	data->width = width;
-	data->height = height;
-	return 0;
 }
 
 

@@ -13,12 +13,16 @@
 # include "drivers/boot/multiboot.h"
 # include "drivers/bus.h"
 # include "drivers/console.h"
+# include "drivers/display.h"
 
 # ifndef LOADER_BUS
 #  define LOADER_BUS		"ioport"
 # endif
 # ifndef LOADER_CONSOLE
-#  define LOADER_CONSOLE	"vga"
+#  define LOADER_CONSOLE	"uart"
+# endif
+# ifndef LOADER_DISPLAY
+#  define LOADER_DISPLAY	"vga"
 # endif
 
 
@@ -41,6 +45,7 @@ int multiboot(const ukMultibootInfo * mi)
 {
 	ukBus * bus;
 	char const * console = LOADER_CONSOLE;
+	char const * display = LOADER_DISPLAY;
 	size_t i;
 	ukMultibootMod * mod;
 	int res = -1;
@@ -56,11 +61,14 @@ int multiboot(const ukMultibootInfo * mi)
 #ifdef notyet
 	/* detect the video driver to use */
 	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_VBE)
-		console = "vesa";
+		display = "vesa";
 #endif
 
 	/* initialize the console */
 	console_init(bus, console);
+
+	/* initialize the display */
+	display_init(bus, display);
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");

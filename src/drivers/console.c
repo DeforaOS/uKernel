@@ -22,8 +22,6 @@ static size_t _console_buf_cnt = 0;
 /* variables */
 #if defined(__amd64__) || defined(__i386__)
 extern ukConsole uart_console;
-extern ukConsole vesa_console;
-extern ukConsole vga_console;
 #endif
 
 
@@ -34,8 +32,6 @@ ukConsole * console_init(ukBus * bus, char const * name)
 	const ukConsole * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&uart_console,
-		&vesa_console,
-		&vga_console
 #endif
 	};
 	size_t i;
@@ -81,22 +77,6 @@ ukConsole * console_get_default(void)
 	if(_console == NULL)
 		errno = ENODEV;
 	return _console;
-}
-
-
-/* console_set_mode */
-int console_set_mode(ukConsole * console, ukConsoleMode mode,
-		unsigned int width, unsigned int height, unsigned int depth)
-{
-	if(console == NULL
-			&& (console = console_get_default()) == NULL)
-		return -1;
-	if(console->set_mode == NULL)
-	{
-		errno = ENOTSUP;
-		return -1;
-	}
-	return console->set_mode(console, mode, width, height, depth);
 }
 
 

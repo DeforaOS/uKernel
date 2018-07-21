@@ -13,10 +13,14 @@
 # include "drivers/bus.h"
 # include "drivers/clock.h"
 # include "drivers/console.h"
+# include "drivers/display.h"
 # include "drivers/pic.h"
 
 # ifndef KERNEL_CONSOLE
-#  define KERNEL_CONSOLE	"vga"
+#  define KERNEL_CONSOLE	"uart"
+# endif
+# ifndef KERNEL_DISPLAY
+#  define KERNEL_DISPLAY	"vga"
 # endif
 
 
@@ -44,6 +48,7 @@ int multiboot(ukMultibootInfo * mi)
 	ukBus * ioportbus;
 	ukBus * cmosbus;
 	char const * console = KERNEL_CONSOLE;
+	char const * display = KERNEL_DISPLAY;
 	size_t i;
 	ukMultibootMod * mod;
 
@@ -54,11 +59,14 @@ int multiboot(ukMultibootInfo * mi)
 #ifdef notyet
 	/* detect the video driver to use */
 	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_VBE)
-		console = "vesa";
+		display = "vesa";
 #endif
 
 	/* initialize the console */
 	console_init(ioportbus, console);
+
+	/* initialize the display */
+	display_init(ioportbus, display);
 
 	/* initialize the PIC */
 	pic_init(ioportbus, "i8259a");
