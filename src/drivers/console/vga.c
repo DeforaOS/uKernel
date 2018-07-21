@@ -156,26 +156,25 @@ static void _vga_cursor_set(VGAConsole * console, bool enabled,
 		/* disable the cursor if necessary */
 		if(data->cursor == false)
 			return;
-		data->bus->write8(data->bus, (ukBusAddress)0x3d4, 0x0a);
-		data->bus->read8(data->bus, (ukBusAddress)0x3d5, &u8);
-		data->bus->write8(data->bus, (ukBusAddress)0x3d5, u8 | 0x20);
+		data->bus->write8(data->bus, 0x3d4, 0x0a);
+		data->bus->read8(data->bus, 0x3d5, &u8);
+		data->bus->write8(data->bus, 0x3d5, u8 | 0x20);
 	}
 	else if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
 	else
 	{
 		/* position the cursor */
-		data->bus->write8(data->bus, (ukBusAddress)0x3d4, 0x0f);
-		data->bus->write8(data->bus, (ukBusAddress)0x3d5, pos & 0xff);
-		data->bus->write8(data->bus, (ukBusAddress)0x3d4, 0x0e);
-		data->bus->write8(data->bus, (ukBusAddress)0x3d5, pos >> 8);
+		data->bus->write8(data->bus, 0x3d4, 0x0f);
+		data->bus->write8(data->bus, 0x3d5, pos & 0xff);
+		data->bus->write8(data->bus, 0x3d4, 0x0e);
+		data->bus->write8(data->bus, 0x3d5, pos >> 8);
 		/* enable the cursor if necessary */
 		if(data->cursor == false)
 		{
-			data->bus->write8(data->bus, (ukBusAddress)0x3d4, 0x0a);
-			data->bus->read8(data->bus, (ukBusAddress)0x3d5, &u8);
-			data->bus->write8(data->bus, (ukBusAddress)0x3d5,
-					u8 & ~0x20);
+			data->bus->write8(data->bus, 0x3d4, 0x0a);
+			data->bus->read8(data->bus, 0x3d5, &u8);
+			data->bus->write8(data->bus, 0x3d5, u8 & ~0x20);
 		}
 	}
 	data->cursor = enabled;
