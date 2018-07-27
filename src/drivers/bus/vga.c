@@ -18,6 +18,7 @@ typedef struct _ukBus VGABus;
 typedef struct _ukBusData
 {
 	ukBus * parent;
+	ukBusAddress base;
 } VGABusData;
 
 
@@ -68,6 +69,7 @@ static VGABus * _vga_bus_init(ukBus * parent)
 	if((data = malloc(sizeof(*data))) == NULL)
 		return NULL;
 	data->parent = parent;
+	data->base = 0x3d4;
 	vga_bus.data = data;
 	return &vga_bus;
 }
@@ -86,8 +88,9 @@ static int _vga_bus_read8(VGABus * bus, ukBusAddress address, uint8_t * value)
 	int ret;
 	ukBus * parent = bus->data->parent;
 
-	ret = (parent->write8(parent, 0x3d4, address) == 0
-			&& parent->read8(parent, 0x3d5, value) == 0) ? 0 : -1;
+	ret = (parent->write8(parent, bus->data->base, address) == 0
+			&& parent->read8(parent, bus->data->base + 1,
+				value) == 0) ? 0 : -1;
 	return ret;
 }
 
@@ -122,10 +125,9 @@ static int _vga_bus_write8(VGABus * bus, ukBusAddress address, uint8_t value)
 	int ret;
 	VGABusData * data = bus->data;
 
-	ret = (data->parent->write8(data->parent, 0x3d4,
-				address) == 0
+	ret = (data->parent->write8(data->parent, bus->data->base, address) == 0
 			&& data->parent->write8(data->parent,
-				0x3d5, value) == 0) ? 0 : -1;
+				bus->data->base + 1, value) == 0) ? 0 : -1;
 	return ret;
 }
 
