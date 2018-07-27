@@ -15,9 +15,6 @@
 # include "drivers/console.h"
 # include "drivers/display.h"
 
-# ifndef LOADER_BUS
-#  define LOADER_BUS		"ioport"
-# endif
 # ifndef LOADER_CONSOLE
 #  define LOADER_CONSOLE	"uart"
 # endif
@@ -43,7 +40,8 @@ static const GDT _gdt_4gb[4] =
 /* multiboot */
 int multiboot(const ukMultibootInfo * mi)
 {
-	ukBus * bus;
+	ukBus * ioportbus;
+	ukBus * vgabus;
 	char const * console = LOADER_CONSOLE;
 	char const * display = LOADER_DISPLAY;
 	size_t i;
@@ -55,8 +53,9 @@ int multiboot(const ukMultibootInfo * mi)
 
 	memcpy(&kmi, mi, sizeof(kmi));
 
-	/* initialize the main bus */
-	bus = bus_init(NULL, LOADER_BUS);
+	/* initialize the main buses */
+	ioportbus = bus_init(NULL, "ioport");
+	vgabus = bus_init(ioportbus, "vga");
 
 #ifdef notyet
 	/* detect the video driver to use */
@@ -65,10 +64,10 @@ int multiboot(const ukMultibootInfo * mi)
 #endif
 
 	/* initialize the console */
-	console_init(bus, console);
+	console_init(ioportbus, console);
 
 	/* initialize the display */
-	display_init(bus, display);
+	display_init(vgabus, display);
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");

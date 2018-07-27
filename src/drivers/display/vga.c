@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <errno.h>
 #include "drivers/display.h"
 #include "vga.h"
 
@@ -88,6 +89,11 @@ VGADisplay vga_display =
 /* vga_display_init */
 static ukDisplay * _vga_display_init(ukBus * bus)
 {
+	if(bus == NULL)
+	{
+		errno = ENODEV;
+		return NULL;
+	}
 	_vga_display_data.bus = bus;
 	_vga_display_clear(&vga_display);
 	/* reset the cursor */
@@ -156,28 +162,26 @@ static void _vga_cursor_set(VGADisplay * display, bool enabled,
 		/* disable the cursor if necessary */
 		if(data->cursor == false)
 			return;
-		data->bus->write8(data->bus, 0x3d4, VGA_REGISTER_CURSOR_START);
-		data->bus->read8(data->bus, 0x3d5, &u8);
-		data->bus->write8(data->bus, 0x3d5, u8 | 0x20);
+		data->bus->read8(data->bus, VGA_REGISTER_CURSOR_START, &u8);
+		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_START,
+				u8 | 0x20);
 	}
 	else if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
 	else
 	{
 		/* position the cursor */
-		data->bus->write8(data->bus, 0x3d4,
-				VGA_REGISTER_CURSOR_LOCATION_LOW);
-		data->bus->write8(data->bus, 0x3d5, pos & 0xff);
-		data->bus->write8(data->bus, 0x3d4,
-				VGA_REGISTER_CURSOR_LOCATION_HIGH);
-		data->bus->write8(data->bus, 0x3d5, pos >> 8);
+		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_LOCATION_LOW,
+				pos & 0xff);
+		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_LOCATION_HIGH,
+				pos >> 8);
 		/* enable the cursor if necessary */
 		if(data->cursor == false)
 		{
-			data->bus->write8(data->bus, 0x3d4,
-					VGA_REGISTER_CURSOR_START);
-			data->bus->read8(data->bus, 0x3d5, &u8);
-			data->bus->write8(data->bus, 0x3d5, u8 & ~0x20);
+			data->bus->read8(data->bus, VGA_REGISTER_CURSOR_START,
+					&u8);
+			data->bus->write8(data->bus, VGA_REGISTER_CURSOR_START,
+					u8 & ~0x20);
 		}
 	}
 	data->cursor = enabled;

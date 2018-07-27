@@ -46,6 +46,7 @@ static const IDT _idt[] =
 int multiboot(ukMultibootInfo * mi)
 {
 	ukBus * ioportbus;
+	ukBus * vgabus;
 	ukBus * cmosbus;
 	char const * console = KERNEL_CONSOLE;
 	char const * display = KERNEL_DISPLAY;
@@ -54,6 +55,7 @@ int multiboot(ukMultibootInfo * mi)
 
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");
+	vgabus = bus_init(ioportbus, "vga");
 	cmosbus = bus_init(ioportbus, "cmos");
 
 #ifdef notyet
@@ -66,7 +68,7 @@ int multiboot(ukMultibootInfo * mi)
 	console_init(ioportbus, console);
 
 	/* initialize the display */
-	display_init(ioportbus, display);
+	display_init(vgabus, display);
 
 	/* initialize the PIC */
 	pic_init(ioportbus, "i8259a");

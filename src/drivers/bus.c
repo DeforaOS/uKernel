@@ -15,6 +15,7 @@
 #if defined(__amd64__) || defined(__i386__)
 extern ukBus cmos_bus;
 extern ukBus ioport_bus;
+extern ukBus vga_bus;
 #endif
 
 
@@ -25,7 +26,8 @@ ukBus * bus_init(ukBus * parent, char const * name)
 	const ukBus * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&cmos_bus,
-		&ioport_bus
+		&ioport_bus,
+		&vga_bus
 #endif
 	};
 	size_t i;
