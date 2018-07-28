@@ -14,15 +14,16 @@
 /* private */
 /* types */
 typedef struct _ukBus CMOSBus;
+typedef struct _ukBusDriver CMOSBusDriver;
 
-typedef struct _ukBusData
+struct _ukBusDriver
 {
 	ukBus * parent;
-} CMOSBusData;
+};
 
 
 /* prototypes */
-static CMOSBus * _cmos_bus_init(ukBus * parent);
+static CMOSBusDriver * _cmos_bus_init(ukBus * parent, va_list ap);
 static void _cmos_bus_destroy(CMOSBus * bus);
 
 static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address,
@@ -31,8 +32,7 @@ static int _cmos_bus_read16(CMOSBus * bus, ukBusAddress address,
 		uint16_t * value);
 static int _cmos_bus_read32(CMOSBus * bus, ukBusAddress address,
 		uint32_t * value);
-static int _cmos_bus_write8(CMOSBus * bus, ukBusAddress address,
-		uint8_t value);
+static int _cmos_bus_write8(CMOSBus * bus, ukBusAddress address, uint8_t value);
 static int _cmos_bus_write16(CMOSBus * bus, ukBusAddress address,
 		uint16_t value);
 static int _cmos_bus_write32(CMOSBus * bus, ukBusAddress address,
@@ -42,7 +42,7 @@ static int _cmos_bus_command(CMOSBus * bus, uint32_t command, va_list ap);
 
 
 /* variables */
-CMOSBus cmos_bus =
+const ukBusInterface cmos_bus =
 {
 	"cmos",
 	_cmos_bus_init,
@@ -53,8 +53,7 @@ CMOSBus cmos_bus =
 	_cmos_bus_write8,
 	_cmos_bus_write16,
 	_cmos_bus_write32,
-	_cmos_bus_command,
-	NULL
+	_cmos_bus_command
 };
 
 
@@ -62,42 +61,43 @@ CMOSBus cmos_bus =
 /* functions */
 /* bus */
 /* cmos_bus_init */
-static CMOSBus * _cmos_bus_init(ukBus * parent)
+static CMOSBusDriver * _cmos_bus_init(ukBus * parent, va_list ap)
 {
-	CMOSBusData * data;
+	CMOSBusDriver * cmos;
+	(void) ap;
 
 	if(parent == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	if((data = malloc(sizeof(*data))) == NULL)
+	if((cmos = malloc(sizeof(*cmos))) == NULL)
 		return NULL;
-	data->parent = parent;
-	cmos_bus.data = data;
-	return &cmos_bus;
+	cmos->parent = parent;
+	return cmos;
 }
 
 
 /* cmos_bus_destroy */
 static void _cmos_bus_destroy(CMOSBus * bus)
 {
-	free(bus->data);
+	free(bus->driver);
 }
 
 
 /* cmos_bus_read8 */
-static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address,
-		uint8_t * value)
+static int _cmos_bus_read8(CMOSBus * bus, ukBusAddress address, uint8_t * value)
 {
 	int ret;
-	ukBus * parent = bus->data->parent;
+	ukBus * parent = bus->driver->parent;
 
 	intr_disable();
-	ret = (parent->write8(parent, BUS_CMOS_REGISTER_ADDRESS, address) == 0
-			&& parent->command(parent, BUS_COMMAND_WAIT, NULL) == 0
-			&& parent->read8(parent, BUS_CMOS_REGISTER_DATA,
-				value) == 0) ? 0 : -1;
+	ret = (parent->interface->write8(parent, BUS_CMOS_REGISTER_ADDRESS,
+				address) == 0
+			&& parent->interface->command(parent, BUS_COMMAND_WAIT,
+				NULL) == 0
+			&& parent->interface->read8(parent,
+				BUS_CMOS_REGISTER_DATA, value) == 0) ? 0 : -1;
 	intr_enable();
 	return ret;
 }
@@ -134,12 +134,12 @@ static int _cmos_bus_write8(CMOSBus * bus, ukBusAddress address,
 		uint8_t value)
 {
 	int ret;
-	CMOSBusData * data = bus->data;
+	ukBus * parent = bus->driver->parent;
 
 	intr_disable();
-	ret = (data->parent->write8(data->parent, BUS_CMOS_REGISTER_ADDRESS,
+	ret = (parent->interface->write8(parent, BUS_CMOS_REGISTER_ADDRESS,
 				address) == 0
-			&& data->parent->write8(data->parent,
+			&& parent->interface->write8(parent,
 				BUS_CMOS_REGISTER_DATA, value) == 0) ? 0 : -1;
 	intr_enable();
 	return ret;
@@ -175,32 +175,34 @@ static int _cmos_bus_write32(CMOSBus * bus, ukBusAddress address,
 /* cmos_bus_command */
 static int _cmos_bus_command(CMOSBus * bus, uint32_t command, va_list ap)
 {
-	ukBus * parent = bus->data->parent;
+	ukBus * parent = bus->driver->parent;
 	uint8_t u8;
 
 	switch(command)
 	{
 		case BUS_CMOS_COMMAND_NMI_ENABLE:
-			return bus->read8(bus, BUS_CMOS_REGISTER_ADDRESS,
-					&u8) == 0
-				&& bus->write8(bus, BUS_CMOS_REGISTER_ADDRESS,
+			return bus->interface->read8(bus,
+					BUS_CMOS_REGISTER_ADDRESS, &u8) == 0
+				&& bus->interface->write8(bus,
+						BUS_CMOS_REGISTER_ADDRESS,
 						BUS_CMOS_COMMAND_NMI_ENABLE
 						| (u8 & 0x7f)) == 0
 				? 0 : -1;
 		case BUS_CMOS_COMMAND_NMI_DISABLE:
-			return bus->read8(bus, BUS_CMOS_REGISTER_ADDRESS,
-					&u8) == 0
-				&& bus->write8(bus, BUS_CMOS_REGISTER_ADDRESS,
+			return bus->interface->read8(bus,
+					BUS_CMOS_REGISTER_ADDRESS, &u8) == 0
+				&& bus->interface->write8(bus,
+						BUS_CMOS_REGISTER_ADDRESS,
 						BUS_CMOS_COMMAND_NMI_DISABLE
 						| (u8 & 0x7f)) == 0
 				? 0 : -1;
 		default:
-			if(parent->command == NULL)
+			if(parent->interface->command == NULL)
 			{
 				errno = ENODEV;
 				return -1;
 			}
-			return parent->command(parent, command, ap);
+			return parent->interface->command(parent, command, ap);
 	}
 }
 #endif

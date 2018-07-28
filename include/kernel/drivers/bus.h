@@ -13,14 +13,21 @@
 /* public */
 /* types */
 typedef struct _ukBus ukBus;
+typedef struct _ukBusDriver ukBusDriver;
+typedef struct _ukBusInterface ukBusInterface;
 typedef uintptr_t ukBusAddress;
-typedef struct _ukBusData ukBusData;
 
 struct _ukBus
 {
+	const ukBusInterface * interface;
+	ukBusDriver * driver;
+};
+
+struct _ukBusInterface
+{
 	char const name[16];
 
-	ukBus * (*init)(ukBus * parent);
+	ukBusDriver * (*init)(ukBus * parent, va_list ap);
 	void (*destroy)(ukBus * bus);
 
 	int (*read8)(ukBus * bus, ukBusAddress address, uint8_t * value);
@@ -33,7 +40,6 @@ struct _ukBus
 
 	int (*command)(ukBus * bus, uint32_t command, va_list ap);
 
-	ukBusData * data;
 };
 
 
@@ -47,6 +53,9 @@ typedef enum _ukBusCommand
 
 
 /* prototypes */
-ukBus * bus_init(ukBus * parent, char const * name);
+ukBus * bus_init(ukBus * parent, char const * name, ...);
+
+/* accessors */
+char const * bus_get_name(ukBus * bus);
 
 #endif /* !UKERNEL_DRIVERS_BUS_H */

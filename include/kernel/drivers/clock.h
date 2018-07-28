@@ -14,24 +14,28 @@
 /* public */
 /* types */
 typedef struct _ukClock ukClock;
-
-typedef struct _ukClockData ukClockData;
+typedef struct _ukClockDriver ukClockDriver;
+typedef struct _ukClockInterface ukClockInterface;
 
 struct _ukClock
 {
+	const ukClockInterface * interface;
+	ukClockDriver * driver;
+};
+
+typedef struct _ukClockInterface
+{
 	char name[16];
 
-	ukClock * (*init)(ukBus * bus);
+	ukClockDriver * (*init)(ukBus * bus, va_list ap);
 	void (*destroy)(ukClock * clock);
 
 	int (*get_time)(ukClock * clock, time_t * time);
-
-	ukClockData * data;
-};
+} ukClockInterface;
 
 
 /* prototypes */
-ukClock * clock_init(ukBus * bus, char const * name);
+ukClock * clock_init(ukBus * bus, char const * name, ...);
 void clock_destroy(ukClock * clock);
 
 /* accessors */

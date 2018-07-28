@@ -12,7 +12,7 @@
 
 /* private */
 /* variables */
-static ukConsole * _console = NULL;
+static ukConsole _console = { NULL, NULL };
 
 static char _console_buf[1024];
 static size_t _console_buf_cnt = 0;
@@ -21,23 +21,25 @@ static size_t _console_buf_cnt = 0;
 /* public */
 /* variables */
 #if defined(__amd64__) || defined(__i386__)
-extern ukConsole uart_console;
+extern const ukConsoleInterface uart_console;
 #endif
 
 
 /* functions */
 /* console_init */
-ukConsole * console_init(ukBus * bus, char const * name)
+ukConsole * console_init(ukBus * bus, char const * name, ...)
 {
-	const ukConsole * drivers[] = {
+	const ukConsoleInterface * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&uart_console,
 #endif
 	};
+	va_list ap;
 	size_t i;
 
-	if(_console != NULL)
-		return _console;
+	if(_console.driver != NULL)
+		return &_console;
+	va_start(ap, name);
 	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
 		if(strncmp(drivers[i]->name, name,
 					strlen(drivers[i]->name)) == 0
@@ -45,17 +47,21 @@ ukConsole * console_init(ukBus * bus, char const * name)
 		{
 			fprintf(stderr, "%s console%s%s%s\n", name,
 					(bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus->name : "",
+					(bus != NULL) ? bus_get_name(bus) : "",
 					(bus != NULL) ? " bus" : "");
-			if((_console = drivers[i]->init(bus)) == NULL)
-				return NULL;
+			_console.interface = drivers[i];
+			_console.driver = drivers[i]->init(bus, ap);
 			break;
 		}
-	if(_console == NULL)
-		errno = ENODEV;
-	else
-		_console->print(_console, _console_buf, _console_buf_cnt);
-	return _console;
+	va_end(ap);
+	if(_console.driver == NULL)
+	{
+		if(i == sizeof(drivers) / sizeof(*drivers))
+			errno = ENODEV;
+		return NULL;
+	}
+	_console.interface->print(&_console, _console_buf, _console_buf_cnt);
+	return &_console;
 }
 
 
@@ -65,8 +71,8 @@ void console_destroy(ukConsole * console)
 	if(console == NULL
 			&& (console = console_get_default()) == NULL)
 		return;
-	if(console->destroy != NULL)
-		console->destroy(console);
+	if(console->interface->destroy != NULL)
+		console->interface->destroy(console);
 }
 
 
@@ -74,9 +80,9 @@ void console_destroy(ukConsole * console)
 /* console_get_default */
 ukConsole * console_get_default(void)
 {
-	if(_console == NULL)
+	if(_console.driver == NULL)
 		errno = ENODEV;
-	return _console;
+	return &_console;
 }
 
 
@@ -87,7 +93,7 @@ void console_clear(ukConsole * console)
 	if(console == NULL
 			&& (console = console_get_default()) == NULL)
 		return;
-	console->clear(console);
+	console->interface->clear(console);
 }
 
 
@@ -104,5 +110,5 @@ void console_print(ukConsole * console, char const * str, size_t len)
 		_console_buf_cnt += s;
 	}
 	else
-		console->print(console, str, len);
+		console->interface->print(console, str, len);
 }

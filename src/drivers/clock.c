@@ -4,6 +4,7 @@
 
 
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -18,22 +19,26 @@ static ukClock * _clock = NULL;
 /* public */
 /* variables */
 #if defined(__amd64__) || defined(__i386__)
-extern ukClock cmos_clock;
+extern const ukClockInterface cmos_clock;
 #endif
 
 
 /* functions */
 /* clock_init */
-ukClock * clock_init(ukBus * bus, char const * name)
+ukClock * clock_init(ukBus * bus, char const * name, ...)
 {
-	const ukClock * drivers[] = {
+	const ukClockInterface * drivers[] = {
 #if defined(__amd64__) || defined(__i386__)
 		&cmos_clock
 #endif
 	};
+	ukClock * clock;
+	va_list ap;
 	size_t i;
-	ukClock * clock = NULL;
 
+	if((clock = malloc(sizeof(*clock))) == NULL)
+		return NULL;
+	va_start(ap, name);
 	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
 		if(strncmp(drivers[i]->name, name,
 					strlen(drivers[i]->name)) == 0
@@ -41,16 +46,21 @@ ukClock * clock_init(ukBus * bus, char const * name)
 		{
 			fprintf(stderr, "%s clock%s%s%s\n", name,
 					(bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus->name : "",
+					(bus != NULL)
+					? bus->interface->name : "",
 					(bus != NULL) ? " bus" : "");
-			if((clock = drivers[i]->init(bus)) == NULL)
-				return NULL;
+			clock->interface = drivers[i];
+			clock->driver = drivers[i]->init(bus, ap);
 			break;
 		}
-	if(clock == NULL)
-		errno = ENODEV;
-	else if(_clock == NULL)
-		_clock = clock;
+	va_end(ap);
+	if(clock->driver == NULL)
+	{
+		if(i == sizeof(drivers) / sizeof(*drivers))
+			errno = ENODEV;
+		free(clock);
+		return NULL;
+	}
 	return clock;
 }
 
@@ -71,5 +81,5 @@ int clock_get_time(ukClock * clock, time_t * time)
 	if(clock == NULL
 			&& (clock = clock_get_default()) == NULL)
 		return -1;
-	return clock->get_time(clock, time);
+	return clock->interface->get_time(clock, time);
 }

@@ -12,10 +12,12 @@
 /* types */
 typedef struct _ukClock SysClock;
 
+typedef struct _ukClockDriver SysClockDriver;
+
 
 /* prototypes */
 /* console */
-static SysClock * _sys_clock_init(ukBus * bus);
+static SysClockDriver * _sys_clock_init(ukBus * bus, va_list ap);
 
 static int _sys_clock_get_time(SysClock * console, time_t * time);
 
@@ -25,24 +27,24 @@ extern time_t _time(time_t * t);
 /* public */
 /* variables */
 /* console */
-SysClock sys_clock =
+const ukClockInterface sys_clock =
 {
 	"sys",
 	_sys_clock_init,
 	NULL,
-	_sys_clock_get_time,
-	NULL
+	_sys_clock_get_time
 };
 
 
 /* functions */
 /* console */
 /* sys_clock_init */
-static SysClock * _sys_clock_init(ukBus * bus)
+static SysClockDriver * _sys_clock_init(ukBus * bus, va_list ap)
 {
 	(void) bus;
+	(void) ap;
 
-	return &sys_clock;
+	return (SysClockDriver *)&sys_clock;
 }
 
 

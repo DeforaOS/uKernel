@@ -14,22 +14,26 @@
 /* public */
 /* types */
 typedef struct _ukPIC ukPIC;
-
-typedef struct _ukPICData ukPICData;
+typedef struct _ukPICDriver ukPICDriver;
+typedef struct _ukPICInterface ukPICInterface;
 
 struct _ukPIC
 {
+	const ukPICInterface * interface;
+	ukPICDriver * driver;
+};
+
+struct _ukPICInterface
+{
 	char name[16];
 
-	ukPIC * (*init)(ukBus * bus);
+	ukPICDriver * (*init)(ukBus * bus, va_list ap);
 	void (*destroy)(ukPIC * pic);
-
-	ukPICData * data;
 };
 
 
 /* prototypes */
-ukPIC * pic_init(ukBus * bus, char const * name);
+ukPIC * pic_init(ukBus * bus, char const * name, ...);
 void pic_destroy(ukPIC * pic);
 
 /* accessors */

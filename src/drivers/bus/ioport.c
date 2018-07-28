@@ -14,27 +14,31 @@
 /* private */
 /* types */
 typedef struct _ukBus IOPortBus;
+typedef struct _ukBusDriver IOPortBusDriver;
 
 
 /* prototypes */
-static IOPortBus * _ioport_bus_init(ukBus * parent);
+static IOPortBusDriver * _ioport_bus_init(ukBus * parent, va_list ap);
+
 static int _ioport_bus_read8(IOPortBus * bus, ukBusAddress address,
 		uint8_t * value);
 static int _ioport_bus_read16(IOPortBus * bus, ukBusAddress address,
 		uint16_t * value);
 static int _ioport_bus_read32(IOPortBus * bus, ukBusAddress address,
 		uint32_t * value);
+
 static int _ioport_bus_write8(IOPortBus * bus, ukBusAddress address,
 		uint8_t value);
 static int _ioport_bus_write16(IOPortBus * bus, ukBusAddress address,
 		uint16_t value);
 static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 		uint32_t value);
+
 static int _ioport_bus_command(IOPortBus * bus, uint32_t command, va_list ap);
 
 
 /* variables */
-IOPortBus ioport_bus =
+const ukBusInterface ioport_bus =
 {
 	"ioport",
 	_ioport_bus_init,
@@ -45,8 +49,7 @@ IOPortBus ioport_bus =
 	_ioport_bus_write8,
 	_ioport_bus_write16,
 	_ioport_bus_write32,
-	_ioport_bus_command,
-	NULL
+	_ioport_bus_command
 };
 
 
@@ -54,11 +57,12 @@ IOPortBus ioport_bus =
 /* functions */
 /* bus */
 /* ioport_bus_init */
-static IOPortBus * _ioport_bus_init(ukBus * parent)
+static IOPortBusDriver * _ioport_bus_init(ukBus * parent, va_list ap)
 {
 	(void) parent;
+	(void) ap;
 
-	return &ioport_bus;
+	return (IOPortBusDriver *)1;
 }
 
 

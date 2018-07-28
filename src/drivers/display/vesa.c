@@ -17,15 +17,15 @@
 /* types */
 typedef struct _ukDisplay VESADisplay;
 
-typedef struct _ukDisplayData
+typedef struct _ukDisplayDriver
 {
 	ukBus * bus;
-} VESADisplayData;
+} VESADisplayDriver;
 
 
 /* prototypes */
 /* display */
-static VESADisplay * _vesa_display_init(ukBus * bus);
+static VESADisplayDriver * _vesa_display_init(ukBus * bus, va_list ap);
 
 static void _vesa_display_clear(VESADisplay * display);
 
@@ -34,7 +34,7 @@ static void _vesa_display_print(VESADisplay * display, char const * str,
 
 
 /* variables */
-static ukDisplayData _vesa_display_data =
+static ukDisplayDriver _vesa_display_driver =
 {
 	NULL
 };
@@ -43,33 +43,37 @@ static ukDisplayData _vesa_display_data =
 /* public */
 /* variables */
 /* display */
-VESADisplay vesa_display =
+const ukDisplayInterface vesa_display =
 {
 	"vesa",
 	_vesa_display_init,
 	NULL,
 	NULL,
 	_vesa_display_clear,
-	_vesa_display_print,
-	&_vesa_display_data
+	_vesa_display_print
 };
 
 
 /* functions */
 /* display */
 /* vesa_display_init */
-static ukDisplay * _vesa_display_init(ukBus * bus)
+static ukDisplayDriver * _vesa_display_init(ukBus * bus, va_list ap)
 {
-	_vesa_display_data.bus = bus;
-	_vesa_display_clear(&vesa_display);
-	return &vesa_display;
+	(void) ap;
+	VESADisplay vesa;
+
+	_vesa_display_driver.bus = bus;
+	vesa.interface = &vesa_display;
+	vesa.driver = &_vesa_display_driver;
+	_vesa_display_clear(&vesa);
+	return &_vesa_display_driver;
 }
 
 
 /* vesa_display_clear */
 static void _vesa_display_clear(VESADisplay * display)
 {
-	VESADisplayData * data = display->data;
+	VESADisplayDriver * vesa = display->driver;
 
 	/* FIXME implement */
 }
@@ -79,7 +83,7 @@ static void _vesa_display_clear(VESADisplay * display)
 static void _vesa_display_print(VESADisplay * display, char const * str,
 		size_t len)
 {
-	VESADisplayData * data = display->data;
+	VESADisplayDriver * vesa = display->driver;
 
 	/* FIXME implement */
 }

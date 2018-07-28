@@ -14,26 +14,30 @@
 /* public */
 /* types */
 typedef struct _ukConsole ukConsole;
-
-typedef struct _ukConsoleData ukConsoleData;
+typedef struct _ukConsoleDriver ukConsoleDriver;
+typedef struct _ukConsoleInterface ukConsoleInterface;
 
 struct _ukConsole
 {
+	const ukConsoleInterface * interface;
+	ukConsoleDriver * driver;
+};
+
+struct _ukConsoleInterface
+{
 	char name[16];
 
-	ukConsole * (*init)(ukBus * bus);
+	ukConsoleDriver * (*init)(ukBus * bus, va_list ap);
 	void (*destroy)(ukConsole * console);
 
 	void (*clear)(ukConsole * console);
 
 	void (*print)(ukConsole * console, char const * str, size_t len);
-
-	ukConsoleData * data;
 };
 
 
 /* prototypes */
-ukConsole * console_init(ukBus * bus, char const * name);
+ukConsole * console_init(ukBus * bus, char const * name, ...);
 void console_destroy(ukConsole * console);
 
 /* accessors */
