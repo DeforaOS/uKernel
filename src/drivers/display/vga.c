@@ -21,7 +21,7 @@
 /* types */
 typedef struct _ukDisplay VGADisplay;
 
-typedef struct _ukDisplayData
+typedef struct _ukDisplayDriver
 {
 	volatile uint16_t * buf;
 
@@ -34,12 +34,12 @@ typedef struct _ukDisplayData
 	uint8_t pos_y;
 
 	ukBus * bus;
-} VGADisplayData;
+} VGADisplayDriver;
 
 
 /* prototypes */
 /* display */
-static VGADisplay * _vga_display_init(ukBus * bus);
+static VGADisplayDriver * _vga_display_init(ukBus * bus, va_list ap);
 
 static void _vga_display_clear(VGADisplay * display);
 
@@ -57,7 +57,7 @@ static void _vga_scroll(VGADisplay * display, size_t rows);
 
 
 /* variables */
-static ukDisplayData _vga_display_data =
+static VGADisplayDriver _vga_display_driver =
 {
 	(uint16_t *)VGA_ADDRESS_BASE,
 	VGA_TEXT_COLOR_BLACK,
@@ -72,49 +72,51 @@ static ukDisplayData _vga_display_data =
 /* public */
 /* variables */
 /* display */
-VGADisplay vga_display =
+const ukDisplayInterface vga_display =
 {
 	"vga",
 	_vga_display_init,
 	NULL,
 	NULL,
 	_vga_display_clear,
-	_vga_display_print,
-	&_vga_display_data
+	_vga_display_print
 };
 
 
 /* functions */
 /* display */
 /* vga_display_init */
-static ukDisplay * _vga_display_init(ukBus * bus)
+static ukDisplayDriver * _vga_display_init(ukBus * bus, va_list ap)
 {
+	VGADisplay display = { &vga_display, &_vga_display_driver };
+	(void) ap;
+
 	if(bus == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	_vga_display_data.bus = bus;
-	_vga_display_clear(&vga_display);
+	_vga_display_driver.bus = bus;
+	_vga_display_clear(&display);
 	/* reset the cursor */
-	_vga_cursor_set(&vga_display, !_vga_display_data.cursor, 0, 0);
-	_vga_cursor_set(&vga_display, true, 0, 0);
-	return &vga_display;
+	_vga_cursor_set(&display, !_vga_display_driver.cursor, 0, 0);
+	_vga_cursor_set(&display, true, 0, 0);
+	return display.driver;
 }
 
 
 /* vga_display_clear */
 static void _vga_display_clear(VGADisplay * display)
 {
-	VGADisplayData * data = display->data;
+	VGADisplayDriver * vga = display->driver;
 	size_t row;
 	size_t col;
 
 	for(row = 0; row < VGA_TEXT_ROWS; row++)
 		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
 			_vga_print(display, ' ', row, col);
-	data->pos_x = 0;
-	data->pos_y = 0;
+	vga->pos_x = 0;
+	vga->pos_y = 0;
 }
 
 
@@ -122,28 +124,28 @@ static void _vga_display_clear(VGADisplay * display)
 static void _vga_display_print(VGADisplay * display, char const * str,
 		size_t len)
 {
-	VGADisplayData * data = display->data;
+	VGADisplayDriver * vga = display->driver;
 	size_t i;
 
 	for(i = 0; i < len; i++)
 	{
-		if(str[i] == '\n' || data->pos_x == VGA_TEXT_COLUMNS)
+		if(str[i] == '\n' || vga->pos_x == VGA_TEXT_COLUMNS)
 		{
-			data->pos_x = 0;
-			data->pos_y++;
+			vga->pos_x = 0;
+			vga->pos_y++;
 			continue;
 		}
 		else if(str[i] == '\r')
 		{
-			data->pos_x = 0;
+			vga->pos_x = 0;
 			continue;
 		}
-		if(data->pos_y == VGA_TEXT_ROWS)
+		if(vga->pos_y == VGA_TEXT_ROWS)
 			_vga_scroll(display, 1);
-		_vga_print(display, str[i], data->pos_y, data->pos_x++);
+		_vga_print(display, str[i], vga->pos_y, vga->pos_x++);
 	}
-	_vga_cursor_set(display, data->cursor, data->pos_y, min(data->pos_x,
-				VGA_TEXT_COLUMNS));
+	_vga_cursor_set(display, vga->cursor, vga->pos_y,
+			min(vga->pos_x, VGA_TEXT_COLUMNS));
 }
 
 
@@ -153,17 +155,18 @@ static void _vga_display_print(VGADisplay * display, char const * str,
 static void _vga_cursor_set(VGADisplay * display, bool enabled,
 		size_t row, size_t column)
 {
-	VGADisplayData * data = display->data;
+	VGADisplayDriver * vga = display->driver;
+	ukBus * bus = vga->bus;
 	uint16_t pos = row * VGA_TEXT_COLUMNS + column;
 	uint8_t u8;
 
 	if(enabled == false)
 	{
 		/* disable the cursor if necessary */
-		if(data->cursor == false)
+		if(vga->cursor == false)
 			return;
-		data->bus->read8(data->bus, VGA_REGISTER_CURSOR_START, &u8);
-		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_START,
+		bus->interface->read8(bus, VGA_REGISTER_CURSOR_START, &u8);
+		bus->interface->write8(bus, VGA_REGISTER_CURSOR_START,
 				u8 | 0x20);
 	}
 	else if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
@@ -171,20 +174,20 @@ static void _vga_cursor_set(VGADisplay * display, bool enabled,
 	else
 	{
 		/* position the cursor */
-		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_LOCATION_LOW,
+		bus->interface->write8(bus, VGA_REGISTER_CURSOR_LOCATION_LOW,
 				pos & 0xff);
-		data->bus->write8(data->bus, VGA_REGISTER_CURSOR_LOCATION_HIGH,
+		bus->interface->write8(bus, VGA_REGISTER_CURSOR_LOCATION_HIGH,
 				pos >> 8);
 		/* enable the cursor if necessary */
-		if(data->cursor == false)
+		if(vga->cursor == false)
 		{
-			data->bus->read8(data->bus, VGA_REGISTER_CURSOR_START,
+			bus->interface->read8(bus, VGA_REGISTER_CURSOR_START,
 					&u8);
-			data->bus->write8(data->bus, VGA_REGISTER_CURSOR_START,
+			bus->interface->write8(bus, VGA_REGISTER_CURSOR_START,
 					u8 & ~0x20);
 		}
 	}
-	data->cursor = enabled;
+	vga->cursor = enabled;
 }
 
 
@@ -192,20 +195,20 @@ static void _vga_cursor_set(VGADisplay * display, bool enabled,
 static void _vga_print(VGADisplay * display, unsigned char c,
 		size_t row, size_t column)
 {
-	VGADisplayData * data = display->data;
+	VGADisplayDriver * vga = display->driver;
 	uint8_t color;
 
 	if(row >= VGA_TEXT_ROWS || column >= VGA_TEXT_COLUMNS)
 		return;
-	color = (data->color_bg << 4) | data->color_fg;
-	data->buf[row * VGA_TEXT_COLUMNS + column] = c | (color << 8);
+	color = (vga->color_bg << 4) | vga->color_fg;
+	vga->buf[row * VGA_TEXT_COLUMNS + column] = c | (color << 8);
 }
 
 
 /* vga_scroll */
 static void _vga_scroll(VGADisplay * display, size_t rows)
 {
-	VGADisplayData * data = display->data;
+	VGADisplayDriver * vga = display->driver;
 	size_t s;
 	size_t row;
 	size_t col;
@@ -218,13 +221,12 @@ static void _vga_scroll(VGADisplay * display, size_t rows)
 		return;
 	}
 	s = rows * VGA_TEXT_COLUMNS;
-	memmove(data->buf, &data->buf[s],
-			sizeof(*data->buf) * VGA_TEXT_COLUMNS * VGA_TEXT_ROWS
-			- (s * sizeof(*data->buf)));
+	memmove(vga->buf, &vga->buf[s], sizeof(*vga->buf) * VGA_TEXT_COLUMNS
+			* VGA_TEXT_ROWS - (s * sizeof(*vga->buf)));
 	/* clear the last lines */
 	for(row = VGA_TEXT_ROWS - rows; row < VGA_TEXT_ROWS; row++)
 		for(col = 0; col < VGA_TEXT_COLUMNS; col++)
 			_vga_print(display, ' ', row, col);
-	data->pos_x = 0;
-	data->pos_y = VGA_TEXT_ROWS - rows;
+	vga->pos_x = 0;
+	vga->pos_y = VGA_TEXT_ROWS - rows;
 }

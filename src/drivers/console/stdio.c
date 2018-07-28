@@ -13,15 +13,15 @@
 /* types */
 typedef struct _ukConsole STDIOConsole;
 
-typedef struct _ukConsoleData
+typedef struct _ukConsoleDriver
 {
 	ukBus * bus;
-} STDIOConsoleData;
+} STDIOConsoleDriver;
 
 
 /* prototypes */
 /* console */
-static STDIOConsole * _stdio_console_init(ukBus * bus);
+static STDIOConsoleDriver * _stdio_console_init(ukBus * bus, va_list ap);
 
 static void _stdio_console_clear(STDIOConsole * console);
 
@@ -30,30 +30,34 @@ static void _stdio_console_print(STDIOConsole * console, char const * str,
 
 
 /* variables */
-static ukConsoleData _stdio_console_data =
+static STDIOConsoleDriver _stdio_console_driver =
 {
 	NULL
 };
 
-STDIOConsole stdio_console =
+const ukConsoleInterface stdio_console =
 {
 	"stdio",
 	_stdio_console_init,
 	NULL,
 	_stdio_console_clear,
-	_stdio_console_print,
-	&_stdio_console_data
+	_stdio_console_print
 };
 
 
 /* functions */
 /* console */
 /* stdio_console_init */
-static ukConsole * _stdio_console_init(ukBus * bus)
+static STDIOConsoleDriver * _stdio_console_init(ukBus * bus, va_list ap)
 {
-	_stdio_console_data.bus = bus;
-	_stdio_console_clear(&stdio_console);
-	return &stdio_console;
+	STDIOConsole stdio;
+	(void) ap;
+
+	_stdio_console_driver.bus = bus;
+	stdio.interface = &stdio_console;
+	stdio.driver = &_stdio_console_driver;
+	_stdio_console_clear(&stdio);
+	return &_stdio_console_driver;
 }
 
 
@@ -68,10 +72,11 @@ static void _stdio_console_clear(STDIOConsole * console)
 static void _stdio_console_print(STDIOConsole * console, char const * str,
 		size_t len)
 {
-	STDIOConsoleData * data = console->data;
+	STDIOConsoleDriver * stdio = console->driver;
+	ukBus * bus = stdio->bus;
 	size_t i;
 
 	for(i = 0; i < len; i++)
-		data->bus->write8(data->bus, STDIO_ADDRESS_STDOUT,
+		bus->interface->write8(bus, STDIO_ADDRESS_STDOUT,
 				(uint8_t)str[i]);
 }

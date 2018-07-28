@@ -4,6 +4,7 @@
 
 
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -17,28 +18,35 @@ static ukClock * _clock = NULL;
 
 /* public */
 /* variables */
-extern ukClock sys_clock;
+extern const ukClockInterface sys_clock;
 
 
 /* functions */
 /* clock_init */
-ukClock * clock_init(ukBus * bus, char const * name)
+ukClock * clock_init(ukBus * bus, char const * name, ...)
 {
-	const ukClock * drivers[] = {
+	const ukClockInterface * drivers[] = {
 		&sys_clock
 	};
+	ukClock * clock;
+	va_list ap;
 	size_t i;
-	ukClock * clock = NULL;
 
+	if((clock = malloc(sizeof(*clock))) == NULL)
+		return NULL;
+	va_start(ap, name);
 	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
 		if(strncmp(drivers[i]->name, name,
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
 			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus->name : "");
-			clock = drivers[i]->init(bus);
+					(bus != NULL) ? bus_get_name(bus) : "");
+			clock->interface = drivers[i];
+			clock->driver = drivers[i]->init(bus, ap);
+			break;
 		}
+	va_end(ap);
 	if(clock == NULL)
 	{
 		errno = ENODEV;
@@ -64,10 +72,10 @@ ukClock * clock_get_default(void)
 /* clock_get_time */
 int clock_get_time(ukClock * clock, time_t * time)
 {
-	if(clock->get_time == NULL)
+	if(clock->interface->get_time == NULL)
 	{
 		errno = ENOTSUP;
 		return -1;
 	}
-	return clock->get_time(clock, time);
+	return clock->interface->get_time(clock, time);
 }

@@ -14,16 +14,17 @@
 /* private */
 /* types */
 typedef struct _ukBus VGABus;
+typedef struct _ukBusDriver VGABusDriver;
 
-typedef struct _ukBusData
+typedef struct _ukBusDriver
 {
 	ukBus * parent;
 	ukBusAddress base;
-} VGABusData;
+} VGABusDriver;
 
 
 /* prototypes */
-static VGABus * _vga_bus_init(ukBus * parent);
+static VGABusDriver * _vga_bus_init(ukBus * parent, va_list ap);
 static void _vga_bus_destroy(VGABus * bus);
 
 static int _vga_bus_read8(VGABus * bus, ukBusAddress address, uint8_t * value);
@@ -35,9 +36,11 @@ static int _vga_bus_write8(VGABus * bus, ukBusAddress address, uint8_t value);
 static int _vga_bus_write16(VGABus * bus, ukBusAddress address, uint16_t value);
 static int _vga_bus_write32(VGABus * bus, ukBusAddress address, uint32_t value);
 
+static int _vga_bus_command(VGABus * bus, uint32_t command, va_list ap);
+
 
 /* variables */
-VGABus vga_bus =
+const ukBusInterface vga_bus =
 {
 	"vga",
 	_vga_bus_init,
@@ -48,8 +51,7 @@ VGABus vga_bus =
 	_vga_bus_write8,
 	_vga_bus_write16,
 	_vga_bus_write32,
-	NULL,
-	NULL
+	_vga_bus_command
 };
 
 
@@ -57,28 +59,28 @@ VGABus vga_bus =
 /* functions */
 /* bus */
 /* vga_bus_init */
-static VGABus * _vga_bus_init(ukBus * parent)
+static VGABusDriver * _vga_bus_init(ukBus * parent, va_list ap)
 {
-	VGABusData * data;
+	VGABusDriver * vga;
+	(void) ap;
 
 	if(parent == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	if((data = malloc(sizeof(*data))) == NULL)
+	if((vga = malloc(sizeof(*vga))) == NULL)
 		return NULL;
-	data->parent = parent;
-	data->base = 0x3d4;
-	vga_bus.data = data;
-	return &vga_bus;
+	vga->parent = parent;
+	vga->base = 0x3d4;
+	return vga;
 }
 
 
 /* vga_bus_destroy */
 static void _vga_bus_destroy(VGABus * bus)
 {
-	free(bus->data);
+	free(bus->driver);
 }
 
 
@@ -86,10 +88,11 @@ static void _vga_bus_destroy(VGABus * bus)
 static int _vga_bus_read8(VGABus * bus, ukBusAddress address, uint8_t * value)
 {
 	int ret;
-	ukBus * parent = bus->data->parent;
+	VGABusDriver * vga = bus->driver;
+	ukBus * parent = bus->driver->parent;
 
-	ret = (parent->write8(parent, bus->data->base, address) == 0
-			&& parent->read8(parent, bus->data->base + 1,
+	ret = (parent->interface->write8(parent, vga->base, address) == 0
+			&& parent->interface->read8(parent, vga->base + 1,
 				value) == 0) ? 0 : -1;
 	return ret;
 }
@@ -119,15 +122,16 @@ static int _vga_bus_read32(VGABus * bus, ukBusAddress address, uint32_t * value)
 }
 
 
-/* vga_write8 */
+/* vga_bus_write8 */
 static int _vga_bus_write8(VGABus * bus, ukBusAddress address, uint8_t value)
 {
 	int ret;
-	VGABusData * data = bus->data;
+	VGABusDriver * vga = bus->driver;
+	ukBus * parent = vga->parent;
 
-	ret = (data->parent->write8(data->parent, bus->data->base, address) == 0
-			&& data->parent->write8(data->parent,
-				bus->data->base + 1, value) == 0) ? 0 : -1;
+	ret = (parent->interface->write8(parent, vga->base, address) == 0
+			&& parent->interface->write8(parent, vga->base + 1,
+				value) == 0) ? 0 : -1;
 	return ret;
 }
 
@@ -144,7 +148,7 @@ static int _vga_bus_write16(VGABus * bus, ukBusAddress address, uint16_t value)
 }
 
 
-/* vga_write32 */
+/* vga_bus_write32 */
 static int _vga_bus_write32(VGABus * bus, ukBusAddress address, uint32_t value)
 {
 	(void) bus;
@@ -153,5 +157,15 @@ static int _vga_bus_write32(VGABus * bus, ukBusAddress address, uint32_t value)
 
 	errno = ENOTSUP;
 	return -1;
+}
+
+
+/* vga_bus_command */
+static int _vga_bus_command(VGABus * bus, uint32_t command, va_list ap)
+{
+	VGABusDriver * driver = bus->driver;
+	ukBus * parent = driver->parent;
+
+	return parent->interface->command(parent, command, ap);
 }
 #endif

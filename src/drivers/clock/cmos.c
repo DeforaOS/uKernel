@@ -14,15 +14,15 @@
 /* types */
 typedef struct _ukClock CMOSClock;
 
-typedef struct _ukClockData
+typedef struct _ukClockDriver
 {
 	ukBus * bus;
-} CMOSClockData;
+} CMOSClockDriver;
 
 
 /* prototypes */
 /* clock */
-static CMOSClock * _cmos_clock_init(ukBus * bus);
+static CMOSClockDriver * _cmos_clock_init(ukBus * bus, va_list ap);
 static void _cmos_clock_destroy(CMOSClock * clock);
 
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time);
@@ -31,31 +31,31 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time);
 /* public */
 /* variables */
 /* clock */
-CMOSClock cmos_clock =
+const ukClockInterface cmos_clock =
 {
 	"cmos",
 	_cmos_clock_init,
 	_cmos_clock_destroy,
-	_cmos_clock_get_time,
-	NULL
+	_cmos_clock_get_time
 };
 
 
 /* functions */
 /* clock */
 /* cmos_clock_init */
-static CMOSClock * _cmos_clock_init(ukBus * bus)
+static CMOSClockDriver * _cmos_clock_init(ukBus * bus, va_list ap)
 {
-	CMOSClock * clock = &cmos_clock;
+	CMOSClockDriver * clock;
+	(void) ap;
 
 	if(bus == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	if((clock->data = malloc(sizeof(*clock->data))) == NULL)
+	if((clock = malloc(sizeof(*clock))) == NULL)
 		return NULL;
-	clock->data->bus = bus;
+	clock->bus = bus;
 	return clock;
 }
 
@@ -63,7 +63,7 @@ static CMOSClock * _cmos_clock_init(ukBus * bus)
 /* cmos_clock_destroy */
 static void _cmos_clock_destroy(CMOSClock * clock)
 {
-	free(clock->data);
+	free(clock->driver);
 }
 
 
@@ -76,7 +76,7 @@ static void _time_do_decode(unsigned char * value);
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
 	const size_t tries = 3;
-	CMOSClockData * data = clock->data;
+	CMOSClockDriver * cmos = clock->driver;
 	unsigned char seconds, s;
 	unsigned char minutes, m;
 	unsigned char hours, h;
@@ -92,9 +92,9 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	}
 	for(i = 0; i < tries; i++)
 		/* try to obtain the same results twice for consistency */
-		if(_get_time_do(data->bus, &day, &month, &year,
+		if(_get_time_do(cmos->bus, &day, &month, &year,
 					&hours, &minutes, &seconds) != 0
-				|| _get_time_do(data->bus, &d, &M, &y,
+				|| _get_time_do(cmos->bus, &d, &M, &y,
 					&h, &m, &s) != 0)
 			return -1;
 		else if(seconds == s && minutes == m && hours == h
@@ -122,19 +122,19 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 
 	/* check if the time and date are available */
 	for(i = 0; i < tries; i++)
-		if(bus->read8(bus, CMOS_REGISTER_STATUS0, &status) != 0)
+		if(bus->interface->read8(bus, CMOS_REGISTER_STATUS0, &status) != 0)
 			return -1;
 		else if((status & CMOS_STATUS0_UPDATING) == 0x00)
 			break;
 	if(i == tries)
 		return -1;
-	if(bus->read8(bus, CMOS_REGISTER_STATUS1, &status) != 0
-			|| bus->read8(bus, CMOS_REGISTER_SECONDS, seconds) != 0
-			|| bus->read8(bus, CMOS_REGISTER_MINUTES, minutes) != 0
-			|| bus->read8(bus, CMOS_REGISTER_HOURS, hours) != 0
-			|| bus->read8(bus, CMOS_REGISTER_DAY, day) != 0
-			|| bus->read8(bus, CMOS_REGISTER_MONTH, month) != 0
-			|| bus->read8(bus, CMOS_REGISTER_YEAR, year) != 0)
+	if(bus->interface->read8(bus, CMOS_REGISTER_STATUS1, &status) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_SECONDS, seconds) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_MINUTES, minutes) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_HOURS, hours) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_DAY, day) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_MONTH, month) != 0
+			|| bus->interface->read8(bus, CMOS_REGISTER_YEAR, year) != 0)
 		return -1;
 	/* convert to a 24-hour clock if necessary */
 	if((status & CMOS_STATUS1_24HOUR) && (*hours & CMOS_HOUR_PM))

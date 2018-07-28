@@ -12,7 +12,7 @@
 
 /* private */
 /* variables */
-static ukConsole * _console = NULL;
+static ukConsole _console = { NULL, NULL };
 
 static char _console_buf[1024];
 static size_t _console_buf_cnt = 0;
@@ -20,36 +20,41 @@ static size_t _console_buf_cnt = 0;
 
 /* public */
 /* variables */
-extern ukConsole stdio_console;
+extern const ukConsoleInterface stdio_console;
 
 
 /* functions */
 /* console_init */
-ukConsole * console_init(ukBus * bus, char const * name)
+ukConsole * console_init(ukBus * bus, char const * name, ...)
 {
-	ukConsole * drivers[] = {
+	const ukConsoleInterface * drivers[] = {
 		&stdio_console
 	};
+	va_list ap;
 	size_t i;
 
-	if(_console != NULL)
-		return _console;
+	if(_console.driver != NULL)
+		return &_console;
+	va_start(ap, name);
 	for(i = 0; i < sizeof(drivers) / sizeof(*drivers); i++)
 		if(strncmp(drivers[i]->name, name,
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
 			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus->name : "");
-			_console = drivers[i]->init(bus);
+					(bus != NULL) ? bus_get_name(bus) : "");
+			_console.interface = drivers[i];
+			_console.driver = drivers[i]->init(bus, ap);
+			break;
 		}
-	if(_console == NULL)
+	va_end(ap);
+	if(_console.driver == NULL)
 	{
 		errno = ENODEV;
 		return NULL;
 	}
-	_console->print(_console, _console_buf, _console_buf_cnt);
-	return _console;
+	_console.interface->print(&_console, _console_buf, _console_buf_cnt);
+	return &_console;
 }
 
 
@@ -58,9 +63,12 @@ ukConsole * console_init(ukBus * bus, char const * name)
 /* console_get_default */
 ukConsole * console_get_default(void)
 {
-	if(_console == NULL)
+	if(_console.driver == NULL)
+	{
 		errno = ENODEV;
-	return _console;
+		return NULL;
+	}
+	return &_console;
 }
 
 
@@ -71,7 +79,8 @@ void console_clear(ukConsole * console)
 	if(console == NULL
 			&& (console = console_get_default()) == NULL)
 		return;
-	console->clear(console);
+	if(console->interface->clear != NULL)
+		console->interface->clear(console);
 }
 
 
@@ -87,6 +96,6 @@ void console_print(ukConsole * console, char const * str, size_t len)
 		strncpy(&_console_buf[_console_buf_cnt], str, s);
 		_console_buf_cnt += s;
 	}
-	else
-		console->print(console, str, len);
+	else if(console->interface->print != NULL)
+		console->interface->print(console, str, len);
 }

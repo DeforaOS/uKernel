@@ -14,6 +14,14 @@
 /* public */
 /* types */
 typedef struct _ukDisplay ukDisplay;
+typedef struct _ukDisplayDriver ukDisplayDriver;
+typedef struct _ukDisplayInterface ukDisplayInterface;
+
+struct _ukDisplay
+{
+	const ukDisplayInterface * interface;
+	ukDisplayDriver * driver;
+};
 
 typedef enum _ukDisplayMode
 {
@@ -21,13 +29,11 @@ typedef enum _ukDisplayMode
 	DISPLAY_MODE_GRAPHICS
 } ukDisplayMode;
 
-typedef struct _ukDisplayData ukDisplayData;
-
-struct _ukDisplay
+struct _ukDisplayInterface
 {
 	char name[16];
 
-	ukDisplay * (*init)(ukBus * bus);
+	ukDisplayDriver * (*init)(ukBus * bus, va_list ap);
 	void (*destroy)(ukDisplay * display);
 
 	int (*set_mode)(ukDisplay * display, ukDisplayMode mode,
@@ -37,13 +43,11 @@ struct _ukDisplay
 	void (*clear)(ukDisplay * display);
 
 	void (*print)(ukDisplay * display, char const * str, size_t len);
-
-	ukDisplayData * data;
 };
 
 
 /* prototypes */
-ukDisplay * display_init(ukBus * bus, char const * name);
+ukDisplay * display_init(ukBus * bus, char const * name, ...);
 void display_destroy(ukDisplay * display);
 
 /* accessors */
