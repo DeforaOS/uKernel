@@ -46,9 +46,11 @@ multiboot_header:
 .long 8
 
 
+#ifndef __ELF__
 .section .text
 /* multiboot_start */
 .global _multiboot_start
 .type _multiboot_start, @function
 _multiboot_start:
 	jmp _start
+#endif
