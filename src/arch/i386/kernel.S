@@ -77,29 +77,29 @@ _start:
 	cmp	$0x0, %eax
 	jne	2f
 
-	/* start the kernel */
+	/* prepare the arguments */
 	push	$0x0
 	push	$0x0
 	mov	%ebx, %eax
 	add	$0x10, %eax
 	push	%eax
 	push	$0x1
-	call	main
-	add	$0x10, %esp
 	jmp	2f
 
 1:
 	/* FIXME setup paging */
 
+	/* prepare the arguments */
+	push	$0x0
+	push	$0x0
+	push	$0x0
+	push	$0x0
+
+2:
 	/* start the kernel */
-	push	$0x0
-	push	$0x0
-	push	$0x0
-	push	$0x0
 	call	main
 	add	$0x10, %esp
 
-2:
 	/* exit the kernel */
 	push	%eax
 	call	exit
