@@ -11,6 +11,10 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#ifndef min
+# define min(a, b) (((a) > (b)) ? (b) : (a))
+#endif
+
 
 /* private */
 /* types */
@@ -151,4 +155,29 @@ void * malloc(size_t size)
 	b->next = a->next;
 	a->next = b;
 	return (char *)b + sizeof(*b);
+}
+
+
+/* realloc */
+void * realloc(void * ptr, size_t size)
+{
+	Alloc * a = (Alloc*)((char*)ptr - sizeof(*a));
+	void * p;
+
+	if(ptr == NULL)
+		return malloc(size);
+	if(size == a->size)
+		return ptr;
+	size = (size | 0xf) + 1; /* round up to 64 bits */
+	if(size < a->size || (a->next != NULL && (char*)a->next - (char*)a
+				- sizeof(*a) >= size))
+	{
+		a->size = size;
+		return ptr;
+	}
+	if((p = malloc(size)) == NULL)
+		return NULL;
+	memcpy(p, ptr, min(a->size, size));
+	free(ptr);
+	return p;
 }
