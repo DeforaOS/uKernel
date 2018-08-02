@@ -81,7 +81,10 @@ void console_destroy(ukConsole * console)
 ukConsole * console_get_default(void)
 {
 	if(_console.driver == NULL)
+	{
 		errno = ENODEV;
+		return NULL;
+	}
 	return &_console;
 }
 
