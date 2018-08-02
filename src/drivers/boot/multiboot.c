@@ -276,7 +276,7 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		puts("Could not load 64-bit module: Invalid format");
 		return -1;
 	}
-	phdr = (Elf64_Phdr *)(mod->start + ehdr->e_phoff);
+	phdr = (Elf64_Phdr *)(uintptr_t)(mod->start + ehdr->e_phoff);
 	for(i = 0; i < ehdr->e_phnum; i++)
 	{
 		if(phdr[i].p_type != PT_LOAD)
@@ -322,7 +322,7 @@ static int _load_module_elf64_relocate(ukMultibootMod const * mod,
 	Elf64_Rela rela;
 	Elf64_Sym * sym;
 
-	shdr = (Elf64_Shdr *)(mod->start + ehdr->e_shoff);
+	shdr = (Elf64_Shdr *)(uintptr_t)(mod->start + ehdr->e_shoff);
 	for(i = SHN_UNDEF + 1; i < ehdr->e_shnum; i++)
 	{
 		if((shdr[i].sh_type != SHT_REL
@@ -339,7 +339,7 @@ static int _load_module_elf64_relocate(ukMultibootMod const * mod,
 					shdr[link].sh_link,
 					&strtab, &strtab_cnt) != 0)
 			break;
-		rel = (Elf64_Rel *)(mod->start + shdr[i].sh_offset);
+		rel = (Elf64_Rel *)(uintptr_t)(mod->start + shdr[i].sh_offset);
 		for(j = 0; j < shdr[i].sh_size; j += shdr[i].sh_entsize)
 		{
 			rela.r_addend = 0;
@@ -364,7 +364,8 @@ static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 #if defined(__i386__)
 	Elf64_Addr * addr;
 
-	addr = (Elf64_Addr *)(mod->start + (shdr != NULL ? shdr->sh_offset : 0)
+	addr = (Elf64_Addr *)(uintptr_t)(mod->start
+			+ (shdr != NULL ? shdr->sh_offset : 0)
 			+ rela->r_offset);
 	switch(ELF64_R_TYPE(rela->r_info))
 	{
@@ -397,7 +398,7 @@ static int _load_module_elf64_strtab(ukMultibootMod const * mod,
 	if(index >= ehdr->e_shnum || shdr[index].sh_type != SHT_STRTAB)
 		return -1;
 	shdr = &shdr[index];
-	*strtab = (char *)(mod->start + shdr->sh_offset);
+	*strtab = (char *)(uintptr_t)(mod->start + shdr->sh_offset);
 	if((*strtab)[shdr->sh_size - 1] != '\0')
 		return -1;
 	*strtab_cnt = shdr->sh_size;
@@ -413,7 +414,7 @@ static int _load_module_elf64_symtab(ukMultibootMod const * mod,
 	shdr = &shdr[index];
 	if(shdr->sh_type != type || shdr->sh_entsize != sizeof(**symtab))
 		return -1;
-	*symtab = (Elf64_Sym *)(mod->start + shdr->sh_offset);
+	*symtab = (Elf64_Sym *)(uintptr_t)(mod->start + shdr->sh_offset);
 	*symtab_cnt = shdr->sh_size / shdr->sh_entsize;
 	return 0;
 }
