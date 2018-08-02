@@ -4,7 +4,8 @@
 
 
 
-#include <stddef.h>
+#include <stdlib.h>
+#include <errno.h>
 #include "drivers/clock.h"
 
 
@@ -12,10 +13,16 @@
 /* types */
 typedef struct _ukClock SysClock;
 
+typedef struct _ukClockDriver
+{
+	ukBus * bus;
+} SysClockDriver;
+
 
 /* prototypes */
 /* console */
-static SysClock * _sys_clock_init(ukBus * bus);
+static SysClockDriver * _sys_clock_init(ukBus * bus, va_list ap);
+static void _sys_clock_destroy(SysClock * clock);
 
 static int _sys_clock_get_time(SysClock * console, time_t * time);
 
@@ -25,24 +32,39 @@ extern time_t _time(time_t * t);
 /* public */
 /* variables */
 /* console */
-SysClock sys_clock =
+const ukClockInterface sys_clock =
 {
 	"sys",
 	_sys_clock_init,
-	NULL,
-	_sys_clock_get_time,
-	NULL
+	_sys_clock_destroy,
+	_sys_clock_get_time
 };
 
 
 /* functions */
 /* console */
 /* sys_clock_init */
-static SysClock * _sys_clock_init(ukBus * bus)
+static SysClockDriver * _sys_clock_init(ukBus * bus, va_list ap)
 {
-	(void) bus;
+	SysClockDriver * clock;
+	(void) ap;
 
-	return &sys_clock;
+	if(bus == NULL)
+	{
+		errno = ENODEV;
+		return NULL;
+	}
+	if((clock = malloc(sizeof(*clock))) == NULL)
+		return NULL;
+	clock->bus = bus;
+	return clock;
+}
+
+
+/* sys_clock_destroy */
+static void _sys_clock_destroy(SysClock * clock)
+{
+	free(clock->driver);
 }
 
 
