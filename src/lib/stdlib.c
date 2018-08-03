@@ -81,28 +81,44 @@ void exit(int status)
 
 
 /* free */
+static void _free_abort(void);
+
 void free(void * ptr)
 {
-	const char buf[] = "invalid free detected: terminated\n";
-	Alloc * a = (Alloc*)((char*)ptr - sizeof(*a));
+	Alloc * a;
 	Alloc * b;
 
 	if(ptr == NULL)
 		return;
+	if(ptr < (void *)sizeof(*a))
+	{
+		_free_abort();
+		return;
+	}
+	a = (Alloc *)ptr - 1;
 	b = a->prev;
 	if(b->next != a)
 	{
-		write(2, buf, sizeof(buf) - 1);
-		abort();
+		_free_abort();
 		return;
 	}
 	b->next = a->next;
-	if(a->next != NULL) /* return if memory is alloc'd past a */
-	{
+	if(a->next != NULL) /* memory is allocated past a */
 		a->next->prev = b;
-		return;
-	}
-	sbrk(-(a->size + sizeof(*a)));
+	else if(b != &_alloc)
+		/* decrease to lowest possible value */
+		sbrk(-((uintptr_t)a + a->size - (uintptr_t)b - b->size));
+	else
+		/* remove the last object */
+		sbrk(-sizeof(*a) - a->size);
+}
+
+static void _free_abort(void)
+{
+	const char buf[] = "invalid free detected: terminated\n";
+
+	write(2, buf, sizeof(buf) - 1);
+	abort();
 }
 
 
@@ -125,22 +141,23 @@ void * malloc(size_t size)
 {
 	Alloc * a = &_alloc;
 	Alloc * b = NULL;
-	intptr_t inc;
+	uintptr_t inc;
 
-	if(size >= LONG_MAX - sizeof(*b) - 0x8)
+	if(size >= SSIZE_MAX - sizeof(*b) - 0x8)
 	{
 		errno = ENOMEM;
 		return NULL;
 	}
-	size = (size | 0x7) + 1; /* round up to 64 bits */
+	if((size & 0x7) != 0x0)
+		size = (size | 0x7) + 1; /* round up to 64 bits */
 	inc = size + sizeof(*b);
 	if(_alloc.next != NULL) /* look for available space */
 		for(a = _alloc.next; a->next != NULL; a = a->next)
-			if(inc <= (intptr_t)(a->next) - (intptr_t)a
-					- (intptr_t)sizeof(*a)
-					- (intptr_t)a->size)
+			if(inc <= (uintptr_t)a->next - (uintptr_t)a - sizeof(*a)
+					- a->size)
 			{
-				b = (Alloc *)((char *)a + sizeof(*a) + a->size);
+				b = (Alloc *)((uintptr_t)a + sizeof(*a)
+						+ a->size);
 				a->next->prev = b;
 				break;
 			}
@@ -158,17 +175,27 @@ void * malloc(size_t size)
 /* realloc */
 void * realloc(void * ptr, size_t size)
 {
-	Alloc * a = (Alloc *)((char *)ptr - sizeof(*a));
+	Alloc * a = (Alloc *)ptr - 1;
 	void * p;
 
 	if(ptr == NULL)
 		return malloc(size);
+	if((size & 0x7) != 0x0)
+		size = (size | 0x7) + 1; /* round up to 64 bits */
 	if(size == a->size)
 		return ptr;
-	size = (size | 0xf) + 1; /* round up to 64 bits */
-	if(size < a->size || (a->next != NULL && (char *)a->next - (char *)a
-				- sizeof(*a) >= size))
+	if(a->next == NULL)
 	{
+		/* reallocate the space */
+		if(sbrk(size - a->size) == (void *)-1)
+			return NULL;
+		a->size = size;
+		return ptr;
+	}
+	if(size < a->size || (uintptr_t)a->next - (uintptr_t)a - sizeof(*a)
+			>= size)
+	{
+		/* update the size */
 		a->size = size;
 		return ptr;
 	}
