@@ -40,6 +40,7 @@ void clock_destroy(ukClock * clock);
 
 /* accessors */
 ukClock * clock_get_default(void);
+char const * clock_get_name(ukClock * clock);
 
 int clock_get_time(ukClock * clock, time_t * time);
 

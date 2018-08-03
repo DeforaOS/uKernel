@@ -38,5 +38,6 @@ void pic_destroy(ukPIC * pic);
 
 /* accessors */
 ukPIC * pic_get_default(void);
+char const * pic_get_name(ukPIC * pic);
 
 #endif /* !UKERNEL_DRIVERS_PIC_H */

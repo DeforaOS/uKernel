@@ -74,3 +74,10 @@ ukPIC * pic_get_default(void)
 		errno = ENODEV;
 	return _pic;
 }
+
+
+/* pic_get_name */
+char const * pic_get_name(ukPIC * pic)
+{
+	return pic->interface->name;
+}

@@ -89,13 +89,17 @@ ukDisplay * display_get_default(void)
 }
 
 
+/* display_get_name */
+char const * display_get_name(ukDisplay * display)
+{
+	return display->interface->name;
+}
+
+
 /* display_set_mode */
 int display_set_mode(ukDisplay * display, ukDisplayMode mode,
 		unsigned int width, unsigned int height, unsigned int depth)
 {
-	if(display == NULL
-			&& (display = display_get_default()) == NULL)
-		return -1;
 	if(display->interface->set_mode == NULL)
 	{
 		errno = ENOTSUP;
@@ -110,9 +114,6 @@ int display_set_mode(ukDisplay * display, ukDisplayMode mode,
 /* display_clear */
 void display_clear(ukDisplay * display)
 {
-	if(display == NULL
-			&& (display = display_get_default()) == NULL)
-		return;
 	if(display->interface->clear != NULL)
 		display->interface->clear(display);
 }
@@ -121,9 +122,6 @@ void display_clear(ukDisplay * display)
 /* display_print */
 void display_print(ukDisplay * display, char const * str, size_t len)
 {
-	if(display == NULL
-			&& (display = display_get_default()) == NULL)
-		return;
 	if(display->interface->print != NULL)
 		display->interface->print(display, str, len);
 }

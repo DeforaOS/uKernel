@@ -52,6 +52,7 @@ void display_destroy(ukDisplay * display);
 
 /* accessors */
 ukDisplay * display_get_default(void);
+char const * display_get_name(ukDisplay * display);
 
 int display_set_mode(ukDisplay * display, ukDisplayMode mode,
 		unsigned int width, unsigned int height, unsigned int depth);

@@ -96,6 +96,17 @@ _start:
 	push	$0x0
 
 2:
+	/* initialize the platform */
+	push	boot
+	push	platform
+	call	platform_init
+	add	$0x8, %esp
+
+	/* start the platform */
+	push	platform
+	call	platform_start
+	add	$0x4, %esp
+
 	/* start the kernel */
 	call	main
 	add	$0x10, %esp

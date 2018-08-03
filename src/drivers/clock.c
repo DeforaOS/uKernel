@@ -74,11 +74,15 @@ ukClock * clock_get_default(void)
 }
 
 
+/* clock_get_name */
+char const * clock_get_name(ukClock * clock)
+{
+	return clock->interface->name;
+}
+
+
 /* clock_get_time */
 int clock_get_time(ukClock * clock, time_t * time)
 {
-	if(clock == NULL
-			&& (clock = clock_get_default()) == NULL)
-		return -1;
 	return clock->interface->get_time(clock, time);
 }

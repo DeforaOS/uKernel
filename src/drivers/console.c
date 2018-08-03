@@ -89,6 +89,13 @@ ukConsole * console_get_default(void)
 }
 
 
+/* console_get_name */
+char const * console_get_name(ukConsole * console)
+{
+	return console->interface->name;
+}
+
+
 /* helpers */
 /* console_clear */
 void console_clear(ukConsole * console)

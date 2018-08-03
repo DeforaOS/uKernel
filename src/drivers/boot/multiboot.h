@@ -10,6 +10,7 @@
 # include <sys/types.h>
 # include <stdint.h>
 # include <elf.h>
+# include <kernel/boot.h>
 # include "multiboot/constants.h"
 
 

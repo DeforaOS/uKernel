@@ -6,38 +6,20 @@
 
 #if defined(__amd64__) || defined(__i386__)
 # include <stdio.h>
-# include "arch/amd64/gdt.h"
-# include "arch/i386/gdt.h"
-# include "arch/i386/idt.h"
 # include "drivers/boot/multiboot.h"
-# include "drivers/bus.h"
-# include "drivers/clock.h"
-# include "drivers/console.h"
-# include "drivers/display.h"
-# include "drivers/pic.h"
 
 # ifndef KERNEL_CONSOLE
 #  define KERNEL_CONSOLE	"uart"
 # endif
+# ifndef KERNEL_CONSOLE_BUS
+#  define KERNEL_CONSOLE_BUS	"ioport"
+# endif
 # ifndef KERNEL_DISPLAY
 #  define KERNEL_DISPLAY	"vga"
 # endif
-
-
-/* private */
-/* constants */
-/* GDT: 4GB flat memory setup */
-static const GDT _gdt_4gb[4] =
-{
-	{ 0x00000000, 0x00000000, 0x00 },
-	{ 0x00000000, 0xffffffff, 0x9a },
-	{ 0x00000000, 0xffffffff, 0x92 },
-	{ 0x00000000, 0x00000000, 0x89 }
-};
-
-static const IDT _idt[] =
-{
-};
+# ifndef KERNEL_DISPLAY_BUS
+#  define KERNEL_DISPLAY_BUS	"vga"
+# endif
 
 
 /* public */
@@ -45,37 +27,24 @@ static const IDT _idt[] =
 /* multiboot */
 int multiboot(ukMultibootInfo * mi)
 {
-	ukBus * ioportbus;
-	ukBus * vgabus;
-	ukBus * cmosbus;
 	char const * console = KERNEL_CONSOLE;
 	char const * display = KERNEL_DISPLAY;
 	size_t i;
 	ukMultibootMod * mod;
 
-	/* initialize the buses */
-	ioportbus = bus_init(NULL, "ioport");
-	vgabus = bus_init(ioportbus, "vga");
-	cmosbus = bus_init(ioportbus, "cmos");
+	boot_init(boot, mi->loader_name, mi->cmdline,
+			mi->mem_lower * 1024, mi->mem_upper * 1024);
+
+	boot_set_console(boot, console, KERNEL_CONSOLE_BUS);
 
 #ifdef notyet
 	/* detect the video driver to use */
 	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_VBE)
 		display = "vesa";
 #endif
+	boot_set_display(boot, display, KERNEL_DISPLAY_BUS);
 
-	/* initialize the console */
-	console_init(ioportbus, console);
-
-	/* initialize the display */
-	display_init(vgabus, display);
-
-	/* initialize the PIC */
-	pic_init(ioportbus, "i8259a");
-
-	/* initialize the clock */
-	clock_init(cmosbus, "cmos");
-
+#if 0
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
 	if(mi->loader_name != NULL)
@@ -85,37 +54,16 @@ int multiboot(ukMultibootInfo * mi)
 	printf("%u MB memory available\n",
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
-
-	/* setup the GDT */
-#if defined(__amd64__)
-	if(_arch_setgdt64(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
-#else
-	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 #endif
-	{
-		puts("Could not setup the GDT");
-		return 2;
-	}
 
-	/* load the modules */
-	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
-		puts("No modules provided");
-	else
-	{
-		puts("Loading modules...");
+	/* register the modules */
+	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS)
 		for(i = 0; i < mi->mods_count; i++)
 		{
 			mod = &mi->mods_addr[i];
-			multiboot_load_module(mod, NULL, NULL);
+			boot_module_register(boot, NULL, mod->cmdline,
+					mod->start, mod->end);
 		}
-	}
-
-	/* setup the IDT */
-	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
-	{
-		puts("Could not setup the IDT");
-		return 2;
-	}
 
 	return 0;
 }

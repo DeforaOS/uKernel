@@ -8,11 +8,11 @@
 
 # include <stdarg.h>
 # include <stdint.h>
+# include <kernel/driver.h>
 
 
 /* public */
 /* types */
-typedef struct _ukBus ukBus;
 typedef struct _ukBusDriver ukBusDriver;
 typedef struct _ukBusInterface ukBusInterface;
 typedef uintptr_t ukBusAddress;

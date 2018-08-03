@@ -42,6 +42,7 @@ void console_destroy(ukConsole * console);
 
 /* accessors */
 ukConsole * console_get_default(void);
+char const * console_get_name(ukConsole * console);
 
 /* helpers */
 void console_clear(ukConsole * console);
