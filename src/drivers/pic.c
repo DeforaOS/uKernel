@@ -44,10 +44,6 @@ ukPIC * pic_init(ukBus * bus, char const * name, ...)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s pic%s%s%s\n", name,
-					(bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus_get_name(bus) : "",
-					(bus != NULL) ? " bus" : "");
 			pic->interface = drivers[i];
 			pic->driver = drivers[i]->init(bus, ap);
 			break;

@@ -21,5 +21,7 @@ typedef enum _ukDriverType
 	UKDT_DISPLAY,
 	UKDT_PIC
 } ukDriverType;
+# define UKDT_LAST	UKDT_PIC
+# define UKDT_COUNT	(UKDT_LAST + 1)
 
 #endif /* !UKERNEL_DRIVER_H */

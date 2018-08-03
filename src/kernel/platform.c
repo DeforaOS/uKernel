@@ -54,6 +54,11 @@ static const ukPlatformDevice _devices[] =
 	{ UKDT_PIC,	"i8259a",	"ioport"}
 };
 
+static char const * _driver_types[UKDT_COUNT] =
+{
+	"unknown", "bus", "clock", "console", "display", "pic"
+};
+
 /* GDT: 4GB flat memory setup */
 static const GDT _gdt_4gb[4] =
 {
@@ -201,6 +206,11 @@ int platform_device_register(ukPlatform * platform,
 	if(driver->driver == NULL)
 		return -1;
 	platform->drivers++;
+	fprintf(stderr, "%s %s%s%s%s\n", device->name,
+			_driver_types[device->type],
+			(device->bus != NULL) ? " at " : "",
+			(device->bus != NULL) ? device->bus : "",
+			(device->bus != NULL) ? " bus" : "");
 	return ret;
 }
 

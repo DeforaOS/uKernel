@@ -43,11 +43,6 @@ ukBus * bus_init(ukBus * parent, char const * name, ...)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s bus%s%s%s\n", name,
-					(parent != NULL) ? " at " : "",
-					(parent != NULL)
-					? bus_get_name(parent) : "",
-					(parent != NULL) ? " bus" : "");
 			bus->driver = drivers[i]->init(parent, ap);
 			break;
 		}
