@@ -5,6 +5,7 @@
 
 
 #include <string.h>
+#include <errno.h>
 #include "drivers/console.h"
 #include "stdio.h"
 
@@ -53,6 +54,11 @@ static STDIOConsoleDriver * _stdio_console_init(ukBus * bus, va_list ap)
 	STDIOConsole stdio;
 	(void) ap;
 
+	if(bus == NULL)
+	{
+		errno = ENODEV;
+		return NULL;
+	}
 	_stdio_console_driver.bus = bus;
 	stdio.interface = &stdio_console;
 	stdio.driver = &_stdio_console_driver;

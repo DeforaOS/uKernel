@@ -95,6 +95,10 @@ _start:
 	push	$0x0
 	push	$0x0
 
+	push	boot
+	call	boot_init
+	add	$0x4, %esp
+
 2:
 	/* initialize the platform */
 	push	boot

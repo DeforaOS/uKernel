@@ -14,7 +14,6 @@
 int _init(void)
 {
 	boot_init(boot, "user", NULL, 0, 0);
-	boot_set_console(boot, "tty", "stdio");
 	platform_init(platform, boot);
 	platform_start(platform);
 	return 0;

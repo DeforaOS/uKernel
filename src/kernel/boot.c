@@ -51,6 +51,8 @@ void boot_init(ukBoot * boot, char const * name, char const * args,
 {
 	boot->name = name;
 	boot->args = args;
+	boot->console = CONFIG_DEFAULT_CONSOLE;
+	boot->console_bus = CONFIG_DEFAULT_CONSOLE_BUS;
 	boot_set_physmem(boot, physmem_low, physmem_high);
 }
 
