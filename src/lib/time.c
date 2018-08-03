@@ -13,9 +13,12 @@
 /* time */
 time_t time(time_t * time)
 {
+	ukClock * clock;
 	time_t t;
 
-	if(clock_get_time(NULL, &t) != 0)
+	if((clock = clock_get_default()) == NULL)
+		return -1;
+	if(clock_get_time(clock, &t) != 0)
 		return -1;
 	if(time != NULL)
 		*time = t;

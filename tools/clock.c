@@ -64,10 +64,9 @@ ukClock * clock_get_default(void)
 /* clock_get_time */
 int clock_get_time(ukClock * clock, time_t * time)
 {
-	if(clock == NULL
-			&& (clock = clock_get_default()) == NULL)
+	if(clock->get_time == NULL)
 	{
-		errno = ENODEV;
+		errno = ENOTSUP;
 		return -1;
 	}
 	return clock->get_time(clock, time);
