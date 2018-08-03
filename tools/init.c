@@ -14,6 +14,7 @@
 #define TOOLS_CONSOLE	"stdio"
 
 
+/* init */
 int _init(void)
 {
 	ukBus * bus;
