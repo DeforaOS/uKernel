@@ -50,7 +50,7 @@ const ukBusInterface tty_bus =
 	_tty_bus_write8,
 	_tty_bus_write16,
 	_tty_bus_write32,
-	NULL
+	_tty_bus_command
 };
 
 
