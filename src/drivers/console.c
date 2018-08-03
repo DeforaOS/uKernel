@@ -11,8 +11,27 @@
 
 
 /* private */
+/* types */
+typedef struct _ukConsole BufferConsole;
+
+/* prototypes */
+static void _buffer_console_clear(BufferConsole * console);
+
+static void _buffer_console_print(BufferConsole * console, char const * str,
+		size_t len);
+
+
 /* variables */
-static ukConsole _console = { NULL, NULL };
+static ukConsoleInterface buffer_console =
+{
+	"buffer",
+	NULL,
+	NULL,
+	_buffer_console_clear,
+	_buffer_console_print
+};
+
+static ukConsole _console = { &buffer_console, NULL };
 
 static char _console_buf[1024];
 static size_t _console_buf_cnt = 0;
@@ -49,7 +68,6 @@ ukConsole * console_init(ukBus * bus, char const * name, ...)
 					(bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus_get_name(bus) : "",
 					(bus != NULL) ? " bus" : "");
-			_console.interface = drivers[i];
 			_console.driver = drivers[i]->init(bus, ap);
 			break;
 		}
@@ -61,6 +79,7 @@ ukConsole * console_init(ukBus * bus, char const * name, ...)
 		return NULL;
 	}
 	_console.interface->print(&_console, _console_buf, _console_buf_cnt);
+	_console.interface = drivers[i];
 	return &_console;
 }
 
@@ -68,9 +87,6 @@ ukConsole * console_init(ukBus * bus, char const * name, ...)
 /* console_destroy */
 void console_destroy(ukConsole * console)
 {
-	if(console == NULL
-			&& (console = console_get_default()) == NULL)
-		return;
 	if(console->interface->destroy != NULL)
 		console->interface->destroy(console);
 }
@@ -80,11 +96,6 @@ void console_destroy(ukConsole * console)
 /* console_get_default */
 ukConsole * console_get_default(void)
 {
-	if(_console.driver == NULL)
-	{
-		errno = ENODEV;
-		return NULL;
-	}
 	return &_console;
 }
 
@@ -100,25 +111,38 @@ char const * console_get_name(ukConsole * console)
 /* console_clear */
 void console_clear(ukConsole * console)
 {
-	if(console == NULL
-			&& (console = console_get_default()) == NULL)
-		return;
-	console->interface->clear(console);
+	if(console->interface->clear != NULL)
+		console->interface->clear(console);
 }
 
 
 /* console_print */
 void console_print(ukConsole * console, char const * str, size_t len)
 {
-	size_t s;
-
-	if(console == NULL && (console = console_get_default()) == NULL)
-	{
-		s = sizeof(_console_buf) - _console_buf_cnt;
-		s = (s > len) ? len : s;
-		strncpy(&_console_buf[_console_buf_cnt], str, s);
-		_console_buf_cnt += s;
-	}
-	else
+	if(console->interface->print != NULL)
 		console->interface->print(console, str, len);
+}
+
+
+/* buffer_console */
+/* buffer_console_clear */
+static void _buffer_console_clear(BufferConsole * console)
+{
+	(void) console;
+
+	_console_buf_cnt = 0;
+}
+
+
+/* buffer_console_print */
+static void _buffer_console_print(BufferConsole * console, char const * str,
+		size_t len)
+{
+	size_t s;
+	(void) console;
+
+	s = sizeof(_console_buf) - _console_buf_cnt;
+	s = (s > len) ? len : s;
+	strncpy(&_console_buf[_console_buf_cnt], str, s);
+	_console_buf_cnt += s;
 }
