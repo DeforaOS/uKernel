@@ -19,9 +19,11 @@ long __stack_chk_guard[8] = { 0, 0, '\n', 255, 0, 0, 0, 0 };
 void __stack_chk_fail(void)
 {
 	const char buf[] = "stack overflow detected: terminated\n";
+	ukConsole * console;
 
 	/* output on the standard error stream */
-	console_print(NULL, buf, sizeof(buf) - 1);
+	console = console_get_default();
+	console_print(console, buf, sizeof(buf) - 1);
 	/* trigger a crash */
 	abort();
 }
