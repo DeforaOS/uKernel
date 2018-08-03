@@ -39,7 +39,10 @@ static size_t _console_buf_cnt = 0;
 
 /* public */
 /* variables */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+extern const ukConsoleInterface stdio_console;
+extern const ukConsoleInterface uart_console;
+#elif defined(__amd64__) || defined(__i386__)
 extern const ukConsoleInterface uart_console;
 #endif
 
@@ -49,8 +52,11 @@ extern const ukConsoleInterface uart_console;
 ukConsole * console_init(ukBus * bus, char const * name, ...)
 {
 	const ukConsoleInterface * drivers[] = {
-#if defined(__amd64__) || defined(__i386__)
-		&uart_console,
+#if defined(__user__)
+		&stdio_console,
+		&uart_console
+#elif defined(__amd64__) || defined(__i386__)
+		&uart_console
 #endif
 	};
 	va_list ap;

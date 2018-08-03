@@ -34,6 +34,9 @@ ssize_t read(int fildes, void * buf, size_t count)
 		errno = EBADF;
 		return -1;
 	}
+	if(_fildes[fildes] == NULL
+			&& (_fildes[fildes] = console_get_default()) == NULL)
+		return -1;
 	if(count == 0)
 		return 0;
 	errno = ENOSYS;
@@ -70,6 +73,9 @@ ssize_t write(int fildes, const void * buf, size_t count)
 		errno = EINVAL;
 		return -1;
 	}
+	if(_fildes[fildes] == NULL
+			&& (_fildes[fildes] = console_get_default()) == NULL)
+		return -1;
 	if((size_t)fildes < sizeof(_fildes) / sizeof(*_fildes))
 		console = _fildes[fildes];
 	else

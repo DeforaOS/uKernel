@@ -18,7 +18,9 @@ static ukClock * _clock = NULL;
 
 /* public */
 /* variables */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+extern const ukClockInterface sys_clock;
+#elif defined(__amd64__) || defined(__i386__)
 extern const ukClockInterface cmos_clock;
 #endif
 
@@ -28,7 +30,9 @@ extern const ukClockInterface cmos_clock;
 ukClock * clock_init(ukBus * bus, char const * name, ...)
 {
 	const ukClockInterface * drivers[] = {
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+		&sys_clock
+#elif defined(__amd64__) || defined(__i386__)
 		&cmos_clock
 #endif
 	};

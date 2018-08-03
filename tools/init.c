@@ -5,22 +5,17 @@
 
 
 #include <stddef.h>
-#include "drivers/bus.h"
-#include "drivers/clock.h"
-#include "drivers/console.h"
-
-#define TOOLS_BUS	"tty"
-#define TOOLS_CLOCK	"sys"
-#define TOOLS_CONSOLE	"stdio"
+#include <kernel/platform.h>
 
 
+/* public */
+/* functions */
 /* init */
 int _init(void)
 {
-	ukBus * bus;
-
-	bus = bus_init(NULL, TOOLS_BUS);
-	console_init(bus, TOOLS_CONSOLE);
-	clock_init(NULL, TOOLS_CLOCK);
+	boot_init(boot, "user", NULL, 0, 0);
+	boot_set_console(boot, "tty", "stdio");
+	platform_init(platform, boot);
+	platform_start(platform);
 	return 0;
 }

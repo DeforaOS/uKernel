@@ -18,7 +18,8 @@ static ukDisplay * _display = NULL;
 
 /* public */
 /* variables */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+#elif defined(__amd64__) || defined(__i386__)
 extern const ukDisplayInterface vesa_display;
 extern const ukDisplayInterface vga_display;
 #endif
@@ -29,7 +30,8 @@ extern const ukDisplayInterface vga_display;
 ukDisplay * display_init(ukBus * bus, char const * name, ...)
 {
 	const ukDisplayInterface * drivers[] = {
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+#elif defined(__amd64__) || defined(__i386__)
 		&vesa_display,
 		&vga_display
 #endif

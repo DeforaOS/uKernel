@@ -13,7 +13,9 @@
 
 /* public */
 /* variables */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+extern const ukBusInterface tty_bus;
+#elif defined(__amd64__) || defined(__i386__)
 extern const ukBusInterface cmos_bus;
 extern const ukBusInterface ioport_bus;
 extern const ukBusInterface vga_bus;
@@ -25,7 +27,9 @@ extern const ukBusInterface vga_bus;
 ukBus * bus_init(ukBus * parent, char const * name, ...)
 {
 	const ukBusInterface * drivers[] = {
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+		&tty_bus
+#elif defined(__amd64__) || defined(__i386__)
 		&cmos_bus,
 		&ioport_bus,
 		&vga_bus

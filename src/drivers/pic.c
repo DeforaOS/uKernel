@@ -18,7 +18,8 @@ static ukPIC * _pic = NULL;
 
 /* public */
 /* variables */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+#elif defined(__amd64__) || defined(__i386__)
 extern const ukPICInterface i8259a_pic;
 #endif
 
@@ -28,7 +29,8 @@ extern const ukPICInterface i8259a_pic;
 ukPIC * pic_init(ukBus * bus, char const * name, ...)
 {
 	const ukPICInterface * drivers[] = {
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__user__)
+#elif defined(__amd64__) || defined(__i386__)
 		&i8259a_pic
 #endif
 	};

@@ -2,4 +2,4 @@
 /* Copyright (c) 2018 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS uKernel */
 
-#include "kernel/main.c"
+#include "kernel/boot.c"

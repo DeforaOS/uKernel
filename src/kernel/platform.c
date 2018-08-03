@@ -47,11 +47,16 @@ struct _ukPlatform
 /* constants */
 static const ukPlatformDevice _devices[] =
 {
+#if defined(__user__)
+	{ UKDT_BUS,	"tty",		NULL	},
+	{ UKDT_CLOCK,	"sys",		NULL	}
+#elif defined(__amd64__) || defined(__i386__)
 	{ UKDT_BUS,	"ioport",	NULL	},
 	{ UKDT_BUS,	"vga",		"ioport"},
 	{ UKDT_BUS,	"cmos",		"ioport"},
 	{ UKDT_CLOCK,	"cmos",		"cmos"	},
 	{ UKDT_PIC,	"i8259a",	"ioport"}
+#endif
 };
 
 static char const * _driver_types[UKDT_COUNT] =
@@ -253,25 +258,31 @@ int platform_start(ukPlatform * platform)
 			sizeof(_devices) / sizeof(*_devices));
 
 	/* setup the GDT */
-#if defined(__amd64__)
+#if !defined(__user__)
+# if defined(__amd64__)
 	if(_arch_setgdt64(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
-#else
+# elif defined(__i386__)
 	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
-#endif
+# endif
 	{
 		puts("Could not setup the GDT");
 		return 2;
 	}
+#endif
 
 	/* load the modules */
 	boot_module_foreach(platform->boot, _start_module_load, platform);
 
+#if !defined(__user__)
 	/* setup the IDT */
+# if defined(__amd64__) || defined(__i386__)
 	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
+# endif
 	{
 		puts("Could not setup the IDT");
 		return 2;
 	}
+#endif
 
 	return 0;
 }
