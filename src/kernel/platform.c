@@ -214,7 +214,8 @@ int platform_device_register(ukPlatform * platform,
 	return ret;
 }
 
-static ukBus * _device_register_get_bus(ukPlatform * platform, char const * name)
+static ukBus * _device_register_get_bus(ukPlatform * platform,
+		char const * name)
 {
 	size_t i;
 	ukPlatformDevice const * device;
