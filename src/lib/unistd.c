@@ -17,8 +17,6 @@ static ukConsole * _fildes[STDERR_FILENO + 1] = { NULL, NULL, NULL };
 
 /* public */
 /* variables */
-extern void * end;
-
 char ** environ;
 
 
@@ -45,6 +43,7 @@ ssize_t read(int fildes, void * buf, size_t count)
 
 /* sbrk */
 extern int _brk(void * addr);
+extern void * end;
 
 void * sbrk(intptr_t increment)
 {
