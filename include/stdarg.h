@@ -10,8 +10,13 @@
 
 /* types */
 # ifndef va_list
-#   define va_list va_list
+#  define va_list va_list
+#  if defined(__GNUC__) && __GNUC__ >= 3
 typedef __builtin_va_list va_list;
+#  else
+#   warning Unsupported architecture: va_list is not supported
+typedef char * va_list;
+#  endif
 # endif
 
 
