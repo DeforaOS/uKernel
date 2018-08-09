@@ -25,7 +25,7 @@ inb:
 .global iowait
 .type iowait, @function
 iowait:
-	mov	$0x0, %eax
+	xor	%eax, %eax
 	outb	%al, $0x80
 
 	/* return 0 */
