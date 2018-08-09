@@ -17,7 +17,7 @@ inb:
 	mov	%al, (%ecx)
 
 	/* return 0 */
-	mov	$0x0, %eax
+	xor	%eax, %eax
 	ret
 
 
@@ -41,6 +41,6 @@ outb:
 	out	%al, %dx
 
 	/* return 0 */
-	mov	$0x0, %eax
+	xor	%eax, %eax
 	ret
 #endif
