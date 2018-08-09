@@ -137,6 +137,9 @@ static int _ioport_bus_write32(IOPortBus * bus, ukBusAddress address,
 /* ioport_bus_command */
 static int _ioport_bus_command(IOPortBus * bus, uint32_t command, va_list ap)
 {
+	(void) bus;
+	(void) ap;
+
 	switch(command)
 	{
 		case BUS_COMMAND_WAIT:
