@@ -260,7 +260,7 @@ static int _load_module_elf32_symtab(ukMultibootMod const * mod,
 	if(shdr->sh_type != type || shdr->sh_entsize != sizeof(**symtab))
 		return -1;
 	*symtab = (Elf32_Sym *)(mod->start + shdr->sh_offset);
-	*symtab_cnt = shdr->sh_size / shdr->sh_entsize;
+	*symtab_cnt = shdr->sh_size / sizeof(**symtab);
 	return 0;
 }
 
@@ -415,7 +415,7 @@ static int _load_module_elf64_symtab(ukMultibootMod const * mod,
 	if(shdr->sh_type != type || shdr->sh_entsize != sizeof(**symtab))
 		return -1;
 	*symtab = (Elf64_Sym *)(uintptr_t)(mod->start + shdr->sh_offset);
-	*symtab_cnt = shdr->sh_size / shdr->sh_entsize;
+	*symtab_cnt = shdr->sh_size / sizeof(**symtab);
 	return 0;
 }
 #endif
