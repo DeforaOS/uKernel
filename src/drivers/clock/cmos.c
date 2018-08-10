@@ -68,6 +68,7 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 
 
 /* cmos_clock_get_time */
+static time_t _get_time_days_per_month(unsigned char month, unsigned int year);
 static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 		unsigned char * year, unsigned char * hours,
 		unsigned char * minutes, unsigned char * seconds);
@@ -76,6 +77,7 @@ static void _time_do_decode(unsigned char * value);
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
 	const size_t tries = 3;
+	const time_t seconds_per_day = 60 * 60 * 24;
 	CMOSClockData * data = clock->data;
 	unsigned char seconds, s;
 	unsigned char minutes, m;
@@ -84,6 +86,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	unsigned char month, M;
 	unsigned char year, y;
 	size_t i;
+	size_t j;
 
 	if(time == NULL)
 	{
@@ -105,11 +108,44 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 		errno = EAGAIN;
 		return -1;
 	}
-	/* FIXME this is not correct */
-	*time = seconds + (minutes * 60) + (hours * 60 * 60)
-		+ (day * 60 * 60 * 24) + (month * 60 * 60 * 24)
-		+ (((year >= 70) ? year : year + 30) * 60 * 60 * 24 * 365);
+	/* FIXME this is not optimal nor fully accurate */
+	*time = 0;
+	for(i = 0; i < ((year >= 70) ? year - 70 : year + 30); i++)
+		for(j = 1; j <= 12; j++)
+			*time += _get_time_days_per_month(j, i + 1970)
+				* seconds_per_day;
+	for(j = 1; j < month; j++)
+		*time += _get_time_days_per_month(j, i + 1970)
+			* seconds_per_day;
+	*time += (day - 1) * seconds_per_day + hours * 60 * 60 + minutes * 60
+		+ seconds;
 	return 0;
+}
+
+static time_t _get_time_days_per_month(unsigned char month, unsigned int year)
+{
+	switch(month)
+	{
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			return 31;
+		case 2:
+			if((year & 0x3) == 0 && year != 2000)
+				return 29;
+			return 28;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			return 30;
+		default:
+			return 0;
+	}
 }
 
 static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
