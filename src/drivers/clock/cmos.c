@@ -68,25 +68,25 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 
 
 /* cmos_clock_get_time */
-static time_t _get_time_days_per_month(unsigned char month, unsigned int year);
-static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
-		unsigned char * year, unsigned char * hours,
-		unsigned char * minutes, unsigned char * seconds);
-static void _time_do_decode(unsigned char * value);
+static time_t _get_time_days_per_month(uint8_t month, unsigned int year);
+static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
+		uint8_t * year, uint8_t * hours, uint8_t * minutes,
+		uint8_t * seconds);
+static void _time_do_decode(uint8_t * value);
 
 static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 {
-	const size_t tries = 3;
+	const uint8_t tries = 3;
 	const time_t seconds_per_day = 60 * 60 * 24;
 	CMOSClockData * data = clock->data;
-	unsigned char seconds, s;
-	unsigned char minutes, m;
-	unsigned char hours, h;
-	unsigned char day, d;
-	unsigned char month, M;
-	unsigned char year, y;
-	size_t i;
-	size_t j;
+	uint8_t seconds, s;
+	uint8_t minutes, m;
+	uint8_t hours, h;
+	uint8_t day, d;
+	uint8_t month, M;
+	uint8_t year, y;
+	uint8_t i;
+	uint8_t j;
 
 	if(time == NULL)
 	{
@@ -122,7 +122,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	return 0;
 }
 
-static time_t _get_time_days_per_month(unsigned char month, unsigned int year)
+static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
 {
 	switch(month)
 	{
@@ -148,13 +148,13 @@ static time_t _get_time_days_per_month(unsigned char month, unsigned int year)
 	}
 }
 
-static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
-		unsigned char * year, unsigned char * hours,
-		unsigned char * minutes, unsigned char * seconds)
+static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
+		uint8_t * year, uint8_t * hours, uint8_t * minutes,
+		uint8_t * seconds)
 {
 	const size_t tries = 3;
 	size_t i;
-	unsigned char status;
+	uint8_t status;
 
 	/* check if the time and date are available */
 	for(i = 0; i < tries; i++)
@@ -188,7 +188,7 @@ static int _get_time_do(ukBus * bus, unsigned char * day, unsigned char * month,
 	return 0;
 }
 
-static void _time_do_decode(unsigned char * value)
+static void _time_do_decode(uint8_t * value)
 {
 	*value = (*value & 0xf) + (*value >> 4) * 10;
 }
