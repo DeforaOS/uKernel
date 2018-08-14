@@ -134,7 +134,7 @@ static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
 		case 12:
 			return 31;
 		case 2:
-			if((year & 0x3) == 0 && year != 2000)
+			if((year & 0x3) == 0)
 				return 29;
 			return 28;
 		case 4:
@@ -149,7 +149,7 @@ static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
 
 static time_t _get_time_days_per_year(unsigned int year)
 {
-	if((year & 0x3) == 0 && year != 2000)
+	if((year & 0x3) == 0)
 		return 366;
 	return 365;
 }
