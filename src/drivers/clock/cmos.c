@@ -69,6 +69,7 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 
 /* cmos_clock_get_time */
 static time_t _get_time_days_per_month(uint8_t month, unsigned int year);
+static time_t _get_time_days_per_year(unsigned int year);
 static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
 		uint8_t * year, uint8_t * hours, uint8_t * minutes,
 		uint8_t * seconds);
@@ -111,9 +112,7 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	/* FIXME this is not optimal nor fully accurate */
 	*time = 0;
 	for(i = 0; i < ((year >= 70) ? year - 70 : year + 30); i++)
-		for(j = 1; j <= 12; j++)
-			*time += _get_time_days_per_month(j, i + 1970)
-				* seconds_per_day;
+		*time += _get_time_days_per_year(i + 1970) * seconds_per_day;
 	for(j = 1; j < month; j++)
 		*time += _get_time_days_per_month(j, i + 1970)
 			* seconds_per_day;
@@ -146,6 +145,13 @@ static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
 		default:
 			return 0;
 	}
+}
+
+static time_t _get_time_days_per_year(unsigned int year)
+{
+	if((year & 0x3) == 0 && year != 2000)
+		return 366;
+	return 365;
 }
 
 static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
