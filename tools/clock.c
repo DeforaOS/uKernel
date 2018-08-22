@@ -40,8 +40,11 @@ ukClock * clock_init(ukBus * bus, char const * name, ...)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			printf("%s%s%s\n", name, (bus != NULL) ? " at " : "",
-					(bus != NULL) ? bus_get_name(bus) : "");
+			fprintf(stderr, "%s clock%s%s%s\n", name,
+					(bus != NULL) ? " at " : "",
+					(bus != NULL)
+					? bus->interface->name : "",
+					(bus != NULL) ? " bus" : "");
 			clock->interface = drivers[i];
 			clock->driver = drivers[i]->init(bus, ap);
 			break;
