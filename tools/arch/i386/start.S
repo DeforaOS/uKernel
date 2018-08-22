@@ -52,6 +52,7 @@ _exit:
 .global _gettimeofday
 .type _gettimeofday, @function
 _gettimeofday:
+	/* FIXME this syscall may differ on different kernels */
 	mov	$0x1a2, %eax
 	jmp	_syscall
 
