@@ -130,14 +130,15 @@ _start:
 .global _time
 .type _time, @function
 _time:
-	push	$0x0
 	sub	$0xc, %esp
-	push	%esp
+	mov	%esp, %eax
+	push	$0x0
+	push	%eax
 	call	_gettimeofday
 	cmp	$-1, %eax
 	je	1f
-	mov	0xc(%esp), %eax
-	mov	0x8(%esp), %edx
+	mov	0x10(%esp), %eax
+	mov	0xc(%esp), %edx
 1:
 	add	$0x14, %esp
 	ret
