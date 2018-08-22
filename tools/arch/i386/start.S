@@ -103,6 +103,9 @@ _start:
 	/* call the global constructors */
 	call	_init
 
+	/* initialize the userland */
+	call	init
+
 	/* run the userland kernel */
 	call	main
 #if defined(__ELF__)
@@ -110,10 +113,14 @@ _start:
 #else
 	add	$0xc, %esp
 #endif
+	push	%eax
+
+	/* call the global destructors */
+	call	_fini
 
 	/* exit the userland kernel */
-	push	%eax
 	call	exit
+	add	$0x4, %esp
 
 	hlt
 

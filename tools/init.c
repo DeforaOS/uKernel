@@ -15,7 +15,7 @@
 
 
 /* init */
-int _init(void)
+int init(void)
 {
 	ukBus * bus;
 
