@@ -21,6 +21,20 @@ char ** environ;
 
 
 /* functions */
+/* getpid */
+pid_t getpid(void)
+{
+	return 0;
+}
+
+
+/* getppid */
+pid_t getppid(void)
+{
+	return 0;
+}
+
+
 /* read */
 ssize_t read(int fildes, void * buf, size_t count)
 {
