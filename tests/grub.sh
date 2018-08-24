@@ -26,6 +26,12 @@
 
 
 #variables
+[ -n "$ARCH" ] || ARCH="$(uname -m)"
+case "$ARCH" in
+	x86_64)
+		ARCH="amd64"
+		;;
+esac
 PROGNAME="grub.sh"
 UKERNELBIN="../src/kernel/uKernel.bin"
 #executables
@@ -45,17 +51,16 @@ _error()
 _grub()
 {
 	ret=0
-	machine=$($UNAME -m)
 
-	if [ $? -ne 0 -o -z "$machine" ]; then
+	if [ -z "$ARCH" ]; then
 		_error "Could not determine the platform"
 		return $?
 	fi
 	$DATE
 	echo
-	case "$machine" in
+	case "$ARCH" in
 		amd64|i?86)
-			_info "Testing multiboot conformance ($machine)"
+			_info "Testing multiboot conformance ($ARCH)"
 			$GRUBFILE --is-x86-multiboot "$OBJDIR$UKERNELBIN"
 			#FIXME look for multiboot2 instead?
 			#$GRUBFILE --is-x86-multiboot2 "$OBJDIR$UKERNELBIN"
@@ -69,7 +74,7 @@ _grub()
 			fi
 			;;
 		*)
-			_info "$machine: Unsupported platform (ignored)"
+			_info "$ARCH: Unsupported platform (ignored)"
 			;;
 	esac
 	if [ $ret -eq 0 ]; then
