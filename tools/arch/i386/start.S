@@ -5,8 +5,26 @@
 
 .section .text
 _syscall:
+#ifdef __linux__
+	push	%ebx
+	push	%esi
+	push	%edi
+	mov	0x10(%esp), %ebx
+	mov	0x14(%esp), %ecx
+	mov	0x18(%esp), %edx
+	mov	0x1c(%esp), %esi
+	mov	0x20(%esp), %edi
+	int	$0x80
+	pop	%edi
+	pop	%esi
+	pop	%ebx
+	cmp	$0, %eax
+	jge	.errnoret
+	neg	%eax
+#else
 	int	$0x80
 	jnc	.errnoret
+#endif
 .errno:
 	mov	%eax, errno
 	mov	$-1, %eax
