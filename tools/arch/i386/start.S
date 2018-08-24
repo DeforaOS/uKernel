@@ -53,7 +53,11 @@ _exit:
 .type _gettimeofday, @function
 _gettimeofday:
 	/* FIXME this syscall may differ on different kernels */
+#ifdef __linux__
+	mov	$0x60, %eax
+#else
 	mov	$0x1a2, %eax
+#endif
 	jmp	_syscall
 
 
