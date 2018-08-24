@@ -20,6 +20,17 @@ _syscall_return:
 	ret
 
 
+/* _brk */
+.global _brk
+.type _brk,@function
+_brk:
+	/* FIXME this syscall may differ on different kernels */
+	mov	$0x11, %rax
+	syscall
+	jc	.errno
+	ret
+
+
 /* exit */
 .global _exit
 .type _exit, @function
