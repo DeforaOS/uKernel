@@ -62,15 +62,15 @@ _grub()
 	case "$ARCH" in
 		amd64|i?86)
 			_info "Testing multiboot conformance ($ARCH)"
-			$GRUBFILE --is-x86-multiboot "$OBJDIR$UKERNELBIN"
+			$GRUBFILE --is-x86-multiboot "$UKERNELBIN"
 			#FIXME look for multiboot2 instead?
-			#$GRUBFILE --is-x86-multiboot2 "$OBJDIR$UKERNELBIN"
+			#$GRUBFILE --is-x86-multiboot2 "$UKERNELBIN"
 			ret=$?
 			if [ $ret -eq 127 ]; then
 				_error "Cannot test: $GRUBFILE not available (ignored)"
 				ret=0
 			elif [ $ret -ne 0 ]; then
-				_error "$OBJDIR$UKERNELBIN: Not compliant with multiboot"
+				_error "$UKERNELBIN: Not compliant with multiboot"
 				ret=$?
 			fi
 			;;
