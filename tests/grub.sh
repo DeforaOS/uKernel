@@ -32,8 +32,9 @@ case "$ARCH" in
 		ARCH="amd64"
 		;;
 esac
+[ -n "$OBJDIR" ] || OBJDIR="./"
 PROGNAME="grub.sh"
-UKERNELBIN="../src/kernel/uKernel.bin"
+UKERNELBIN="${OBJDIR}../src/kernel/uKernel.bin"
 #executables
 DATE="date"
 GRUBFILE="grub-file"
