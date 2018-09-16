@@ -30,7 +30,6 @@
 PLATFORMCONF="../arch/$ARCH/platform.conf"
 [ -f "$PLATFORMCONF" ] || PLATFORMCONF="platform.conf"
 PROGNAME="platform.sh"
-TARGET="platform.c"
 
 
 #functions
@@ -181,4 +180,4 @@ if [ $# -ne 1 ]; then
 	exit $?
 fi
 #XXX breaks OBJDIR
-_platform < "$PLATFORMCONF" > "$TARGET"
+_platform < "$PLATFORMCONF" > "$1"
