@@ -64,11 +64,11 @@ int multiboot(ukMultibootInfo * mi)
 		display = "vesa";
 #endif
 
-	/* initialize the console */
-	console_init(ioportbus, console);
-
 	/* initialize the display */
 	display_init(vgabus, display);
+
+	/* initialize the console */
+	console_init(ioportbus, console);
 
 	/* initialize the PIC */
 	pic_init(ioportbus, "i8259a");
