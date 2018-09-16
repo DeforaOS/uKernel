@@ -26,7 +26,9 @@
 
 
 #variables
-PLATFORMCONF="platform.conf"
+[ -n "$ARCH" ] || ARCH=$(uname -m)
+PLATFORMCONF="../arch/$ARCH/platform.conf"
+[ -f "$PLATFORMCONF" ] || PLATFORMCONF="platform.conf"
 PROGNAME="platform.sh"
 TARGET="platform.c"
 
