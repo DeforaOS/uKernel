@@ -66,6 +66,16 @@ ukPIC * pic_init(ukBus * bus, char const * name, ...)
 }
 
 
+/* pic_destroy */
+void pic_destroy(ukPIC * pic)
+{
+	/* FIXME notify or destroy all the drivers interrupting */
+	if(pic->interface->destroy != NULL)
+		pic->interface->destroy(pic);
+	free(pic);
+}
+
+
 /* accessors */
 /* pic_get_default */
 ukPIC * pic_get_default(void)

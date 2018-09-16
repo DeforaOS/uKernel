@@ -65,6 +65,15 @@ ukClock * clock_init(ukBus * bus, char const * name, ...)
 }
 
 
+/* clock_destroy */
+void clock_destroy(ukClock * clock)
+{
+	if(clock->interface->destroy != NULL)
+		clock->interface->destroy(clock);
+	free(clock);
+}
+
+
 /* accessors */
 /* clock_get_default */
 ukClock * clock_get_default(void)

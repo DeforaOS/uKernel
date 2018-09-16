@@ -54,6 +54,7 @@ typedef enum _ukBusCommand
 
 /* prototypes */
 ukBus * bus_init(ukBus * parent, char const * name, ...);
+void bus_destroy(ukBus * bus);
 
 /* accessors */
 char const * bus_get_name(ukBus * bus);

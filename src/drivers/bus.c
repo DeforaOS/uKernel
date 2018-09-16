@@ -64,6 +64,16 @@ ukBus * bus_init(ukBus * parent, char const * name, ...)
 }
 
 
+/* bus_destroy */
+void bus_destroy(ukBus * bus)
+{
+	/* FIXME destroy all the drivers on the bus */
+	if(bus->interface->destroy != NULL)
+		bus->interface->destroy(bus);
+	free(bus);
+}
+
+
 /* accessors */
 /* bus_get_name */
 char const * bus_get_name(ukBus * bus)
