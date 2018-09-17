@@ -8,12 +8,12 @@
 # include <stdint.h>
 # include <stdio.h>
 # include <string.h>
+# include <kernel/drivers/bus.h>
+# include <kernel/drivers/console.h>
+# include <kernel/drivers/display.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
-# include "drivers/bus.h"
-# include "drivers/console.h"
-# include "drivers/display.h"
 
 # ifndef LOADER_CONSOLE
 #  define LOADER_CONSOLE	"uart"

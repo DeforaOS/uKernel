@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "console.h"
+#include <kernel/drivers/console.h>
 
 
 /* private */

@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "drivers/clock.h"
-#include "drivers/clock/cmos.h"
+#include <kernel/drivers/clock.h>
+#include "cmos.h"
 
 
 /* private */

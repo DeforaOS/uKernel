@@ -102,7 +102,7 @@ $name $type $busname $args"
 	echo "#include <stddef.h>"
 	echo "$devices" | while read name type busname args; do
 		[ -n "$name" ] || continue
-		echo "#include \"drivers/${type}.h\""
+		echo "#include <kernel/drivers/${type}.h>"
 	done
 
 	#begin the function

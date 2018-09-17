@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "pic.h"
+#include <kernel/drivers/pic.h>
 
 
 /* private */

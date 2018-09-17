@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "clock.h"
+#include <kernel/drivers/clock.h>
 
 
 /* private */

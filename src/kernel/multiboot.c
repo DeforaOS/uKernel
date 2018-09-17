@@ -6,15 +6,15 @@
 
 #if defined(__amd64__) || defined(__i386__)
 # include <stdio.h>
+# include <kernel/drivers/bus.h>
+# include <kernel/drivers/clock.h>
+# include <kernel/drivers/console.h>
+# include <kernel/drivers/display.h>
+# include <kernel/drivers/pic.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
 # include "arch/i386/idt.h"
 # include "drivers/boot/multiboot.h"
-# include "drivers/bus.h"
-# include "drivers/clock.h"
-# include "drivers/console.h"
-# include "drivers/display.h"
-# include "drivers/pic.h"
 
 # ifndef KERNEL_CONSOLE
 #  define KERNEL_CONSOLE	"uart"

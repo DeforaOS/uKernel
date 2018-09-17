@@ -7,7 +7,7 @@
 #ifndef UKERNEL_DRIVERS_BUS_CMOS_H
 # define UKERNEL_DRIVERS_BUS_CMOS_H
 
-# include "drivers/bus.h"
+# include <kernel/drivers/bus.h>
 
 
 /* types */

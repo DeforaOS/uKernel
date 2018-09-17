@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "kernel/intr.h"
-#include "drivers/bus.h"
+#include <kernel/intr.h>
+#include <kernel/drivers/bus.h>
 
 
 #if defined(__amd64__) || defined(__i386__)

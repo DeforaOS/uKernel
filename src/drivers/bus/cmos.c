@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "kernel/intr.h"
-#include "drivers/bus/cmos.h"
+#include <kernel/intr.h>
+#include "cmos.h"
 
 
 #if defined(__amd64__) || defined(__i386__)

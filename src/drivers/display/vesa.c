@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include "drivers/display.h"
+#include <kernel/drivers/display.h>
 #include "vesa.h"
 
 

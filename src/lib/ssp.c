@@ -5,7 +5,7 @@
 
 
 #include <stdlib.h>
-#include "drivers/console.h"
+#include <kernel/drivers/console.h>
 
 
 #if defined(__SSP__)

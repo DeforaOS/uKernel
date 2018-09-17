@@ -6,7 +6,6 @@
 
 #include <string.h>
 #include <errno.h>
-#include "drivers/bus.h"
 
 #include "drivers/bus/tty.c"
 

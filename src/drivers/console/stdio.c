@@ -5,7 +5,7 @@
 
 
 #include <string.h>
-#include "drivers/console.h"
+#include <kernel/drivers/console.h>
 #include "stdio.h"
 
 

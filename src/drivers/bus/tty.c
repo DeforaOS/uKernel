@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <errno.h>
-#include "../bus.h"
+#include <kernel/drivers/bus.h>
 
 
 /* private */

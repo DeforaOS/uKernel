@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
-#include "drivers/display.h"
+#include <kernel/drivers/display.h>
 #include "vga.h"
 
 /* macros */

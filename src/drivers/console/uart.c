@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <errno.h>
-#include "drivers/console.h"
+#include <kernel/drivers/console.h>
 #include "uart.h"
 
 

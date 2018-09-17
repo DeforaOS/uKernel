@@ -5,7 +5,7 @@
 
 
 #include <stddef.h>
-#include "drivers/clock.h"
+#include <kernel/drivers/clock.h>
 
 
 /* private */

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "display.h"
+#include <kernel/drivers/display.h>
 
 
 /* private */

@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include <unistd.h>
-#include "drivers/console.h"
+#include <kernel/drivers/console.h>
 
 
 /* private */

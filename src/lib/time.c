@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 #include <time.h>
-#include "drivers/clock.h"
+#include <kernel/drivers/clock.h>
 
 
 /* functions */

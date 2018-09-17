@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "bus.h"
+#include <kernel/drivers/bus.h>
 
 
 /* public */

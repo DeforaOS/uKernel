@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "drivers/pic.h"
-#include "drivers/pic/i8259a.h"
+#include <kernel/drivers/pic.h>
+#include "i8259a.h"
 
 
 /* private */
