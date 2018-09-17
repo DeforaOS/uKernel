@@ -8,7 +8,12 @@
 # define UKERNEL_KERNEL_PLATFORM_H
 
 
-/* constants */
+/* functions */
 void platform_init(void);
+
+
+/* accessors */
+void platform_set_console(char const * bus, char const * name);
+void platform_set_display(char const * bus, char const * name);
 
 #endif /* !UKERNEL_KERNEL_PLATFORM_H */

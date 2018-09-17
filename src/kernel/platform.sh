@@ -108,10 +108,14 @@ $name $type $busname $args"
 	#begin the function
 	echo "
 	
-/* public */
+/* private */
+/* prototypes */
+static void _platform_init_arch(void);
+
+
 /* functions */
 /* platform_init */
-void platform_init(void)
+static void _platform_init_arch(void)
 {"
 
 	#list the buses

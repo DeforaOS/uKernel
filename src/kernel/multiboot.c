@@ -11,6 +11,7 @@
 # include <kernel/drivers/console.h>
 # include <kernel/drivers/display.h>
 # include <kernel/drivers/pic.h>
+# include <kernel/platform.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
 # include "arch/i386/idt.h"
@@ -45,18 +46,10 @@ static const IDT _idt[] =
 /* multiboot */
 int multiboot(ukMultibootInfo * mi)
 {
-	ukBus * ioportbus;
-	ukBus * vgabus;
-	ukBus * cmosbus;
 	char const * console = KERNEL_CONSOLE;
 	char const * display = KERNEL_DISPLAY;
 	size_t i;
 	ukMultibootMod * mod;
-
-	/* initialize the buses */
-	ioportbus = bus_init(NULL, "ioport");
-	vgabus = bus_init(ioportbus, "vga");
-	cmosbus = bus_init(ioportbus, "cmos");
 
 #ifdef notyet
 	/* detect the video driver to use */
@@ -65,16 +58,13 @@ int multiboot(ukMultibootInfo * mi)
 #endif
 
 	/* initialize the display */
-	display_init(vgabus, display);
+	platform_set_display("vgaport", display);
 
 	/* initialize the console */
-	console_init(ioportbus, console);
+	platform_set_console("ioport", console);
 
-	/* initialize the PIC */
-	pic_init(ioportbus, "i8259a");
-
-	/* initialize the clock */
-	clock_init(cmosbus, "cmos");
+	/* initialize the platform */
+	platform_init();
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
