@@ -68,8 +68,8 @@ static void _cmos_clock_destroy(CMOSClock * clock)
 
 
 /* cmos_clock_get_time */
-static time_t _get_time_days_per_month(uint8_t month, unsigned int year);
-static time_t _get_time_days_per_year(unsigned int year);
+static time_t _get_time_seconds_per_month(uint8_t month, unsigned int year);
+static time_t _get_time_seconds_per_year(unsigned int year);
 static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
 		uint8_t * year, uint8_t * hours, uint8_t * minutes,
 		uint8_t * seconds);
@@ -112,17 +112,22 @@ static int _cmos_clock_get_time(CMOSClock * clock, time_t * time)
 	/* FIXME this is not optimal nor fully accurate */
 	*time = 0;
 	for(i = 0; i < ((year >= 70) ? year - 70 : year + 30); i++)
-		*time += _get_time_days_per_year(i + 1970) * seconds_per_day;
+		*time += _get_time_seconds_per_year(i + 1970);
 	for(j = 1; j < month; j++)
-		*time += _get_time_days_per_month(j, i + 1970)
-			* seconds_per_day;
+		*time += _get_time_seconds_per_month(j, i + 1970);
 	*time += (day - 1) * seconds_per_day + hours * 60 * 60 + minutes * 60
 		+ seconds;
 	return 0;
 }
 
-static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
+static time_t _get_time_seconds_per_month(uint8_t month, unsigned int year)
 {
+	const time_t seconds_per_day = 60 * 60 * 24;
+	const time_t month28 = 28 * seconds_per_day;
+	const time_t month29 = 29 * seconds_per_day;
+	const time_t month30 = 30 * seconds_per_day;
+	const time_t month31 = 31 * seconds_per_day;
+
 	switch(month)
 	{
 		case 1:
@@ -132,26 +137,30 @@ static time_t _get_time_days_per_month(uint8_t month, unsigned int year)
 		case 8:
 		case 10:
 		case 12:
-			return 31;
+			return month31;
 		case 2:
 			if((year & 0x3) == 0)
-				return 29;
-			return 28;
+				return month29;
+			return month28;
 		case 4:
 		case 6:
 		case 9:
 		case 11:
-			return 30;
+			return month30;
 		default:
 			return 0;
 	}
 }
 
-static time_t _get_time_days_per_year(unsigned int year)
+static time_t _get_time_seconds_per_year(unsigned int year)
 {
+	const time_t seconds_per_day = 60 * 60 * 24;
+	const time_t year365 = 365 * seconds_per_day;
+	const time_t year366 = 366 * seconds_per_day;
+
 	if((year & 0x3) == 0)
-		return 366;
-	return 365;
+		return year366;
+	return year365;
 }
 
 static int _get_time_do(ukBus * bus, uint8_t * day, uint8_t * month,
