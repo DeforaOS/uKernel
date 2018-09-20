@@ -139,7 +139,7 @@ static time_t _get_time_seconds_per_month(uint8_t month, unsigned int year)
 		case 12:
 			return month31;
 		case 2:
-			if((year & 0x3) == 0)
+			if((year & 0x3) == 0 && (year % 400) != 0)
 				return month29;
 			return month28;
 		case 4:
@@ -158,7 +158,7 @@ static time_t _get_time_seconds_per_year(unsigned int year)
 	const time_t year365 = 365 * seconds_per_day;
 	const time_t year366 = 366 * seconds_per_day;
 
-	if((year & 0x3) == 0)
+	if((year & 0x3) == 0 && (year % 400) != 0)
 		return year366;
 	return year365;
 }
