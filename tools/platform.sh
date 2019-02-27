@@ -27,6 +27,7 @@
 #variables
 CONFIGSH="${0%/platform.sh}/../config.sh"
 DESTDIR=
+LDSOCONF="/etc/ld.so.conf"
 PREFIX="/usr/local"
 PROGNAME="platform.sh"
 SOEXT=".so"
@@ -41,12 +42,48 @@ _platform_library()
 {
 	library="$1"
 	libdir=$(_platform_variable "LIBDIR")
+	path="/lib:/usr/lib:$libdir"
 
-	if [ -f "$DESTDIR/lib/lib$library$SOEXT" \
-		-o -f "$DESTDIR/usr/lib/lib$library$SOEXT" \
-		-o -f "$DESTDIR$libdir/lib$library$SOEXT" ]; then
-		echo "-l$library"
+	if [ -f "$DESTDIR$LDSOCONF" ]; then
+		paths=$(_library_ldsoconf "$DESTDIR$LDSOCONF")
+		#XXX breaks on whitespace
+		for p in $paths; do
+			path="$path:$p"
+		done
 	fi
+	(IFS=:; for p in $path; do
+		if [ -f "$DESTDIR$p/lib$library$SOEXT" ]; then
+			echo "-l$library"
+			return
+		fi
+	done)
+}
+
+_library_ldsoconf()
+{
+	ldsoconf="$1"
+
+	while read line; do
+		case "$line" in
+			"#"*)
+				;;
+			"include "*)
+				#remove trailing comments
+				line="${line%#*}"
+
+				#recurse into the file included
+				#XXX does not support globbing
+				filename="${ldsoconf%/*}/${line#include }"
+				[ -f "$filename" ] &&
+					_library_ldsoconf "$filename"
+				;;
+			*)
+				#remove trailing comments
+				line="${line%#*}"
+				echo "$line"
+				;;
+		esac
+	done < "$ldsoconf"
 }
 
 
