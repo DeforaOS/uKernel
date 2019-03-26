@@ -94,6 +94,12 @@ _platform_variable()
 	context="$2"
 
 	case "$variable" in
+		ARCH)
+			[ -n "$ARCH" ] || ARCH="$context"
+			[ -n "$ARCH" ] || ARCH=$($UNAME -m)
+			[ -n "$ARCH" ] || return 2
+			echo "$ARCH"
+			;;
 		BINDIR)
 			echo "$PREFIX/bin"
 			;;
@@ -101,13 +107,10 @@ _platform_variable()
 			echo "$PREFIX/share"
 			;;
 		LIBUKERNEL_*|NATIVE_*|UKERNEL_*|ULOADER_*)
-			[ -n "$context" ] || context=`$UNAME -m`
-			case "$context" in
-				amd64)
-					"_platform_variable_$context" "$variable"
-					;;
-				i386|i486|i586|i686)
-					"_platform_variable_i386" "$variable"
+			[ -n "$PORT" ] || PORT=$(_platform_variable "PORT" "$context")
+			case "$PORT" in
+				amd64|i386)
+					"_platform_variable_$PORT" "$variable"
 					;;
 			esac
 			;;
@@ -120,6 +123,24 @@ _platform_variable()
 			else
 				echo "$PREFIX/share/man"
 			fi
+			;;
+		PORT)
+			[ -n "$PORT" ] || PORT="$context"
+			if [ ! -n "$PORT" ]; then
+				[ -n "$ARCH" ] || ARCH=$(_platform_variable "ARCH")
+				case "$ARCH" in
+					amd64|x86_64)
+						PORT="amd64"
+						;;
+					i[3456]86)
+						PORT="i386"
+						;;
+					*)
+						return 2
+						;;
+				esac
+			fi
+			echo "$PORT"
 			;;
 		PREFIX)
 			echo "$PREFIX"
