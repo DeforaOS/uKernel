@@ -169,9 +169,12 @@ fi
 [ $clean -ne 0 ] && exit 0
 
 exec 3>&1
+ret=0
 while [ $# -gt 0 ]; do
 	target="$1"
 	shift
 
-	_fixme > "$target"					|| exit 2
+	_fixme > "$target"					|| ret=$?
 done
+#XXX ignore errors
+exit 0
