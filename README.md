@@ -38,6 +38,11 @@ specifically targeted for this purpose.
 The resulting kernel is located in `src/kernel/uKernel.bin`. On the i386 and
 amd64 platforms, it produces a multiboot-compliant kernel file.
 
+Note that it is also possible to build uKernel outside of the source tree, by
+using the "OBJDIR" variable as follows:
+
+    $ make ARCH="i386" OBJDIR="$PWD/obj-i386"
+
 Testing uKernel
 ---------------
 
