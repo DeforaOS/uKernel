@@ -95,3 +95,9 @@ obtained by invoking the following:
 
     $ $TARGET-gcc --version
 
+Troubleshooting
+---------------
+
+In case the combination of binutils and GCC does not build together, it is
+possible to refer to the following table and choose a combination known to have
+worked before: <https://wiki.osdev.org/Cross-Compiler_Successful_Builds>
