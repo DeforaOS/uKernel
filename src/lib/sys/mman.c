@@ -52,7 +52,7 @@ int mprotect(void * addr, size_t length, int prot)
 	if((prot & (PROT_WRITE | PROT_EXEC)) == (PROT_WRITE | PROT_EXEC))
 	{
 		errno = EPERM;
-		return MAP_FAILED;
+		return -1;
 	}
 	/* FIXME really implement */
 	return 0;
