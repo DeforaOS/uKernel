@@ -58,3 +58,11 @@ On the Intel 64-bit platform, the loader is actually required:
 
     $ qemu-system-x86_64 -kernel src/loader/uLoader.bin -initrd src/kernel/uKernel.bin
 
+Generating ISO images
+---------------------
+
+The build system will automatically try to create a bootable ISO image in
+`$(OBJDIR)src/DeforaOS.iso` on supported platforms.
+
+On Intel-based platforms (i386, amd64) this currently requires GNU GRUB to be
+installed.
