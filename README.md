@@ -64,5 +64,5 @@ Generating ISO images
 The build system will automatically try to create a bootable ISO image in
 `src/DeforaOS.iso` on supported platforms.
 
-On Intel-based platforms (i386, amd64) this currently requires GNU GRUB to be
-installed.
+On Intel-based platforms (i386, amd64) this currently requires GNU GRUB and the
+corresponding dependencies (eg xorriso) to be installed.
