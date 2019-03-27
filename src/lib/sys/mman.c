@@ -22,7 +22,17 @@ void * mmap(void * addr, size_t length, int prot, int flags, int fd,
 		return MAP_FAILED;
 	}
 	/* flags */
-	if((flags & MAP_ANONYMOUS) == MAP_ANONYMOUS)
+	if((flags & MAP_FIXED) == MAP_FIXED)
+	{
+		/* XXX verify if the address is aligned and allowed */
+		if((flags & MAP_ANONYMOUS) == MAP_ANONYMOUS)
+		{
+			errno = ENOTSUP;
+			ret = MAP_FAILED;
+		}
+		ret = addr;
+	}
+	else if((flags & MAP_ANONYMOUS) == MAP_ANONYMOUS)
 		ret = calloc(1, length);
 	else
 		ret = malloc(length);
