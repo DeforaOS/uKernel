@@ -49,7 +49,7 @@ Modify the environment to reflect this choice; in this case for the i386 port:
     $ export PREFIX="$HOME/opt/cross-gcc-$TARGET"
     $ export PATH="$PREFIX/bin:$PATH"
 
-Extract, configure, and build the archive in a dedicated tree:
+Extract, configure, and build binutils in a dedicated tree:
 
     $ tar xzvf binutils-2.32.tar.gz
     $ mkdir binutils-build
@@ -70,7 +70,7 @@ Just the same, GCC has to be configured for the target chosen.
 
 *Note:* GNU Make is required to build GCC.
 
-Extract, configure, and build the archive in a dedicated tree:
+Extract, configure, and build GCC in a dedicated tree:
 
     $ tar xzvf gcc-8.3.0.tar.gz
     $ mkdir gcc-build
