@@ -22,11 +22,6 @@ void * mmap(void * addr, size_t length, int prot, int flags, int fd,
 		return MAP_FAILED;
 	}
 	/* flags */
-	if((flags & MAP_PRIVATE) != MAP_PRIVATE)
-	{
-		errno = EINVAL;
-		return MAP_FAILED;
-	}
 	if((flags & MAP_ANONYMOUS) == MAP_ANONYMOUS)
 		ret = calloc(1, length);
 	else
