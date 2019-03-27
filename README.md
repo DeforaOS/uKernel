@@ -62,7 +62,7 @@ Generating ISO images
 ---------------------
 
 The build system will automatically try to create a bootable ISO image in
-`$(OBJDIR)src/DeforaOS.iso` on supported platforms.
+`src/DeforaOS.iso` on supported platforms.
 
 On Intel-based platforms (i386, amd64) this currently requires GNU GRUB to be
 installed.
