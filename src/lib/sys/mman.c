@@ -48,6 +48,12 @@ int mprotect(void * addr, size_t length, int prot)
 		errno = EINVAL;
 		return -1;
 	}
+	/* enforce W^X */
+	if((prot & (PROT_WRITE | PROT_EXEC)) == (PROT_WRITE | PROT_EXEC))
+	{
+		errno = EPERM;
+		return MAP_FAILED;
+	}
 	/* FIXME really implement */
 	return 0;
 }
