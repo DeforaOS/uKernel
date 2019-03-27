@@ -26,12 +26,6 @@
 
 
 #variables
-[ -n "$ARCH" ] || ARCH="$(uname -m)"
-case "$ARCH" in
-	x86_64)
-		ARCH="amd64"
-		;;
-esac
 [ -n "$OBJDIR" ] || OBJDIR="./"
 PROGNAME="grub.sh"
 UKERNELBIN="${OBJDIR}../src/kernel/uKernel.bin"
@@ -49,19 +43,21 @@ _error()
 	return 2
 }
 
+
+#grub
 _grub()
 {
 	ret=0
 
-	if [ -z "$ARCH" ]; then
+	if [ -z "$PORT" ]; then
 		_error "Could not determine the platform"
 		return $?
 	fi
 	$DATE
 	echo
-	case "$ARCH" in
-		amd64|i?86)
-			_info "Testing multiboot conformance ($ARCH)"
+	case "$PORT" in
+		amd64|i386)
+			_info "Testing multiboot conformance ($PORT)"
 			$GRUBFILE --is-x86-multiboot "$UKERNELBIN"
 			#FIXME look for multiboot2 instead?
 			#$GRUBFILE --is-x86-multiboot2 "$UKERNELBIN"
@@ -75,7 +71,7 @@ _grub()
 			fi
 			;;
 		*)
-			_info "$ARCH: Unsupported platform (ignored)"
+			_info "$PORT: Unsupported platform (ignored)"
 			;;
 	esac
 	if [ $ret -eq 0 ]; then
@@ -129,6 +125,22 @@ fi
 
 #clean
 [ $clean -ne 0 ] && exit 0
+
+#determine the current port
+[ -n "$ARCH" ] || ARCH="$($UNAME -m)"
+case "$ARCH" in
+	i[3456]86)
+		PORT="i386"
+		;;
+	x86_64)
+		PORT="amd64"
+		;;
+	*)
+		_error "$ARCH: Unsupported platform (ignored)"
+		#XXX ignore errors
+		exit 0
+		;;
+esac
 
 exec 3>&1
 while [ $# -gt 0 ]; do
