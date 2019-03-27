@@ -46,6 +46,7 @@ ULOADERBIN="${OBJDIR}loader/uLoader.bin"
 DATE="date"
 DEBUG="_debug"
 GRUBMKRESCUE="grub-mkrescue"
+INSTALL="install"
 MKDIR="mkdir -p"
 MKTEMP="mktemp"
 RM="rm -f"
@@ -82,6 +83,8 @@ _iso()
 		return 2
 	fi
 	$DEBUG $MKDIR -- "$tmpdir/boot" "$tmpdir/grub"
+	$DEBUG $INSTALL -m 0644 "$UKERNELBIN" "$tmpdir/boot/uKernel.bin"
+	$DEBUG $INSTALL -m 0644 "$ULOADERBIN" "$tmpdir/boot/uLoader.bin"
 	$CAT > "$tmpdir/grub/grub.cfg" << EOF
 menuentry "DeforaOS" {
 	multiboot /boot/uKernel.bin
@@ -89,7 +92,8 @@ menuentry "DeforaOS" {
 EOF
 	$DEBUG $GRUBMKRESCUE -o "$target" "$tmpdir"
 	ret=$?
-	$DEBUG $RM -- "$tmpdir/uKernel.bin" "$tmpdir/uLoader.bin" "$tmpdir/grub/grub.cfg"
+	$DEBUG $RM -- "$tmpdir/boot/uKernel.bin" "$tmpdir/boot/uLoader.bin" \
+		"$tmpdir/grub/grub.cfg"
 	$DEBUG $RMDIR -- "$tmpdir/boot" "$tmpdir/grub" "$tmpdir"
 	if [ $ret -eq 127 ]; then
 		_error "$target: Could not create ISO image: $GRUBMKRESCUE not available (ignored)"
