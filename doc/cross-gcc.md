@@ -15,7 +15,8 @@ Dependencies
 Binutils and GCC require the following software components to be available in
 the system prior to their installation:
 
-|_Component_|_Notes                  _|
+| Component | Notes                   |
+| --------- | ----------------------- |
 | Make      | eg GNU Make or BSD Make |
 | Bison     |                         |
 | Flex      |                         |
@@ -38,7 +39,8 @@ is version 2.32:
 To configure binutils it is necessary to choose a target. It can be chosen
 according to the following table:
 
-|_Port_|_Target  _|
+| Port | Target   |
+| ---- | -------- |
 | i386 | i686-elf |
 
 Modify the environment to reflect this choice; in this case for the i386 port:
