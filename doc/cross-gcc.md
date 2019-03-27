@@ -45,15 +45,15 @@ according to the following table:
 
 Modify the environment to reflect this choice; in this case for the i386 port:
 
-    $ export TARGET=i686-elf
-    $ export PREFIX="$HOME/opt/cross-gcc-$TARGET"
-    $ export PATH="$PREFIX/bin:$PATH"
+    $ TARGET="i686-elf"
+    $ PREFIX="$HOME/opt/cross-gcc-$TARGET"
+    $ PATH="$PREFIX/bin:$PATH"
 
 Extract, configure, and build binutils in a dedicated tree:
 
     $ tar xzvf binutils-2.32.tar.gz
     $ mkdir binutils-build
-    $ (cd binutils-build && ../binutils-2.32/configure --target=$TARGET \
+    $ (cd binutils-build && ../binutils-2.32/configure --target="$TARGET" \
       --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror)
     $ (cd binutils-build && make)
     $ (cd binutils-build && make install)
@@ -74,7 +74,7 @@ Extract, configure, and build GCC in a dedicated tree:
 
     $ tar xzvf gcc-8.3.0.tar.gz
     $ mkdir gcc-build
-    $ (cd gcc-build && ../gcc-8.3.0/configure --target=$TARGET \
+    $ (cd gcc-build && ../gcc-8.3.0/configure --target="$TARGET" \
       --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
       --without-headers
     $ (cd gcc-build && make all-gcc)
