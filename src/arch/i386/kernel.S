@@ -65,6 +65,7 @@ _start:
 	mov	$stack_top, %esp
 	xor	%ebp, %ebp
 
+	/* save %eax to detect multiboot */
 	push	%eax
 
 	/* reset EFLAGS */
