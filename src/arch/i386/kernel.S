@@ -7,6 +7,18 @@
 
 #include "multiboot.S"
 
+/* macros */
+#ifdef DEBUG
+# define DEBUG_STRING(s) \
+	pusha; \
+	push s; \
+	call puts; \
+	pop s; \
+	popa;
+#else
+# define DEBUG_STRING(s)
+#endif
+
 
 /* bss */
 .section .bss
