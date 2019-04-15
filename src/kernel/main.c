@@ -21,6 +21,8 @@ int main(int argc, char * argv[])
 	printf("Command line:");
 	for(i = 0; i < argc; i++)
 		printf(" %s%s", argv[i], (i + 1 == argc) ? "\n" : "");
+	if(argv[i] != NULL)
+		puts("argv is not terminated properly!");
 	if((t = time(NULL)) == -1)
 		printf("Could not get the current time (%d)\n", errno);
 	else
