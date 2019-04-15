@@ -88,21 +88,61 @@ _start:
 	call	multiboot
 	add	$0x4, %esp
 	cmp	$0x0, %eax
-	jne	2f
+	jne	1f
+
+	/* parse the command line */
+	push	%ebp
+	mov	%esp, %ebp
+	push	$0x0		/* argc */
+
+	mov	%ebx, %ecx	/* ecx = mi->cmdline;	*/
+	add	$0x10, %ecx
+	mov	(%ecx), %ecx	/* ecx = *ecx;		*/
+	mov	%ecx, %edx	/* edx = ecx;		*/
+3:
+	mov	(%edx), %al	/* al = *edx;		*/
+	cmp	$0x0, %al	/* if(al == '\0')	*/
+	je	4f		/*     goto 4f;		*/
+	inc	%edx		/* edx++;		*/
+	jmp	3b		/* goto 3b;		*/
+4:
+	push	$0x0		/* argv[] = NULL;	*/
+5:
+	cmp	%ecx, %edx	/* if(ecx == edx)	*/
+	je	7f		/*     goto 7f;		*/
+	mov	(%edx), %al	/* al = *edx;		*/
+	cmp	$0x20, %al	/* if(al != ' ')	*/
+	jne	6f		/*     goto 6f;		*/
+	movb	$0x0, (%edx)	/* *edx = '\0';		*/
+	inc	%edx
+	push	%edx		/* argv[] = edx;	*/
+	DEBUG_STRING(%edx)
+	dec	%edx
+	incl	-0x4(%ebp)	/* argc++;		*/
+6:
+	dec	%edx		/* edx--;		*/
+	jmp	5b		/* goto 4b;		*/
+7:
+	push	%edx		/* argv[] = edx;	*/
+	DEBUG_STRING(%edx)
+	incl	-0x4(%ebp)	/* argc++;		*/
 
 	/* prepare the arguments */
-	push	$0x0
-	push	$0x0
-	mov	%ebx, %eax
-	add	$0x10, %eax
-	push	%eax
-	push	$0x1
+	mov	%esp, %eax	/* eax = &argv;		*/
+	push	%esp
+	push	%ebx		/* auxv			*/
+	push	$0x0		/* envp			*/
+	push	%eax		/* argv			*/
+	push	-0x4(%ebp)	/* argc			*/
+
 	jmp	2f
 
 1:
 	/* FIXME setup paging */
 
 	/* prepare the arguments */
+	push	%ebp
+	mov	%esp, %ebp
 	push	$0x0
 	push	$0x0
 	push	$0x0
@@ -111,7 +151,8 @@ _start:
 2:
 	/* start the kernel */
 	call	main
-	add	$0x10, %esp
+	mov	%ebp, %esp
+	pop	%ebp
 
 	/* exit the kernel */
 	push	%eax
