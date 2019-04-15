@@ -43,6 +43,7 @@ PROGNAME="iso.sh"
 UKERNELBIN="${OBJDIR}kernel/uKernel.bin"
 ULOADERBIN="${OBJDIR}loader/uLoader.bin"
 #executables
+CAT="cat"
 DATE="date"
 DEBUG="_debug"
 GRUBMKRESCUE="grub-mkrescue"
