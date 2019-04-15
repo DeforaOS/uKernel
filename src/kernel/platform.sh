@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2018 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2018-2019 Pierre Pronchery <khorben@defora.org>
 #This file is part of DeforaOS uKernel
 #
 #Redistribution and use in source and binary forms, with or without
