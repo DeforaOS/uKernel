@@ -52,6 +52,7 @@ int multiboot(const ukMultibootInfo * mi)
 	ukMultibootInfo kmi;
 
 	memcpy(&kmi, mi, sizeof(kmi));
+	kmi.loader_name = "DeforaOS uLoader";
 
 	/* initialize the main buses */
 	ioportbus = bus_init(NULL, "ioport");
