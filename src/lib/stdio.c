@@ -207,7 +207,7 @@ int putchar(int c)
 int puts(char const * string)
 {
 	size_t i;
-	
+
 	i = strlen(string);
 	if(fwrite(string, sizeof(char), i, stdout) != i)
 		return EOF;

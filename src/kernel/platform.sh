@@ -107,7 +107,7 @@ $name $type $busname $args"
 
 	#begin the function
 	echo "
-	
+
 /* public */
 /* functions */
 /* platform_init */
