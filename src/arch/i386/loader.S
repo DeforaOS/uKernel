@@ -107,7 +107,9 @@ _start:
 	pop	%ebp
 
 	/* exit the loader */
+	push	%eax
 	call	_exit
+	add	$0x4, %esp
 
 	hlt
 
