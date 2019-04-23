@@ -77,6 +77,9 @@ _start:
 	add	$0x4, %esp
 
 	/* start the loader */
+	push	%ebp
+	mov	%esp, %ebp
+
 	push	$0x0
 	push	$0x0
 	mov	%ebx, %eax
@@ -84,19 +87,25 @@ _start:
 	push	%eax
 	push	$0x1
 	call	main
-	add	$0x10, %esp
+	mov	%ebp, %esp
+	pop	%ebp
 	jmp	2f
 
 1:
-	/* start the loader */
+	/* prepare the arguments */
+	push	%ebp
+	mov	%esp, %ebp
 	push	$0x0
 	push	$0x0
 	push	$0x0
 	push	$0x0
-	call	main
-	add	$0x10, %esp
 
 2:
+	/* start the loader */
+	call	main
+	mov	%ebp, %esp
+	pop	%ebp
+
 	/* exit the loader */
 	call	_exit
 
