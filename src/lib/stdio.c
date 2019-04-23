@@ -204,12 +204,14 @@ int putchar(int c)
 
 
 /* puts */
-int puts(char const * string)
+int puts(char const * str)
 {
 	size_t i;
 
-	i = strlen(string);
-	if(fwrite(string, sizeof(char), i, stdout) != i)
+	if(str == NULL) /* XXX be nice and do not crash */
+		str = "(null)";
+	i = strlen(str);
+	if(fwrite(str, sizeof(char), i, stdout) != i)
 		return EOF;
 	fputc('\n', stdout);
 	return i <= INT_MAX ? i : INT_MAX;
