@@ -95,6 +95,7 @@ _start:
 	mov	%esp, %ebp
 	push	$0x0		/* argc */
 
+	/* FIXME mi->cmdline may be NULL */
 	mov	%ebx, %ecx	/* ecx = mi->cmdline;	*/
 	add	$0x10, %ecx
 	mov	(%ecx), %ecx	/* ecx = *ecx;		*/
