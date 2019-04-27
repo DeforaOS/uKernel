@@ -7,6 +7,19 @@
 
 #include "multiboot/header.S"
 
+/* macros */
+#ifdef DEBUG
+# define DEBUG_STRING(s) \
+	pusha; \
+	push s; \
+	call puts; \
+	pop s; \
+	popa;
+#else
+# define DEBUG_STRING(s)
+#endif
+
+
 /* sections */
 /* text */
 .section .text
@@ -15,20 +28,16 @@
 .type multiboot_boot_kernel32, @function
 multiboot_boot_kernel32:
 	/* jump into the 32-bit kernel */
-#if 0
 	mov	0x4(%esp), %ebx
-	mov	0x8(%esp), %eax
-	call	*%eax
-	ret
-#else
-	push	%ebp
-	mov	%esp, %ebp
-
-	mov	0x8(%ebp), %ebx
-	mov	0xc(%ebp), %ecx
+	mov	0x8(%esp), %ecx
+#ifdef DEBUG
+	mov	0x10(%ebx), %eax
+	DEBUG_STRING(%eax)
+	mov	0x40(%ebx), %eax
+	DEBUG_STRING(%eax)
+#endif
 	mov	$BOOT_MULTIBOOT_LOADER_MAGIC, %eax
 	jmp	*%ecx
-#endif
 
 
 .global multiboot_boot_kernel64
