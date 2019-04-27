@@ -22,9 +22,9 @@ static int _load_module_elf(ukMultibootMod const * mod,
 static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr);
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
 static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
-		Elf32_Shdr * shdr, Elf32_Rela * rela,
+		Elf32_Phdr * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
 static int _load_module_elf32_strtab(ukMultibootMod const * mod,
 		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
@@ -134,8 +134,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		if(entrypoint != NULL)
 			*entrypoint = mod->start + ehdr->e_entry
 				- phdr[i].p_vaddr + phdr[i].p_offset;
-		/* FIXME really look for main() directly? */
-		if(_load_module_elf32_relocate(mod, ehdr) != 0)
+		if(_load_module_elf32_relocate(mod, ehdr, &phdr[i]) != 0)
 		{
 			puts("Could not load 32-bit module:"
 					" Could not relocate");
@@ -148,7 +147,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 }
 
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr)
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr)
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
@@ -186,7 +185,7 @@ static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
 			sym = (ELF32_R_SYM(rela.r_info) < symtab_cnt)
 				? &symtab[ELF32_R_SYM(rela.r_info)] : NULL;
-			if(_load_module_elf32_relocate_arch(mod,
+			if(_load_module_elf32_relocate_arch(mod, phdr,
 						shdr[i].sh_info < ehdr->e_shnum
 						? &shdr[shdr[i].sh_info] : NULL,
 						&rela, strtab, strtab_cnt,
@@ -198,14 +197,14 @@ static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
-		Elf32_Shdr * shdr, Elf32_Rela * rela,
+		Elf32_Phdr * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym)
 {
 #if defined(__i386__)
 	Elf32_Addr * addr;
 
 	addr = (Elf32_Addr *)(mod->start + (shdr != NULL ? shdr->sh_offset : 0)
-			+ rela->r_offset);
+			+ rela->r_offset - phdr->p_vaddr);
 	switch(ELF32_R_TYPE(rela->r_info))
 	{
 		case R_386_32:		/* S + A */
