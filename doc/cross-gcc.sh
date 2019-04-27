@@ -41,17 +41,14 @@ WGET="wget"
 #main
 
 #Modify the environment to reflect the port chosen
-
 PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
 
 #Download binutils
-
 [ -f "binutils-$BINUTILS_VERSION.tar.gz" ] ||
 	$WGET "$MIRROR/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.gz"
 
 #Extract, configure, and build binutils in a dedicated tree
-
 $TAR xzvf "binutils-$BINUTILS_VERSION.tar.gz"
 $MKDIR binutils-build
 (cd binutils-build && "../binutils-$BINUTILS_VERSION/configure" \
@@ -61,12 +58,10 @@ $MKDIR binutils-build
 (cd binutils-build && $MAKE install)
 
 #Download GCC
-
 [ -f "gcc-$GCC_VERSION.tar.gz" ] ||
 	$WGET "$MIRROR/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.gz"
 
 #Extract, configure, and build GCC in a dedicated tree
-
 $TAR xzvf "gcc-$GCC_VERSION.tar.gz"
 $MKDIR gcc-build
 (cd gcc-build && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
