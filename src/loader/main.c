@@ -15,9 +15,9 @@ int main(int argc, char * argv[])
 	int i;
 
 	puts("Failed to boot DeforaOS");
-	puts("Command line:");
+	printf("Command line:");
 	for(i = 0; i < argc; i++)
-		printf("%s%s%s", (i > 0) ? " " : "", argv[i],
-				(i + 1 == argc) ? "\n" : "");
+		printf(" \"%s\"", argv[i]);
+	printf("\n");
 	return 0;
 }

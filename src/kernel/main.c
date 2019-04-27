@@ -20,7 +20,8 @@ int main(int argc, char * argv[])
 	puts("Starting DeforaOS...");
 	printf("Command line:");
 	for(i = 0; i < argc; i++)
-		printf(" %s%s", argv[i], (i + 1 == argc) ? "\n" : "");
+		printf(" \"%s\"", argv[i]);
+	printf("\n");
 	if(argv[i] != NULL)
 		puts("argv is not terminated properly!");
 	if((t = time(NULL)) == -1)
