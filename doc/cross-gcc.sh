@@ -71,7 +71,7 @@ $TAR xzvf "gcc-$GCC_VERSION.tar.gz"
 $MKDIR gcc-build
 (cd gcc-build && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
 	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
-	--without-headers
+	--without-headers)
 (cd gcc-build && $MAKE all-gcc)
 (cd gcc-build && $MAKE all-target-libgcc)
 (cd gcc-build && $MAKE install-gcc)
