@@ -28,6 +28,7 @@
 #variables
 BINUTILS_VERSION="2.32"
 GCC_VERSION="8.3.0"
+GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
 TARGET="i686-elf"
 #executables
@@ -45,11 +46,11 @@ PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
 
 #Download binutils
-[ -f "binutils-$BINUTILS_VERSION.tar.gz" ] ||
-	$WGET "$MIRROR/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.gz"
+[ -f "binutils-$BINUTILS_VERSION.tar.$GZEXT" ] ||
+	$WGET "$MIRROR/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build binutils in a dedicated tree
-$TAR xzvf "binutils-$BINUTILS_VERSION.tar.gz"
+$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
 $MKDIR binutils-build
 (cd binutils-build && "../binutils-$BINUTILS_VERSION/configure" \
 	--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
@@ -58,11 +59,11 @@ $MKDIR binutils-build
 (cd binutils-build && $MAKE install)
 
 #Download GCC
-[ -f "gcc-$GCC_VERSION.tar.gz" ] ||
-	$WGET "$MIRROR/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.gz"
+[ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
+	$WGET "$MIRROR/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build GCC in a dedicated tree
-$TAR xzvf "gcc-$GCC_VERSION.tar.gz"
+$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
 $MKDIR gcc-build
 (cd gcc-build && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
 	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
