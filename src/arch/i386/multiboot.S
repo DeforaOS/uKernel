@@ -16,6 +16,7 @@ k_ptr:
 
 
 /* text */
+.section .text
 /* multiboot_boot_kernel32 */
 .global multiboot_boot_kernel32
 .type multiboot_boot_kernel32, @function
