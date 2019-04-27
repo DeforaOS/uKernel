@@ -19,5 +19,9 @@ int main(int argc, char * argv[])
 	for(i = 0; i < argc; i++)
 		printf(" \"%s\"", argv[i]);
 	printf("\n");
+#ifdef DEBUG
+	if(argv[i] != NULL)
+		puts("uLoader: argv is not terminated properly");
+#endif
 	return 0;
 }

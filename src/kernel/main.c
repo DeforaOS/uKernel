@@ -22,8 +22,10 @@ int main(int argc, char * argv[])
 	for(i = 0; i < argc; i++)
 		printf(" \"%s\"", argv[i]);
 	printf("\n");
+#ifdef DEBUG
 	if(argv[i] != NULL)
-		puts("argv is not terminated properly!");
+		puts("uKernel: argv is not terminated properly");
+#endif
 	if((t = time(NULL)) == -1)
 		printf("Could not get the current time (%d)\n", errno);
 	else
