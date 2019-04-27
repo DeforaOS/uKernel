@@ -43,7 +43,7 @@ static const IDT _idt[] =
 /* public */
 /* functions */
 /* multiboot */
-int multiboot(ukMultibootInfo * mi)
+int multiboot(const ukMultibootInfo * mi)
 {
 	ukBus * ioportbus;
 	ukBus * vgabus;
