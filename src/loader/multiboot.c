@@ -118,7 +118,7 @@ int multiboot(const ukMultibootInfo * mi)
 	if(res != 0)
 	{
 		puts("Could not load the kernel");
-		return 5;
+		return 6;
 	}
 
 	/* hand control over to the kernel */
@@ -134,7 +134,8 @@ int multiboot(const ukMultibootInfo * mi)
 			puts("Detected 64-bit kernel");
 			return multiboot_boot_kernel64(&kmi, entrypoint);
 	}
+
 	puts("Unsupported ELF class for the kernel");
-	return 6;
+	return 7;
 }
 #endif

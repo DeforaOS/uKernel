@@ -94,7 +94,7 @@ int multiboot(const ukMultibootInfo * mi)
 #endif
 	{
 		puts("Could not setup the GDT");
-		return 2;
+		return 4;
 	}
 
 	/* load the modules */
@@ -114,7 +114,7 @@ int multiboot(const ukMultibootInfo * mi)
 	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
 	{
 		puts("Could not setup the IDT");
-		return 2;
+		return 5;
 	}
 
 	return 0;
