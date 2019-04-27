@@ -7,14 +7,6 @@
 
 #include "multiboot/header.S"
 
-
-/* sections */
-/* data */
-.section .data
-k_ptr:
-.long 0x0
-
-
 /* sections */
 /* text */
 .section .text
@@ -82,3 +74,9 @@ multiboot_boot_kernel64:
 1:
 	mov	$-1, %eax
 	ret
+
+
+/* data */
+.section .data
+k_ptr:
+.long 0x0
