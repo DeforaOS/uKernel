@@ -23,6 +23,9 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
+static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
+		Elf32_Half i);
 static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
 		Elf32_Phdr * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
@@ -158,6 +161,27 @@ static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
+
+	shdr = (Elf32_Shdr *)(mod->start + ehdr->e_shoff);
+	for(i = SHN_UNDEF + 1; i < ehdr->e_shnum; i++)
+	{
+		if((shdr[i].sh_type == SHT_REL
+					&& shdr[i].sh_entsize
+					== sizeof(Elf32_Rel))
+				|| (shdr[i].sh_type == SHT_RELA
+					&& shdr[i].sh_entsize
+					== sizeof(Elf32_Rela)))
+			if(_load_module_elf32_relocate_rela(mod, ehdr, phdr,
+						shdr, i) != 0)
+				return -1;
+	}
+	return 0;
+}
+
+static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
+		Elf32_Half i)
+{
 	Elf32_Word link;
 	Elf32_Sym * symtab;
 	size_t symtab_cnt;
@@ -168,37 +192,26 @@ static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 	Elf32_Rela rela;
 	Elf32_Sym * sym;
 
-	shdr = (Elf32_Shdr *)(mod->start + ehdr->e_shoff);
-	for(i = SHN_UNDEF + 1; i < ehdr->e_shnum; i++)
+	if((link = shdr[i].sh_link) > ehdr->e_shnum)
+		return -1;
+	if(_load_module_elf32_symtab(mod, ehdr, shdr, link, SHT_DYNSYM, &symtab,
+				&symtab_cnt) != 0)
+		return -1;
+	if(_load_module_elf32_strtab(mod, ehdr, shdr, shdr[link].sh_link,
+				&strtab, &strtab_cnt) != 0)
+		return 0;
+	rel = (Elf32_Rel *)(mod->start + shdr[i].sh_offset);
+	for(j = 0; j < shdr[i].sh_size; j += shdr[i].sh_entsize)
 	{
-		if((shdr[i].sh_type != SHT_REL
-					|| shdr[i].sh_entsize != sizeof(*rel))
-				&& (shdr[i].sh_type != SHT_RELA
-					|| shdr[i].sh_entsize != sizeof(rela)))
-			continue;
-		if((link = shdr[i].sh_link) > ehdr->e_shnum)
+		rela.r_addend = 0;
+		memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
+		sym = (ELF32_R_SYM(rela.r_info) < symtab_cnt)
+			? &symtab[ELF32_R_SYM(rela.r_info)] : NULL;
+		if(_load_module_elf32_relocate_arch(mod, phdr,
+					shdr[i].sh_info < ehdr->e_shnum
+					? &shdr[shdr[i].sh_info] : NULL,
+					&rela, strtab, strtab_cnt, sym) != 0)
 			return -1;
-		if(_load_module_elf32_symtab(mod, ehdr, shdr, link, SHT_DYNSYM,
-					&symtab, &symtab_cnt) != 0)
-			return -1;
-		if(_load_module_elf32_strtab(mod, ehdr, shdr,
-					shdr[link].sh_link,
-					&strtab, &strtab_cnt) != 0)
-			break;
-		rel = (Elf32_Rel *)(mod->start + shdr[i].sh_offset);
-		for(j = 0; j < shdr[i].sh_size; j += shdr[i].sh_entsize)
-		{
-			rela.r_addend = 0;
-			memcpy(&rela, (char *)rel + j, shdr[i].sh_entsize);
-			sym = (ELF32_R_SYM(rela.r_info) < symtab_cnt)
-				? &symtab[ELF32_R_SYM(rela.r_info)] : NULL;
-			if(_load_module_elf32_relocate_arch(mod, phdr,
-						shdr[i].sh_info < ehdr->e_shnum
-						? &shdr[shdr[i].sh_info] : NULL,
-						&rela, strtab, strtab_cnt,
-						sym) != 0)
-				return -1;
-		}
 	}
 	return 0;
 }
