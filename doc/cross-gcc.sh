@@ -52,7 +52,8 @@ PATH="$PREFIX/bin:$PATH"
 	$WGET "$MIRROR/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build binutils in a dedicated tree
-$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
+[ -d "binutils-$BINUTILS_VERSION" ] ||
+	$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
 case "$TARGET" in
 	aarch64-elf|amd64-elf|sparc64-elf)
 		BINUTILS_FLAGS="$BINUTILS_FLAGS --enable-multilib"
@@ -70,7 +71,8 @@ $MKDIR "binutils-build"
 	$WGET "$MIRROR/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build GCC in a dedicated tree
-$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
+[ -d "gcc-$GCC_VERSION" ] ||
+	$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
 case "$TARGET" in
 	aarch64-elf|sparc64-elf)
 		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m32,m64 --enable-targets=all"
