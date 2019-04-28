@@ -88,7 +88,7 @@ _iso()
 	$DEBUG $INSTALL -m 0644 "$ULOADERBIN" "$tmpdir/boot/uLoader.bin"
 	$CAT > "$tmpdir/boot/grub/grub.cfg" << EOF
 menuentry "DeforaOS" {
-	multiboot /boot/uKernel.bin
+	multiboot /boot/uKernel.bin uKernel
 }
 EOF
 	$DEBUG $GRUBMKRESCUE -o "$target" "$tmpdir"
