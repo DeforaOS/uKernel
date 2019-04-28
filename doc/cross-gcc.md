@@ -39,9 +39,10 @@ is version 2.32:
 To configure binutils it is necessary to choose a target. It can be chosen
 according to the following table:
 
-| Port | Target   |
-| ---- | -------- |
-| i386 | i686-elf |
+| Port  | Target    |
+| ----- | --------- |
+| amd64 | amd64-elf |
+| i386  | i686-elf  |
 
 Modify the environment to reflect this choice; in this case for the i386 port:
 
