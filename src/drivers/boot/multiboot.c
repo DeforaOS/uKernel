@@ -199,8 +199,9 @@ static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
 					MAP_ANONYMOUS, -1, 0)) == MAP_FAILED)
 		return -1;
 	memset(addr, 0, shdr[i].sh_size);
-	if((shdr[i].sh_flags & SHF_WRITE) != SHF_WRITE)
-		mprotect(addr, shdr[i].sh_size, PROT_READ);
+	if((shdr[i].sh_flags & SHF_WRITE) != SHF_WRITE
+			&& mprotect(addr, shdr[i].sh_size, PROT_READ) != 0)
+		return -1;
 	shdr[i].sh_offset = (Elf32_Off)(addr - phdr[i].p_offset);
 	return 0;
 }
