@@ -64,7 +64,7 @@ int munmap(void * addr, size_t length)
 {
 	(void) length;
 
-	if(length == 0)
+	if(addr == NULL || length == 0)
 	{
 		errno = EINVAL;
 		return -1;
