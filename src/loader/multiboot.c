@@ -49,12 +49,11 @@ int multiboot(const ukMultibootInfo * mi)
 	ukBus * vgabus;
 	char const * console = LOADER_CONSOLE;
 	char const * display = LOADER_DISPLAY;
-	size_t i;
 	ukMultibootMod * mod;
-	int res = -1;
 	unsigned char elfclass;
 	vaddr_t entrypoint;
 	ukMultibootInfo kmi;
+	size_t i;
 
 	/* initialize the heap */
 	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS)
@@ -66,10 +65,7 @@ int multiboot(const ukMultibootInfo * mi)
 	}
 	heap = sbrk(0);
 
-	memcpy(&kmi, mi, sizeof(kmi));
-	kmi.loader_name = "DeforaOS uLoader";
-
-	/* initialize the main buses */
+	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");
 	vgabus = bus_init(ioportbus, "vga");
 
@@ -79,11 +75,11 @@ int multiboot(const ukMultibootInfo * mi)
 		display = "vesa";
 #endif
 
-	/* initialize the console */
-	console_init(ioportbus, console);
-
 	/* initialize the display */
 	display_init(vgabus, display);
+
+	/* initialize the console */
+	console_init(ioportbus, console);
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
@@ -95,51 +91,44 @@ int multiboot(const ukMultibootInfo * mi)
 			(mi->mem_upper - mi->mem_lower) / 1024);
 	printf("Booted from %#x\n", mi->boot_device_drive);
 
-	/* look for the kernel and modules */
-	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
-	{
-		puts("No modules provided");
-		return 2;
-	}
-	if(mi->mods_count == 0)
-	{
-		puts("No kernel provided");
-		return 3;
-	}
+	/* setup the GDT */
 	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 	{
 		puts("Could not setup the GDT");
 		return 4;
 	}
 
-	/* load the kernel and modules */
-	kmi.mods_count = 0;
-	kmi.mods_addr = NULL;
-	for(i = 0; i < mi->mods_count; i++)
+	/* load the kernel */
+	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
-		mod = &mi->mods_addr[i];
-		printf("Loading %s: %s\n", (i == 0) ? "kernel" : "module",
-				mod->cmdline);
-		if(i == 0)
-		{
-			res = multiboot_load_module(mod, &elfclass,
-					&entrypoint);
-			kmi.mods_count = mi->mods_count - 1;
-			kmi.mods_addr = &mi->mods_addr[1];
-		}
-		else
-			multiboot_load_module(mod, NULL, NULL);
-	}
-	if(res != 0)
-	{
-		puts("Could not load the kernel");
+		puts("No modules provided");
 		return 6;
 	}
+	if(mi->mods_count == 0)
+	{
+		puts("No kernel provided");
+		return 7;
+	}
+	mod = &mi->mods_addr[0];
+	printf("Loading kernel: %s\n", mod->cmdline);
+	if(multiboot_load_module(mod, &elfclass, &entrypoint) != 0)
+	{
+		puts("Could not load the kernel");
+		return 8;
+	}
+
+	/* forward the Multiboot information */
+	memcpy(&kmi, mi, sizeof(kmi));
+	kmi.loader_name = "DeforaOS uLoader";
+	kmi.cmdline = mod->cmdline;
+	kmi.mods_count = mi->mods_count - 1;
+	kmi.mods_addr = &mi->mods_addr[1];
 
 	/* hand control over to the kernel */
-	printf("Jumping into the kernel at %#x (%u, %u, %#x) %p\n", entrypoint,
-			mi->elfshdr_num, mi->elfshdr_size, mi->elfshdr_addr,
-			multiboot);
+#ifdef DEBUG
+	printf("Jumping into the kernel at %#x (%u, %u, %#x)\n", entrypoint,
+			mi->elfshdr_num, mi->elfshdr_size, mi->elfshdr_addr);
+#endif
 	switch(elfclass)
 	{
 		case ELFCLASS32:
