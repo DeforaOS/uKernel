@@ -20,6 +20,7 @@
 #endif
 
 
+/* sections */
 /* bss */
 .section .bss
 .align 16
