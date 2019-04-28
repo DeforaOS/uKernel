@@ -92,6 +92,11 @@ static int _load_module_elf(ukMultibootMod const * mod,
 	Elf32_Ehdr * ehdr;
 
 	ehdr = (Elf32_Ehdr *)mod->start;
+	if(ehdr->e_ident[EI_VERSION] != EV_CURRENT)
+	{
+		puts("Could not load module: Unsupported ELF version");
+		return -1;
+	}
 	if(elfclass != NULL)
 		*elfclass = ehdr->e_ident[EI_CLASS];
 	switch(ehdr->e_ident[EI_CLASS])
