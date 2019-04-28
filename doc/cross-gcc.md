@@ -52,7 +52,7 @@ Modify the environment to reflect this choice; in this case for the i386 port:
 
 Extract, configure, and build binutils in a dedicated tree:
 
-    $ tar xzvf binutils-2.32.tar.gz
+    $ tar xzf binutils-2.32.tar.gz
     $ mkdir binutils-build
     $ (cd binutils-build && ../binutils-2.32/configure --target="$TARGET" \
       --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror)
@@ -73,7 +73,7 @@ Just the same, GCC has to be configured for the target chosen.
 
 Extract, configure, and build GCC in a dedicated tree:
 
-    $ tar xzvf gcc-8.3.0.tar.gz
+    $ tar xzf gcc-8.3.0.tar.gz
     $ mkdir gcc-build
     $ (cd gcc-build && ../gcc-8.3.0/configure --target="$TARGET" \
       --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
