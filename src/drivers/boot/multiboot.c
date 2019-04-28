@@ -129,7 +129,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 	if(mod->start + ehdr->e_phoff + (ehdr->e_phnum * sizeof(*phdr))
 			> mod->end)
 	{
-		puts("Could not load 32-bit module: Invalid format");
+		puts("Could not load ELF 32-bit module: Invalid format");
 		return -1;
 	}
 	phdr = (Elf32_Phdr *)(mod->start + ehdr->e_phoff);
@@ -139,7 +139,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 			continue;
 		if(phdr[i].p_filesz > phdr[i].p_memsz)
 		{
-			puts("Could not load 32-bit module:"
+			puts("Could not load ELF 32-bit module:"
 					" Invalid program header");
 			return -1;
 		}
@@ -152,19 +152,19 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 				- phdr[i].p_vaddr + phdr[i].p_offset;
 		if(_load_module_elf32_allocate(mod, ehdr, &phdr[i]) != 0)
 		{
-			puts("Could not load 32-bit module:"
-					" Could not allocate");
+			puts("Could not load ELF 32-bit module:"
+					" Could not allocate memory");
 			return -1;
 		}
 		if(_load_module_elf32_relocate(mod, ehdr, &phdr[i]) != 0)
 		{
-			puts("Could not load 32-bit module:"
+			puts("Could not load ELF 32-bit module:"
 					" Could not relocate");
 			return -1;
 		}
 		return 0;
 	}
-	puts("Could not load 32-bit module: Invalid entrypoint");
+	puts("Could not load ELF 32-bit module: Invalid entrypoint");
 	return -1;
 }
 
@@ -299,7 +299,7 @@ static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
 	}
 	return 0;
 #else
-# warning Unsupported platform: 32-bit relocations not implemented
+# warning Unsupported platform: ELF 32-bit relocations not implemented
 	return -1;
 #endif
 }
@@ -345,7 +345,7 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 	if(mod->start + ehdr->e_phoff + (ehdr->e_phnum * sizeof(*phdr))
 			> mod->end)
 	{
-		puts("Could not load 64-bit module: Invalid format");
+		puts("Could not load ELF 64-bit module: Invalid format");
 		return -1;
 	}
 	phdr = (Elf64_Phdr *)(uintptr_t)(mod->start + ehdr->e_phoff);
@@ -355,7 +355,7 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 			continue;
 		if(phdr[i].p_filesz > phdr[i].p_memsz)
 		{
-			puts("Could not load 64-bit module:"
+			puts("Could not load ELF 64-bit module:"
 					" Invalid program header");
 			return -1;
 		}
@@ -369,13 +369,13 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		/* FIXME really look for main() directly? */
 		if(_load_module_elf64_relocate(mod, ehdr) != 0)
 		{
-			puts("Could not load 64-bit module:"
+			puts("Could not load ELF 64-bit module:"
 					" Could not relocate");
 			return -1;
 		}
 		return 0;
 	}
-	puts("Could not load 64-bit module: Invalid entrypoint");
+	puts("Could not load ELF 64-bit module: Invalid entrypoint");
 	return -1;
 }
 
@@ -457,7 +457,7 @@ static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 	}
 	return 0;
 #else
-# warning Unsupported platform: 64-bit relocations not implemented
+# warning Unsupported platform: ELF 64-bit relocations not implemented
 
 	return -1;
 #endif
