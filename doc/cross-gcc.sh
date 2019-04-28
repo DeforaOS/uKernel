@@ -59,12 +59,12 @@ case "$TARGET" in
 		BINUTILS_FLAGS="$BINUTILS_FLAGS --enable-multilib"
 		;;
 esac
-$MKDIR "binutils-build"
-(cd binutils-build && "../binutils-$BINUTILS_VERSION/configure" \
+$MKDIR "binutils-$TARGET"
+(cd "binutils-$TARGET" && "../binutils-$BINUTILS_VERSION/configure" \
 	--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
 	--disable-werror $BINUTILS_FLAGS)
-(cd binutils-build && $MAKE)
-(cd binutils-build && $MAKE install)
+(cd "binutils-$TARGET" && $MAKE)
+(cd "binutils-$TARGET" && $MAKE install)
 
 #Download GCC
 [ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
@@ -81,11 +81,11 @@ case "$TARGET" in
 		GCC_FLAGS="$GCC_FLAGS --with-abi=m64 --with-multilib-list=m32,m64 --enable-targets=all"
 		;;
 esac
-$MKDIR "gcc-build"
-(cd gcc-build && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
+$MKDIR "gcc-$TARGET"
+(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
 	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
 	--without-headers $GCC_FLAGS)
-(cd gcc-build && $MAKE all-gcc)
-(cd gcc-build && $MAKE all-target-libgcc)
-(cd gcc-build && $MAKE install-gcc)
-(cd gcc-build && $MAKE install-target-libgcc)
+(cd "gcc-$TARGET" && $MAKE all-gcc)
+(cd "gcc-$TARGET" && $MAKE all-target-libgcc)
+(cd "gcc-$TARGET" && $MAKE install-gcc)
+(cd "gcc-$TARGET" && $MAKE install-target-libgcc)
