@@ -5,6 +5,7 @@
 
 
 #if defined(__amd64__) || defined(__i386__)
+# include <sys/mman.h>
 # include <stdint.h>
 # include <stdio.h>
 # include <string.h>
@@ -21,6 +22,11 @@ static int _load_module_elf(ukMultibootMod const * mod,
 		unsigned char * elfclass, vaddr_t * entrypoint);
 static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		Elf32_Ehdr * ehdr);
+static int _load_module_elf32_allocate(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
+static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
+		Elf32_Half i);
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
 static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
@@ -144,6 +150,12 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		if(entrypoint != NULL)
 			*entrypoint = mod->start + ehdr->e_entry
 				- phdr[i].p_vaddr + phdr[i].p_offset;
+		if(_load_module_elf32_allocate(mod, ehdr, &phdr[i]) != 0)
+		{
+			puts("Could not load 32-bit module:"
+					" Could not allocate");
+			return -1;
+		}
 		if(_load_module_elf32_relocate(mod, ehdr, &phdr[i]) != 0)
 		{
 			puts("Could not load 32-bit module:"
@@ -154,6 +166,43 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 	}
 	puts("Could not load 32-bit module: Invalid entrypoint");
 	return -1;
+}
+
+static int _load_module_elf32_allocate(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr)
+{
+	Elf32_Half i;
+	Elf32_Shdr * shdr;
+
+	shdr = (Elf32_Shdr *)(mod->start + ehdr->e_shoff);
+	for(i = SHN_UNDEF + 1; i < ehdr->e_shnum; i++)
+	{
+		if(shdr[i].sh_type == SHT_NOBITS
+				&& shdr[i].sh_size != 0
+				&& shdr[i].sh_flags & SHF_ALLOC)
+			if(_load_module_elf32_allocate_nobits(mod, ehdr, phdr,
+						shdr, i) != 0)
+				return -1;
+	}
+	return 0;
+}
+
+static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
+		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
+		Elf32_Half i)
+{
+	void * addr;
+	(void) mod;
+	(void) ehdr;
+
+	if((addr = mmap(0x0, shdr[i].sh_size, PROT_READ | PROT_WRITE,
+					MAP_ANONYMOUS, -1, 0)) == MAP_FAILED)
+		return -1;
+	memset(addr, 0, shdr[i].sh_size);
+	if((shdr[i].sh_flags & SHF_WRITE) != SHF_WRITE)
+		mprotect(addr, shdr[i].sh_size, PROT_READ);
+	shdr[i].sh_offset = (Elf32_Off)(addr - phdr[i].p_offset);
+	return 0;
 }
 
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
