@@ -36,12 +36,6 @@ stack_top:
 .type _brk, @function
 _brk:
 	xor	%eax, %eax
-	mov	0x4(%esp), %ecx
-	/* XXX limits the heap to the first 1 MB */
-	cmp	$0x100000, %ecx
-	jl	1f
-	not	%eax
-1:
 	ret
 
 
