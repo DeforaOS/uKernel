@@ -21,6 +21,15 @@ char ** environ;
 
 
 /* functions */
+/* brk */
+extern int _brk(void * addr);
+
+int brk(void * addr)
+{
+	return _brk(addr);
+}
+
+
 /* getpid */
 pid_t getpid(void)
 {

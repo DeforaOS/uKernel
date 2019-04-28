@@ -39,6 +39,7 @@ typedef long ssize_t;
 
 
 /* prototypes */
+int brk(void * addr);
 void _exit(int status);
 pid_t getpid(void);
 pid_t getppid(void);
