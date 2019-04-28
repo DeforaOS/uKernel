@@ -26,7 +26,9 @@
 
 
 #variables
+BINUTILS_FLAGS=
 BINUTILS_VERSION="2.32"
+GCC_FLAGS=
 GCC_VERSION="8.3.0"
 GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
@@ -51,10 +53,15 @@ PATH="$PREFIX/bin:$PATH"
 
 #Extract, configure, and build binutils in a dedicated tree
 $TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
-$MKDIR binutils-build
+case "$TARGET" in
+	aarch64-elf|amd64-elf|sparc64-elf)
+		BINUTILS_FLAGS="$BINUTILS_FLAGS --enable-multilib"
+		;;
+esac
+$MKDIR "binutils-build"
 (cd binutils-build && "../binutils-$BINUTILS_VERSION/configure" \
 	--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
-	--disable-werror)
+	--disable-werror $BINUTILS_FLAGS)
 (cd binutils-build && $MAKE)
 (cd binutils-build && $MAKE install)
 
@@ -64,10 +71,18 @@ $MKDIR binutils-build
 
 #Extract, configure, and build GCC in a dedicated tree
 $TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
-$MKDIR gcc-build
+case "$TARGET" in
+	aarch64-elf|sparc64-elf)
+		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m32,m64 --enable-targets=all"
+		;;
+	amd64-elf)
+		GCC_FLAGS="$GCC_FLAGS --with-abi=m64 --with-multilib-list=m32,m64 --enable-targets=all"
+		;;
+esac
+$MKDIR "gcc-build"
 (cd gcc-build && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
 	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
-	--without-headers)
+	--without-headers $GCC_FLAGS)
 (cd gcc-build && $MAKE all-gcc)
 (cd gcc-build && $MAKE all-target-libgcc)
 (cd gcc-build && $MAKE install-gcc)
