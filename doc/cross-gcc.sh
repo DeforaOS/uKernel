@@ -29,6 +29,7 @@
 BINUTILS_FLAGS=
 BINUTILS_VERSION="2.32"
 GCC_FLAGS=
+GCC_TARGETS="all-gcc all-target-libgcc install-gcc install-target-libgcc"
 GCC_VERSION="8.3.0"
 GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
@@ -85,7 +86,6 @@ $MKDIR "gcc-$TARGET"
 (cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
 	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
 	--without-headers $GCC_FLAGS)
-(cd "gcc-$TARGET" && $MAKE all-gcc)
-(cd "gcc-$TARGET" && $MAKE all-target-libgcc)
-(cd "gcc-$TARGET" && $MAKE install-gcc)
-(cd "gcc-$TARGET" && $MAKE install-target-libgcc)
+for target in $GCC_TARGETS; do
+	(cd "gcc-$TARGET" && $MAKE "$target")
+done
