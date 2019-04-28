@@ -54,11 +54,12 @@ int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 	{
 		int (*loader)(ukMultibootMod const * mod,
 				unsigned char * elfclass, vaddr_t * entrypoint);
+		off_t offset;
 		char * signature;
 		size_t signature_len;
 	} loaders[] =
 	{
-		{ _load_module_elf, ELFMAG, SELFMAG }
+		{ _load_module_elf, 0x0, ELFMAG, SELFMAG }
 	};
 	size_t i;
 
@@ -76,7 +77,8 @@ int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 	{
 		if(len < loaders[i].signature_len)
 			continue;
-		if(memcmp((void *)mod->start, loaders[i].signature,
+		if(memcmp((void *)(mod->start + loaders[i].offset),
+					loaders[i].signature,
 					loaders[i].signature_len) == 0)
 			return loaders[i].loader(mod, elfclass, entrypoint);
 	}
