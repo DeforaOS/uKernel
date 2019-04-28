@@ -13,6 +13,10 @@
 /* types */
 typedef struct _FILE FILE;
 
+# ifndef off_t
+#  define off_t off_t
+typedef long long off_t;
+# endif
 # ifndef va_list
 #   define va_list va_list
 typedef __builtin_va_list va_list;

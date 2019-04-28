@@ -13,6 +13,10 @@
 #  define intptr_t intptr_t
 typedef long intptr_t;
 # endif
+# ifndef off_t
+#  define off_t off_t
+typedef long long off_t;
+# endif
 # ifndef pid_t
 #  define pid_t pid_t
 typedef int pid_t;
