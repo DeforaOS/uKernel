@@ -50,7 +50,7 @@ PATH="$PREFIX/bin:$PATH"
 
 #Download binutils
 [ -f "binutils-$BINUTILS_VERSION.tar.$GZEXT" ] ||
-	$WGET "$MIRROR/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.$GZEXT"
+	$WGET "$MIRROR/binutils/binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build binutils in a dedicated tree
 [ -d "binutils-$BINUTILS_VERSION" ] ||
@@ -69,7 +69,7 @@ $MKDIR "binutils-$TARGET"
 
 #Download GCC
 [ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
-	$WGET "$MIRROR/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
+	$WGET "$MIRROR/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
 
 #Extract, configure, and build GCC in a dedicated tree
 [ -d "gcc-$GCC_VERSION" ] ||
