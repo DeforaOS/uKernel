@@ -94,4 +94,6 @@ int multiboot_boot_kernel64(ukMultibootInfo const * info, vaddr_t entrypoint);
 int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 		vaddr_t * entrypoint);
 
+void multiboot_heap_reset(ukMultibootInfo const * info);
+
 #endif /* !UKERNEL_DRIVERS_BOOT_MULTIBOOT_H */

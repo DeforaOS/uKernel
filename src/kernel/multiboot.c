@@ -5,7 +5,6 @@
 
 
 #if defined(__amd64__) || defined(__i386__)
-# include <unistd.h>
 # include <stdio.h>
 # include <kernel/drivers/bus.h>
 # include <kernel/drivers/clock.h>
@@ -16,10 +15,6 @@
 # include "arch/i386/gdt.h"
 # include "arch/i386/idt.h"
 # include "drivers/boot/multiboot.h"
-
-# ifndef MAX
-#  define MAX(a, b) (a) > (b) ? (a) : (b)
-# endif
 
 # ifndef KERNEL_CONSOLE
 #  define KERNEL_CONSOLE	"uart"
@@ -50,24 +45,16 @@ static const IDT _idt[] =
 /* multiboot */
 int multiboot(const ukMultibootInfo * mi)
 {
-	void * heap;
 	ukBus * ioportbus;
 	ukBus * vgabus;
 	ukBus * cmosbus;
 	char const * console = KERNEL_CONSOLE;
 	char const * display = KERNEL_DISPLAY;
-	size_t i;
+	uint32_t i;
 	ukMultibootMod * mod;
 
 	/* initialize the heap */
-	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS)
-	{
-		heap = sbrk(0);
-		for(i = 0; i < mi->mods_count; i++)
-			heap = MAX(heap, (void *)mi->mods_addr[i].end);
-		sbrk(heap - sbrk(0));
-	}
-	heap = sbrk(0);
+	multiboot_heap_reset(mi);
 
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");

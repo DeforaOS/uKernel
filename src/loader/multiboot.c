@@ -5,7 +5,6 @@
 
 
 #if defined(__i386__)
-# include <unistd.h>
 # include <stdio.h>
 # include <string.h>
 # include <kernel/drivers/bus.h>
@@ -14,10 +13,6 @@
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
-
-# ifndef MAX
-#  define MAX(a, b) (a) > (b) ? (a) : (b)
-# endif
 
 # ifndef LOADER_CONSOLE
 #  define LOADER_CONSOLE	"uart"
@@ -44,7 +39,6 @@ static const GDT _gdt_4gb[4] =
 /* multiboot */
 int multiboot(const ukMultibootInfo * mi)
 {
-	void * heap;
 	ukBus * ioportbus;
 	ukBus * vgabus;
 	char const * console = LOADER_CONSOLE;
@@ -53,17 +47,9 @@ int multiboot(const ukMultibootInfo * mi)
 	unsigned char elfclass;
 	vaddr_t entrypoint;
 	ukMultibootInfo kmi;
-	size_t i;
 
 	/* initialize the heap */
-	if(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS)
-	{
-		heap = sbrk(0);
-		for(i = 0; i < mi->mods_count; i++)
-			heap = MAX(heap, (void *)mi->mods_addr[i].end);
-		sbrk(heap - sbrk(0));
-	}
-	heap = sbrk(0);
+	multiboot_heap_reset(mi);
 
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");

@@ -5,6 +5,7 @@
 
 
 #if defined(__amd64__) || defined(__i386__)
+# include <unistd.h>
 # include <sys/mman.h>
 # include <stdint.h>
 # include <stdio.h>
@@ -13,6 +14,10 @@
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
+
+# ifndef MAX
+#  define MAX(a, b) (a) > (b) ? (a) : (b)
+# endif
 
 
 /* public */
@@ -496,3 +501,19 @@ static int _load_module_elf64_symtab(ukMultibootMod const * mod,
 	return 0;
 }
 #endif
+
+
+/* multiboot_heap_reset */
+void multiboot_heap_reset(ukMultibootInfo const * info)
+{
+	void * heap;
+	uint32_t i;
+
+	if(info->flags & BOOT_MULTIBOOT_INFO_HAS_MODS)
+	{
+		heap = sbrk(0);
+		for(i = 0; i < info->mods_count; i++)
+			heap = MAX(heap, (void *)info->mods_addr[i].end);
+		sbrk(heap - sbrk(0));
+	}
+}
