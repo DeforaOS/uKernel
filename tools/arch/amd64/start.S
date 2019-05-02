@@ -84,6 +84,17 @@ _start:
 	push	%rdi
 	push	%rsi
 	push	%rdx
+#ifdef __ELF__
+	mov	%rdx, %rcx	/* auxv */
+auxv:
+	cmpq	$0x0, (%rcx)
+	jz	auxv_done
+	add	$0x8, %rcx
+	jmp	auxv
+auxv_done:
+	add	$0x8, %rcx
+	push	%rcx
+#endif
 
 #if defined(__SSP__)
 	/* initialize SSP */
@@ -95,6 +106,11 @@ _start:
 #endif
 
 	/* run the userland kernel */
+#ifdef __ELF__
+	pop	%rcx
+#else
+	xor	%rcx, %rcx
+#endif
 	pop	%rdx
 	pop	%rsi
 	pop	%rdi
