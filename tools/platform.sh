@@ -164,54 +164,34 @@ _platform_variable_amd64()
 	extra=
 	platform=$($UNAME -s)
 
+	if [ "$platform" = "OpenBSD" ]; then
+		extra=" -fno-stack-protector"
+	else
+		extra=" -fstack-protector"
+	fi
 	case "$variable" in
 		LIBK_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding -fPIC -mno-red-zone$extra"
 			;;
 		LIBK_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib"
 			;;
 		LIBULOADER_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-m32 -ffreestanding -fPIC -mno-red-zone$extra"
 			;;
 		LIBULOADER_LDFLAGS)
 			echo "-m32 -nostdlib"
 			;;
 		NATIVE_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding -fPIE$extra"
 			;;
 		UKERNEL_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding -fPIE -mno-red-zone$extra"
 			;;
 		UKERNEL_LDFLAGS)
 			echo "-nostdlib -pie -static -T ${prepend}src/arch/amd64/uKernel.ld"
 			;;
 		ULOADER_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-m32 -ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
@@ -226,35 +206,25 @@ _platform_variable_i386()
 	extra=
 	platform=$($UNAME -s)
 
+	if [ "$platform" = "OpenBSD" ]; then
+		extra=" -fno-stack-protector"
+	else
+		extra=" -fstack-protector"
+	fi
 	case "$variable" in
 		LIBK_CFLAGS|LIBULOADER_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding -fPIC$extra"
 			;;
 		LIBK_LDFLAGS|LIBULOADER_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib"
 			;;
 		NATIVE_CFLAGS|UKERNEL_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding -fPIE$extra"
 			;;
 		UKERNEL_LDFLAGS)
 			echo "-nostdlib -pie -static -T ${prepend}src/arch/i386/uKernel.ld"
 			;;
 		ULOADER_CFLAGS)
-			if [ "$platform" = "OpenBSD" ]; then
-				extra=" -fno-stack-protector"
-			else
-				extra=" -fstack-protector"
-			fi
 			echo "-ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
