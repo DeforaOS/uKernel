@@ -7,6 +7,25 @@
 
 #include "../i386/multiboot/header.S"
 
+/* macros */
+#ifdef DEBUG
+# ifdef __PIC__
+#  define DEBUG_STRING(s) \
+	pusha; \
+	mov s, %rdi; \
+	call puts@PLT; \
+	popa;
+# else
+#  define DEBUG_STRING(s) \
+	pusha; \
+	mov s, %rdi; \
+	call puts; \
+	popa;
+# endif
+#else
+# define DEBUG_STRING(s)
+#endif
+
 
 /* sections */
 /* bss */
@@ -53,6 +72,9 @@ _start:
 #endif
 	xor	%rbp, %rbp
 
+	/* save %eax to detect multiboot */
+	push	%rax
+
 #if defined(__SSP__)
 	/* initialize SSP */
 # ifdef __PIC__
@@ -69,6 +91,39 @@ _start:
 	call	_init
 #endif
 
+	/* detect multiboot */
+	pop	%rax
+	cmp	$BOOT_MULTIBOOT_LOADER_MAGIC, %eax
+	jne	1f
+	mov	%rbx, %rdi
+#ifdef __PIC__
+	call	multiboot@PLT
+#else
+	call	multiboot
+#endif
+	cmp	$0x0, %rax
+	jne	1f
+
+	/* TODO parse the command line */
+
+	/* TODO prepare the arguments */
+	xor	%rax, %rax
+	push	%rax
+	push	%rax
+	push	%rax
+	push	%rax
+
+	jmp	2f
+
+1:
+	/* prepare the arguments */
+	xor	%rax, %rax
+	push	%rax
+	push	%rax
+	push	%rax
+	push	%rax
+
+2:
 	/* set the interrupt descriptor */
 #if 0 /* FIXME rework */
 # ifdef __PIC__
@@ -81,7 +136,12 @@ _start:
 	/* FIXME setup paging */
 
 	/* start the kernel */
-	xor	%rdi, %rdi
+	pop	%rcx
+	pop	%rdx
+	pop	%rsi
+	pop	%rdi
+
+	/* run the program */
 #ifdef __PIC__
 	call	main@PLT
 #else
