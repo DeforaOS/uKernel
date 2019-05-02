@@ -9,7 +9,9 @@
 
 /* public */
 /* prototypes */
+# if defined(__SSP__)
 void __stack_chk_fail(void);
 void __stack_chk_setup(void);
+# endif
 
 #endif /* !UKERNEL_SSP_H */
