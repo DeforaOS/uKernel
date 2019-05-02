@@ -34,7 +34,7 @@ Binutils
 Download the latest version of binutils; at the time of writing this document it
 is version 2.32:
 
-    $ wget https://ftpmirror.gnu.org/pub/binutils/releases/binutils-2.32.tar.gz
+    $ wget https://ftpmirror.gnu.org/binutils/binutils-2.32.tar.gz
 
 To configure binutils it is necessary to choose a target. It can be chosen
 according to the following table:
@@ -65,7 +65,7 @@ GCC
 Download the latest version of GCC; at the time of writing this document it is
 version 8.3.0:
 
-    $ wget https://ftpmirror.gnu.org/pub/gcc/releases/gcc-8.3.0/gcc-8.3.0.tar.gz
+    $ wget https://ftpmirror.gnu.org/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz
 
 Just the same, GCC has to be configured for the target chosen.
 
