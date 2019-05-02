@@ -193,7 +193,7 @@ _platform_variable_amd64()
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
-			echo "-nostdlib -shared -static -T ${prepend}src/arch/amd64/uKernel.ld"
+			echo "-nostdlib -pie -static -T ${prepend}src/arch/amd64/uKernel.ld"
 			;;
 		ULOADER_LDFLAGS)
 			echo "-m32 -nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld"
