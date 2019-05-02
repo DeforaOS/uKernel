@@ -26,38 +26,38 @@
 static int _load_module_elf(ukMultibootMod const * mod,
 		unsigned char * elfclass, vaddr_t * entrypoint);
 static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
-		Elf32_Ehdr * ehdr);
+		Elf32_Ehdr const * ehdr);
 static int _load_module_elf32_allocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr);
 static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
-		Elf32_Half i);
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr,
+		Elf32_Shdr * shdr, Elf32_Half i);
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr);
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr);
 static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
-		Elf32_Half i);
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr,
+		Elf32_Shdr * shdr, Elf32_Half i);
 static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
-		Elf32_Phdr * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
+		Elf32_Phdr const * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym);
 static int _load_module_elf32_strtab(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Ehdr const * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		char ** strtab, size_t * strtab_cnt);
 static int _load_module_elf32_symtab(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Ehdr const * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		Elf32_Word type, Elf32_Sym ** symtab, size_t * symtab_cnt);
 static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
-		Elf64_Ehdr * ehdr);
+		Elf64_Ehdr const * ehdr);
 static int _load_module_elf64_relocate(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr);
+		Elf64_Ehdr const * ehdr);
 static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 		Elf64_Shdr * shdr, Elf64_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf64_Sym * sym);
 static int _load_module_elf64_strtab(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
+		Elf64_Ehdr const * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
 		char ** strtab, size_t * strtab_cnt);
 static int _load_module_elf64_symtab(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
+		Elf64_Ehdr const * ehdr, Elf64_Shdr * shdr, Elf64_Word index,
 		Elf64_Word type, Elf64_Sym ** symtab, size_t * symtab_cnt);
 
 int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
@@ -103,9 +103,9 @@ int multiboot_load_module(ukMultibootMod const * mod, unsigned char * elfclass,
 static int _load_module_elf(ukMultibootMod const * mod,
 		unsigned char * elfclass, vaddr_t * entrypoint)
 {
-	Elf32_Ehdr * ehdr;
+	Elf32_Ehdr const * ehdr;
 
-	ehdr = (Elf32_Ehdr *)mod->start;
+	ehdr = (Elf32_Ehdr const *)mod->start;
 	if(ehdr->e_ident[EI_VERSION] != EV_CURRENT)
 	{
 		puts("Could not load module: Unsupported ELF version");
@@ -119,16 +119,16 @@ static int _load_module_elf(ukMultibootMod const * mod,
 			return _load_module_elf32(mod, entrypoint, ehdr);
 		case ELFCLASS64:
 			return _load_module_elf64(mod, entrypoint,
-					(Elf64_Ehdr *)ehdr);
+					(Elf64_Ehdr const *)ehdr);
 	}
 	puts("Could not load module: Unsupported ELF class");
 	return -1;
 }
 
 static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
-		Elf32_Ehdr * ehdr)
+		Elf32_Ehdr const * ehdr)
 {
-	Elf32_Phdr * phdr;
+	Elf32_Phdr const * phdr;
 	Elf32_Half i;
 
 	if(mod->start + ehdr->e_phoff + (ehdr->e_phnum * sizeof(*phdr))
@@ -137,7 +137,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		puts("Could not load ELF 32-bit module: Invalid format");
 		return -1;
 	}
-	phdr = (Elf32_Phdr *)(mod->start + ehdr->e_phoff);
+	phdr = (Elf32_Phdr const *)(mod->start + ehdr->e_phoff);
 	for(i = 0; i < ehdr->e_phnum; i++)
 	{
 		if(phdr[i].p_type != PT_LOAD)
@@ -174,7 +174,7 @@ static int _load_module_elf32(ukMultibootMod const * mod, vaddr_t * entrypoint,
 }
 
 static int _load_module_elf32_allocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr)
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr)
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
@@ -193,8 +193,8 @@ static int _load_module_elf32_allocate(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
-		Elf32_Half i)
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr,
+		Elf32_Shdr * shdr, Elf32_Half i)
 {
 	void * addr;
 	(void) mod;
@@ -212,7 +212,7 @@ static int _load_module_elf32_allocate_nobits(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_relocate(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr)
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr)
 {
 	Elf32_Half i;
 	Elf32_Shdr * shdr;
@@ -234,8 +234,8 @@ static int _load_module_elf32_relocate(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Phdr * phdr, Elf32_Shdr * shdr,
-		Elf32_Half i)
+		Elf32_Ehdr const * ehdr, Elf32_Phdr const * phdr,
+		Elf32_Shdr * shdr, Elf32_Half i)
 {
 	Elf32_Word link;
 	Elf32_Sym * symtab;
@@ -272,7 +272,7 @@ static int _load_module_elf32_relocate_rela(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
-		Elf32_Phdr * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
+		Elf32_Phdr const * phdr, Elf32_Shdr * shdr, Elf32_Rela * rela,
 		char const * strtab, size_t strtab_cnt, Elf32_Sym * sym)
 {
 #if defined(__i386__)
@@ -311,7 +311,7 @@ static int _load_module_elf32_relocate_arch(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_strtab(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Ehdr const * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		char ** strtab, size_t * strtab_cnt)
 {
 	if(index >= ehdr->e_shnum || shdr[index].sh_type != SHT_STRTAB)
@@ -325,7 +325,7 @@ static int _load_module_elf32_strtab(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf32_symtab(ukMultibootMod const * mod,
-		Elf32_Ehdr * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
+		Elf32_Ehdr const * ehdr, Elf32_Shdr * shdr, Elf32_Word index,
 		Elf32_Word type, Elf32_Sym ** symtab, size_t * symtab_cnt)
 {
 	if(index >= ehdr->e_shnum)
@@ -343,9 +343,9 @@ static int _load_module_elf32_symtab(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
-		Elf64_Ehdr * ehdr)
+		Elf64_Ehdr const * ehdr)
 {
-	Elf64_Phdr * phdr;
+	Elf64_Phdr const * phdr;
 	Elf64_Quarter i;
 
 	if(mod->start + ehdr->e_phoff + (ehdr->e_phnum * sizeof(*phdr))
@@ -354,7 +354,7 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 		puts("Could not load ELF 64-bit module: Invalid format");
 		return -1;
 	}
-	phdr = (Elf64_Phdr *)(uintptr_t)(mod->start + ehdr->e_phoff);
+	phdr = (Elf64_Phdr const *)(uintptr_t)(mod->start + ehdr->e_phoff);
 	for(i = 0; i < ehdr->e_phnum; i++)
 	{
 		if(phdr[i].p_type != PT_LOAD)
@@ -386,7 +386,7 @@ static int _load_module_elf64(ukMultibootMod const * mod, vaddr_t * entrypoint,
 }
 
 static int _load_module_elf64_relocate(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr)
+		Elf64_Ehdr const * ehdr)
 {
 	Elf64_Quarter i;
 	Elf64_Shdr * shdr;
@@ -470,7 +470,7 @@ static int _load_module_elf64_relocate_arch(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf64_strtab(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
+		Elf64_Ehdr const * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
 		char ** strtab, size_t * strtab_cnt)
 {
 	if(index >= ehdr->e_shnum || shdr[index].sh_type != SHT_STRTAB)
@@ -484,7 +484,7 @@ static int _load_module_elf64_strtab(ukMultibootMod const * mod,
 }
 
 static int _load_module_elf64_symtab(ukMultibootMod const * mod,
-		Elf64_Ehdr * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
+		Elf64_Ehdr const * ehdr, Elf64_Shdr * shdr, Elf64_Half index,
 		Elf64_Half type, Elf64_Sym ** symtab, size_t * symtab_cnt)
 {
 	if(index >= ehdr->e_shnum)
