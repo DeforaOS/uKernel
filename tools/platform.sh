@@ -106,7 +106,7 @@ _platform_variable()
 		DATADIR)
 			echo "$PREFIX/share"
 			;;
-		LIBUKERNEL_*|NATIVE_*|UKERNEL_*|ULOADER_*)
+		LIBK_*|NATIVE_*|UKERNEL_*|ULOADER_*)
 			[ -n "$PORT" ] || PORT=$(_platform_variable "PORT" "$context")
 			case "$PORT" in
 				amd64|i386)
@@ -165,7 +165,7 @@ _platform_variable_amd64()
 	platform=$($UNAME -s)
 
 	case "$variable" in
-		LIBUKERNEL_CFLAGS|UKERNEL_CFLAGS)
+		LIBK_CFLAGS|UKERNEL_CFLAGS)
 			if [ "$platform" = "OpenBSD" ]; then
 				extra=" -fno-stack-protector"
 			else
@@ -189,7 +189,7 @@ _platform_variable_amd64()
 			fi
 			echo "-m32 -ffreestanding -fPIC$extra"
 			;;
-		LIBUKERNEL_LDFLAGS|NATIVE_LDFLAGS)
+		LIBK_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
@@ -208,7 +208,7 @@ _platform_variable_i386()
 	platform=$($UNAME -s)
 
 	case "$variable" in
-		LIBUKERNEL_CFLAGS|NATIVE_CFLAGS|UKERNEL_CFLAGS|ULOADER_CFLAGS)
+		LIBK_CFLAGS|NATIVE_CFLAGS|UKERNEL_CFLAGS|ULOADER_CFLAGS)
 			if [ "$platform" = "OpenBSD" ]; then
 				extra=" -fno-stack-protector"
 			else
@@ -216,7 +216,7 @@ _platform_variable_i386()
 			fi
 			echo "-ffreestanding -fPIC$extra"
 			;;
-		LIBUKERNEL_LDFLAGS|NATIVE_LDFLAGS)
+		LIBK_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib -static"
 			;;
 		UKERNEL_LDFLAGS)
