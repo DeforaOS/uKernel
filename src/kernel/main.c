@@ -12,7 +12,7 @@
 /* public */
 /* functions */
 /* main */
-int main(int argc, char * argv[])
+int main(int argc, char * argv[], char * envp[], void * auxv)
 {
 	int i;
 	time_t t;
@@ -26,6 +26,13 @@ int main(int argc, char * argv[])
 	if(argv[i] != NULL)
 		puts("uKernel: argv is not terminated properly");
 #endif
+	if(envp != NULL)
+	{
+		printf("Environment:\n");
+		for(i = 0; envp[i] != NULL; i++)
+			printf("%s\n", envp[i]);
+	}
+	printf("Auxiliary vector: %p\n", auxv);
 	if((t = time(NULL)) == -1)
 		printf("Could not get the current time (%d)\n", errno);
 	else
