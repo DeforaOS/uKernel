@@ -45,30 +45,55 @@ _start:
 	cli
 
 	/* initialize the stack */
-	mov	$stack_top, %rsp
+#ifdef __PIC__
+	mov	stack_top@GOTPCREL(%rip), %rsp
+	mov	(%rsp), %rsp
+#else
+	mov	stack_top, %rsp
+#endif
 	xor	%rbp, %rbp
 
 #if defined(__SSP__)
 	/* initialize SSP */
+# ifdef __PIC__
+	call	__stack_chk_setup@PLT
+# else
 	call	__stack_chk_setup
+# endif
 #endif
 
 	/* call the global constructors */
+#ifdef __PIC__
+	call	_init@PLT
+#else
 	call	_init
+#endif
 
 	/* set the interrupt descriptor */
 #if 0 /* FIXME rework */
+# ifdef __PIC__
+	call	__arch_setidt@PLT
+# else
 	call	__arch_setidt
+# endif
 #endif
 
 	/* FIXME setup paging */
 
 	/* start the kernel */
 	xor	%rdi, %rdi
+#ifdef __PIC__
+	call	main@PLT
+#else
 	call	main
+#endif
 
 	/* exit the kernel */
 	mov	%rax, %rdi
+#ifdef __PIC__
+	call	exit@PLT
+#else
 	call	exit
+#endif
 
 	hlt
