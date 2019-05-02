@@ -106,7 +106,7 @@ _platform_variable()
 		DATADIR)
 			echo "$PREFIX/share"
 			;;
-		LIBK_*|NATIVE_*|UKERNEL_*|ULOADER_*)
+		LIBK_*|LIBULOADER_*|NATIVE_*|UKERNEL_*|ULOADER_*)
 			[ -n "$PORT" ] || PORT=$(_platform_variable "PORT" "$context")
 			case "$PORT" in
 				amd64|i386)
@@ -195,7 +195,8 @@ _platform_variable_amd64()
 			echo "-m32 -ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
-			echo "-m32 -nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld"
+			[ -n "$CC" ] || CC="cc"
+			echo "-m32 -nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld `$CC -m32 -print-libgcc-file-name`"
 			;;
 	esac
 }
@@ -228,7 +229,8 @@ _platform_variable_i386()
 			echo "-ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
-			echo "-nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld"
+			[ -n "$CC" ] || CC="cc"
+			echo "-nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld `$CC -m32 -print-libgcc-file-name`"
 			;;
 	esac
 }
