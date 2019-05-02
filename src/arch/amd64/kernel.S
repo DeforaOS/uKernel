@@ -24,11 +24,6 @@ stack_top:
 .type _brk, @function
 _brk:
 	xor	%rax, %rax
-	/* XXX limits the heap to the first 1 MB */
-	cmp	$0x100000, %rcx
-	jl	1f
-	not	%rax
-1:
 	ret
 
 
