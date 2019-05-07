@@ -43,51 +43,61 @@ WGET="wget"
 
 
 #functions
-#main
+#binutils
+_binutils()
+{
+	#Download binutils
+	[ -f "binutils-$BINUTILS_VERSION.tar.$GZEXT" ] ||
+		$WGET "$MIRROR/binutils/binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
+	#Extract, configure, and build binutils in a dedicated tree
+	[ -d "binutils-$BINUTILS_VERSION" ] ||
+		$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
+	case "$TARGET" in
+		aarch64-elf|amd64-elf|sparc64-elf)
+			BINUTILS_FLAGS="$BINUTILS_FLAGS --enable-multilib"
+			;;
+	esac
+	$MKDIR "binutils-$TARGET"
+	(cd "binutils-$TARGET" && "../binutils-$BINUTILS_VERSION/configure" \
+		--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
+		--disable-werror $BINUTILS_FLAGS)
+	for target in $BINUTILS_TARGETS; do
+		(cd "binutils-$TARGET" && $MAKE "$target")
+	done
+}
+
+#gcc
+_gcc()
+{
+	#Download GCC
+	[ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
+		$WGET "$MIRROR/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
+
+	#Extract, configure, and build GCC in a dedicated tree
+	[ -d "gcc-$GCC_VERSION" ] ||
+		$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
+	case "$TARGET" in
+		aarch64-elf)
+			GCC_FLAGS="$GCC_FLAGS --with-multilib-list=lp64,ilp32"
+			;;
+		amd64-elf|sparc64-elf)
+			GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m64,m32"
+			;;
+	esac
+	$MKDIR "gcc-$TARGET"
+	(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
+		--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
+		--without-headers $GCC_FLAGS)
+	for target in $GCC_TARGETS; do
+		(cd "gcc-$TARGET" && $MAKE "$target")
+	done
+}
+
+#main
 #Modify the environment to reflect the port chosen
 PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
 
-#Download binutils
-[ -f "binutils-$BINUTILS_VERSION.tar.$GZEXT" ] ||
-	$WGET "$MIRROR/binutils/binutils-$BINUTILS_VERSION.tar.$GZEXT"
-
-#Extract, configure, and build binutils in a dedicated tree
-[ -d "binutils-$BINUTILS_VERSION" ] ||
-	$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
-case "$TARGET" in
-	aarch64-elf|amd64-elf|sparc64-elf)
-		BINUTILS_FLAGS="$BINUTILS_FLAGS --enable-multilib"
-		;;
-esac
-$MKDIR "binutils-$TARGET"
-(cd "binutils-$TARGET" && "../binutils-$BINUTILS_VERSION/configure" \
-	--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
-	--disable-werror $BINUTILS_FLAGS)
-for target in $BINUTILS_TARGETS; do
-	(cd "binutils-$TARGET" && $MAKE "$target")
-done
-
-#Download GCC
-[ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
-	$WGET "$MIRROR/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
-
-#Extract, configure, and build GCC in a dedicated tree
-[ -d "gcc-$GCC_VERSION" ] ||
-	$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
-case "$TARGET" in
-	aarch64-elf)
-		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=lp64,ilp32"
-		;;
-	amd64-elf|sparc64-elf)
-		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m64,m32"
-		;;
-esac
-$MKDIR "gcc-$TARGET"
-(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
-	--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
-	--without-headers $GCC_FLAGS)
-for target in $GCC_TARGETS; do
-	(cd "gcc-$TARGET" && $MAKE "$target")
-done
+_binutils &&
+_gcc
