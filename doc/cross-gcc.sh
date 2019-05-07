@@ -34,7 +34,7 @@ GCC_TARGETS="all-gcc all-target-libgcc install-gcc install-target-libgcc"
 GCC_VERSION="8.3.0"
 GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
-TARGET="i686-elf"
+TARGET="i686-deforaos-elf"
 #executables
 MAKE="make"
 MKDIR="mkdir -p"
