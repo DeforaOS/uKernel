@@ -56,19 +56,19 @@ _binutils()
 		$WGET "$MIRROR/binutils/binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
 	#Extract binutils
-	[ -d "binutils-$BINUTILS_VERSION" ] ||
+	if [ ! -d "binutils-$BINUTILS_VERSION" ]; then
 		$TAR $TAR_FLAGS "binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
-	#Extend binutils for DeforaOS
-	$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_i386_deforaos.sh" << EOF
+		#Extend binutils for DeforaOS
+		$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_i386_deforaos.sh" << EOF
 . \${srcdir}/emulparams/elf_i386.sh
 GENERATE_SHLIB_SCRIPT=yes
 GENERATE_PIE_SCRIPT=yes
 EOF
-	$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_x86_64_deforaos.sh" << EOF
+		$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_x86_64_deforaos.sh" << EOF
 . \${srcdir}/emulparams/elf_x86_64_deforaos.sh
 EOF
-	(cd "binutils-$BINUTILS_VERSION" && $PATCH -p1) << EOF
+		(cd "binutils-$BINUTILS_VERSION" && $PATCH -p1) << EOF
 --- binutils-2.32/ld/Makefile.am.orig	2019-05-08 01:05:33.000000000 +0200
 +++ binutils-2.32/ld/Makefile.am	2019-05-08 01:08:58.000000000 +0200
 @@ -285,6 +285,7 @@
@@ -146,7 +146,8 @@ EOF
    i[3-7]86-*-lynxos*)
      targ_defvec=i386_elf32_vec
 EOF
-	(cd "binutils-$BINUTILS_VERSION/ld" && $ACLOCAL && $AUTOMAKE)
+		(cd "binutils-$BINUTILS_VERSION/ld" && $ACLOCAL && $AUTOMAKE)
+	fi
 
 	#Configure and build binutils in a dedicated tree
 	case "$TARGET" in
@@ -155,9 +156,12 @@ EOF
 			;;
 	esac
 	$MKDIR "binutils-$TARGET"
-	(cd "binutils-$TARGET" && "../binutils-$BINUTILS_VERSION/configure" \
-		--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
-		--disable-werror $BINUTILS_FLAGS)
+	if [ ! -f "binutils-$TARGET/Makefile" ]; then
+		(cd "binutils-$TARGET" &&
+			"../binutils-$BINUTILS_VERSION/configure" \
+			--target="$TARGET" --prefix="$PREFIX" --with-sysroot \
+			--disable-nls --disable-werror $BINUTILS_FLAGS)
+	fi
 	for target in $BINUTILS_TARGETS; do
 		(cd "binutils-$TARGET" && $MAKE "$target")
 	done
@@ -170,11 +174,11 @@ _gcc()
 		$WGET "$MIRROR/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
 
 	#Extract GCC
-	[ -d "gcc-$GCC_VERSION" ] ||
+	if [ ! -d "gcc-$GCC_VERSION" ]; then
 		$TAR $TAR_FLAGS "gcc-$GCC_VERSION.tar.$GZEXT"
 
-	#Extend GCC for DeforaOS
-	$CAT > "gcc-$GCC_VERSION/gcc/config/deforaos.h" << EOF
+		#Extend GCC for DeforaOS
+		$CAT > "gcc-$GCC_VERSION/gcc/config/deforaos.h" << EOF
 /* Useful if you wish to make target-specific GCC changes. */
 #undef TARGET_DEFORAOS
 #define TARGET_DEFORAOS 1
@@ -209,11 +213,11 @@ _gcc()
     builtin_assert ("system=posix");   \\
   } while(0);
 EOF
-	$CAT > "gcc-$GCC_VERSION/gcc/config/i386/t-x86_64-elf" << EOF
+		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/t-x86_64-elf" << EOF
 MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone
 EOF
-	(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
+		(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2019-05-08 01:33:41.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-08 01:37:37.000000000 +0200
 @@ -603,6 +603,15 @@
@@ -272,20 +276,27 @@ EOF
  	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \\
  	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \\
 EOF
+	fi
 
 	#Configure and build GCC in a dedicated tree
 	case "$TARGET" in
 		aarch64-elf|aarch64-*-elf)
 			GCC_FLAGS="$GCC_FLAGS --with-multilib-list=lp64,ilp32"
 			;;
-		amd64-elf|amd64-*-elf|sparc64-elf|sparc64-*-elf)
+		amd64-elf|amd64-*-elf)
+			GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m64,m32,no-red-zone"
+			;;
+		sparc64-elf|sparc64-*-elf)
 			GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m64,m32"
 			;;
 	esac
 	$MKDIR "gcc-$TARGET"
-	(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" --target="$TARGET" \
-		--prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
-		--without-headers --enable-shared $GCC_FLAGS)
+	if [ ! -f "gcc-$TARGET/Makefile" ]; then
+		(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" \
+			--target="$TARGET" --prefix="$PREFIX" \
+			--disable-nls --enable-languages=c,c++ \
+			--without-headers --enable-shared $GCC_FLAGS)
+	fi
 	for target in $GCC_TARGETS; do
 		(cd "gcc-$TARGET" && $MAKE "$target")
 	done
