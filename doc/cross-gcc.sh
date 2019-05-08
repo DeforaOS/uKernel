@@ -44,6 +44,7 @@ MKDIR="mkdir -p"
 PATCH="patch"
 TAR="tar"
 TAR_FLAGS="-xzf"
+UNAME="uname"
 WGET="wget"
 
 
@@ -304,8 +305,12 @@ EOF
 
 _platform()
 {
-	#NetBSD
-	[ -d "/usr/pkg" ] && GCC_FLAGS="$GCCFLAGS --with-gmp=/usr/pkg --with-mpfr=/usr/pkg"
+	case $($UNAME -s) in
+		NetBSD)
+			GCC_FLAGS="$GCCFLAGS --with-gmp=/usr/pkg --with-mpfr=/usr/pkg"
+			MAKE="gmake"
+			;;
+	esac
 }
 
 #main
