@@ -208,10 +208,14 @@ _gcc()
     builtin_assert ("system=posix");   \\
   } while(0);
 EOF
+	$CAT > "gcc-$GCC_VERSION/gcc/config/i386/t-x86_64-elf" << EOF
+MULTILIB_OPTIONS += mno-red-zone
+MULTILIB_DIRNAMES += no-red-zone
+EOF
 	(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2019-05-08 01:33:41.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-08 01:37:37.000000000 +0200
-@@ -603,6 +603,14 @@
+@@ -603,6 +603,15 @@
  	tm_file="\$tm_file i386/darwin-lib.h"
  	extra_parts="\$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
  	;;
@@ -222,6 +226,7 @@ EOF
 +x86_64-*-deforaos*)
 +	extra_parts="crti.o crtbegin.o crtend.o crtn.o"
 +	tmake_file="\$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
++	tmake_file="\$tmake_file i386/t-x86_64-elf"
 +	;;
  i[34567]86-*-elfiamcu)
  	tmake_file="\$tmake_file i386/t-crtstuff t-softfp-sfdftf i386/32/t-softfp i386/32/t-iamcu i386/t-softfp t-softfp t-dfprules"
