@@ -43,6 +43,7 @@ MAKE="make"
 MKDIR="mkdir -p"
 PATCH="patch"
 TAR="tar"
+TAR_FLAGS="-xzf"
 WGET="wget"
 
 
@@ -56,7 +57,7 @@ _binutils()
 
 	#Extract binutils
 	[ -d "binutils-$BINUTILS_VERSION" ] ||
-		$TAR xzvf "binutils-$BINUTILS_VERSION.tar.$GZEXT"
+		$TAR $TAR_FLAGS "binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
 	#Extend binutils for DeforaOS
 	$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_i386_deforaos.sh" << EOF
@@ -170,7 +171,7 @@ _gcc()
 
 	#Extract GCC
 	[ -d "gcc-$GCC_VERSION" ] ||
-		$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
+		$TAR $TAR_FLAGS "gcc-$GCC_VERSION.tar.$GZEXT"
 
 	#Extend GCC for DeforaOS
 	$CAT > "gcc-$GCC_VERSION/gcc/config/deforaos.h" << EOF
