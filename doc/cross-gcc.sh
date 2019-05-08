@@ -290,10 +290,17 @@ EOF
 	done
 }
 
+_platform()
+{
+	#NetBSD
+	[ -d "/usr/pkg" ] && GCC_FLAGS="$GCCFLAGS --with-gmp=/usr/pkg --with-mpfr=/usr/pkg"
+}
+
 #main
 #Modify the environment to reflect the port chosen
 PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
 
+_platform &&
 _binutils &&
 _gcc
