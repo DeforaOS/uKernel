@@ -296,7 +296,7 @@ EOF
 		(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" \
 			--target="$TARGET" --prefix="$PREFIX" \
 			--disable-nls --enable-languages=c,c++ \
-			--without-headers --enable-shared $GCC_FLAGS)
+			--without-headers $GCC_FLAGS)
 	fi
 	for target in $GCC_TARGETS; do
 		(cd "gcc-$TARGET" && $MAKE "$target")
