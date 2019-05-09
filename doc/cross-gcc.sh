@@ -218,6 +218,10 @@ EOF
 MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone
 EOF
+		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos.h" << EOF
+EOF
+		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos64.h" << EOF
+EOF
 		(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2019-05-08 01:33:41.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-08 01:37:37.000000000 +0200
@@ -257,10 +261,10 @@ EOF
  	tm_file="\${tm_file} \${cpu_type}/darwin64.h"
  	;;
 +i[34567]86-*-deforaos*)
-+	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h deforaos.h"
++	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h deforaos.h i386/deforaos.h"
 +	;;
 +x86_64-*-deforaos*)
-+	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h i386/x86-64.h deforaos.h"
++	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h i386/x86-64.h deforaos.h i386/deforaos64.h"
 +	;;
  i[34567]86-*-elfiamcu)
  	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/iamcu.h"
