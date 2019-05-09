@@ -70,8 +70,8 @@ EOF
 . \${srcdir}/emulparams/elf_x86_64_deforaos.sh
 EOF
 		(cd "binutils-$BINUTILS_VERSION" && $PATCH -p1) << EOF
---- binutils-2.32/ld/Makefile.am.orig	2019-05-08 01:05:33.000000000 +0200
-+++ binutils-2.32/ld/Makefile.am	2019-05-08 01:08:58.000000000 +0200
+--- binutils-2.32/ld/Makefile.am.orig	2019-01-19 17:01:33.000000000 +0100
++++ binutils-2.32/ld/Makefile.am	2019-05-09 02:46:04.000000000 +0200
 @@ -285,6 +285,7 @@
  	eelf_i386.c \\
  	eelf_i386_be.c \\
@@ -93,8 +93,8 @@ EOF
    \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf_chaos.sc \${GEN_DEPENDS}
  
 +eelf_i386_deforaos.c: \$(srcdir)/emulparams/elf_i386_deforaos.sh \\
-+  \$(ELF_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
-+	\${GENSCRIPTS} elf_i386_deforaos "\$(tdir_elf_i386_deforaos)"
++  \$(srcdir)/emulparams/elf_i386.sh \\
++  \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
 +
  eelf_i386_fbsd.c: \$(srcdir)/emulparams/elf_i386_fbsd.sh \\
    \$(srcdir)/emulparams/elf_i386.sh \\
@@ -104,14 +104,14 @@ EOF
    \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
  
 +eelf_x86_64_deforaos.c: \$(srcdir)/emulparams/elf_x86_64_deforaos.sh \\
-+  \$(ELF_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
-+	\${GENSCRIPTS} elf_x86_64_deforaos "\$(tdir_elf_x86_64_deforaos)"
++  \$(srcdir)/emulparams/elf_x86_64.sh \\
++  \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
 +
  eelf_x86_64_fbsd.c: \$(srcdir)/emulparams/elf_x86_64_fbsd.sh \\
    \$(srcdir)/emulparams/elf_x86_64.sh \\
    \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
---- binutils-2.32/gas/configure.tgt.orig	2019-05-08 00:02:09.000000000 +0200
-+++ binutils-2.32/gas/configure.tgt	2019-05-08 00:02:12.000000000 +0200
+--- binutils-2.32/gas/configure.tgt.orig	2019-01-19 17:01:33.000000000 +0100
++++ binutils-2.32/gas/configure.tgt	2019-05-09 02:09:54.000000000 +0200
 @@ -260,6 +260,7 @@
    i386-*-chaos)				fmt=elf ;;
    i386-*-rdos*)				fmt=elf ;;
@@ -120,8 +120,8 @@ EOF
  
    ia16-*-elf*)				fmt=elf ;;
  
---- binutils-2.32/bfd/config.bfd.orig	2019-05-08 00:02:27.000000000 +0200
-+++ binutils-2.32/bfd/config.bfd	2019-05-08 00:26:59.000000000 +0200
+--- binutils-2.32/bfd/config.bfd.orig	2019-01-19 17:01:32.000000000 +0100
++++ binutils-2.32/bfd/config.bfd	2019-05-09 02:09:54.000000000 +0200
 @@ -652,6 +652,11 @@
      targ_selvecs=
      targ64_selvecs=x86_64_elf64_vec
