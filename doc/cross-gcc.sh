@@ -308,6 +308,12 @@ _platform()
 	case $($UNAME -s) in
 		NetBSD)
 			GCC_FLAGS="$GCCFLAGS --with-gmp=/usr/pkg --with-mpfr=/usr/pkg"
+			if [ -n "$LD_LIBRARY_PATH" ]; then
+				LD_LIBRARY_PATH="/usr/pkg/lib:$LD_LIBRARY_PATH"
+			else
+				LD_LIBRARY_PATH="/usr/pkg/lib"
+			fi
+			export LD_LIBRARY_PATH
 			MAKE="gmake"
 			;;
 	esac
