@@ -75,11 +75,11 @@ $MKDIR "binutils-$TARGET"
 [ -d "gcc-$GCC_VERSION" ] ||
 	$TAR xzvf "gcc-$GCC_VERSION.tar.$GZEXT"
 case "$TARGET" in
-	aarch64-elf|sparc64-elf)
-		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m32,m64 --enable-targets=all"
+	aarch64-elf)
+		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=lp64,ilp32"
 		;;
-	amd64-elf)
-		GCC_FLAGS="$GCC_FLAGS --with-abi=m64 --with-multilib-list=m32,m64 --enable-targets=all"
+	amd64-elf|sparc64-elf)
+		GCC_FLAGS="$GCC_FLAGS --with-multilib-list=m64,m32"
 		;;
 esac
 $MKDIR "gcc-$TARGET"
