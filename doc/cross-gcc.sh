@@ -27,6 +27,7 @@
 
 #variables
 BINUTILS_FLAGS=
+BINUTILS_TARGETS="all install"
 BINUTILS_VERSION="2.32"
 GCC_FLAGS=
 GCC_TARGETS="all-gcc all-target-libgcc install-gcc install-target-libgcc"
@@ -64,8 +65,9 @@ $MKDIR "binutils-$TARGET"
 (cd "binutils-$TARGET" && "../binutils-$BINUTILS_VERSION/configure" \
 	--target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls \
 	--disable-werror $BINUTILS_FLAGS)
-(cd "binutils-$TARGET" && $MAKE)
-(cd "binutils-$TARGET" && $MAKE install)
+for target in $BINUTILS_TARGETS; do
+	(cd "binutils-$TARGET" && $MAKE "$target")
+done
 
 #Download GCC
 [ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
