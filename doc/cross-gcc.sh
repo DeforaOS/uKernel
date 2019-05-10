@@ -215,8 +215,9 @@ _gcc()
   } while(0);
 EOF
 		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/t-x86_64-elf" << EOF
-MULTILIB_OPTIONS += mno-red-zone
-MULTILIB_DIRNAMES += no-red-zone
+MULTILIB_OPTIONS = m64 m32 mno-red-zone
+MULTILIB_DIRNAMES = m64 m32 no-red-zone
+MULTILIB_OSDIRNAMES = ../lib ../lib/i386 ../lib/no-red-zone
 EOF
 		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos.h" << EOF
 EOF
