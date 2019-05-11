@@ -6,8 +6,10 @@ compile code suitable there. This document gathers the different steps required
 for this purpose. Three major steps are required:
 
 * install the dependencies
-* compile binutils
-* compile GCC
+* patch and compile binutils
+* patch and compile GCC
+
+For convenience, a helper script is available in `cross-gcc.sh`.
 
 Dependencies
 ------------
@@ -15,15 +17,15 @@ Dependencies
 Binutils and GCC require the following software components to be available in
 the system prior to their installation:
 
-| Component | Notes                   |
-| --------- | ----------------------- |
-| Make      | eg GNU Make or BSD Make |
-| Bison     |                         |
-| Flex      |                         |
-| GMP       |                         |
-| MPC       |                         |
-| MPFR      |                         |
-| Texinfo   |                         |
+| Component | Notes                |
+| --------- | -------------------- |
+| Make      | GNU Make is required |
+| Bison     |                      |
+| Flex      |                      |
+| GMP       |                      |
+| MPC       |                      |
+| MPFR      |                      |
+| Texinfo   | Optional             |
 
 Please refer to the manual of your local system for information on how to find
 and install these components as required.
@@ -39,20 +41,22 @@ is version 2.32:
 To configure binutils it is necessary to choose a target. It can be chosen
 according to the following table:
 
-| Port  | Target    |
-| ----- | --------- |
-| amd64 | amd64-elf |
-| i386  | i686-elf  |
+| Port  | Target              |
+| ----- | ------------------- |
+| amd64 | amd64-none-deforaos |
+| i386  | i686-none-deforaos  |
 
 Modify the environment to reflect this choice; in this case for the i386 port:
 
-    $ TARGET="i686-elf"
+    $ TARGET="i686-none-deforaos"
     $ PREFIX="$HOME/opt/cross-gcc-$TARGET"
     $ PATH="$PREFIX/bin:$PATH"
 
-Extract, configure, and build binutils in a dedicated tree:
+Extract, patch, configure, and build binutils in a dedicated tree:
 
     $ tar xzf binutils-2.32.tar.gz
+    $ (cd binutils-2.32 && patch -p1 < ../doc/patch-binutils_2.32.diff)
+    $ (cd binutils-2.32/ld && aclocal && automake)
     $ mkdir binutils-build
     $ (cd binutils-build && ../binutils-2.32/configure --target="$TARGET" \
       --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror)
@@ -69,11 +73,10 @@ version 8.3.0:
 
 Just the same, GCC has to be configured for the target chosen.
 
-*Note:* GNU Make is required to build GCC.
-
-Extract, configure, and build GCC in a dedicated tree:
+Extract, patch, configure, and build GCC in a dedicated tree:
 
     $ tar xzf gcc-8.3.0.tar.gz
+    $ (cd gcc-8.3.0 && patch -p1 < ../doc/patch-gcc_8.3.0.diff)
     $ mkdir gcc-build
     $ (cd gcc-build && ../gcc-8.3.0/configure --target="$TARGET" \
       --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ \
@@ -88,7 +91,7 @@ Using the cross-compiler
 
 Make sure the compiler binaries are available in your PATH:
 
-    $ export TARGET="i686-elf"
+    $ export TARGET="i686-none-deforaos"
     $ export PATH="$HOME/opt/cross-gcc-$TARGET/bin:$PATH"
 
 The compiler can then be used directly. For instance, its version can be

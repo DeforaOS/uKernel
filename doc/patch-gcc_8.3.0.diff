@@ -1,0 +1,62 @@
+--- gcc-8.3.0/libgcc/config.host.orig	2018-04-06 22:04:17.000000000 +0200
++++ gcc-8.3.0/libgcc/config.host	2019-05-11 04:54:00.000000000 +0200
+@@ -603,6 +603,17 @@
+ 	tm_file="$tm_file i386/darwin-lib.h"
+ 	extra_parts="$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
+ 	;;
++i[34567]86-*-deforaos*)
++	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
++	tmake_file="$tmake_file t-slibgcc t-slibgcc-elf-ver"
++	tmake_file="$tmake_file t-slibgcc-libgcc"
++	extra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o crti.o crtn.o"
++	;;
++x86_64-*-deforaos*)
++	extra_parts="crti.o crtbegin.o crtend.o crtn.o"
++	tmake_file="$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
++	tmake_file="$tmake_file i386/t-x86_64-elf"
++	;;
+ i[34567]86-*-elfiamcu)
+ 	tmake_file="$tmake_file i386/t-crtstuff t-softfp-sfdftf i386/32/t-softfp i386/32/t-iamcu i386/t-softfp t-softfp t-dfprules"
+ 	;;
+--- gcc-8.3.0/gcc/config.gcc.orig	2019-01-29 16:31:10.000000000 +0100
++++ gcc-8.3.0/gcc/config.gcc	2019-05-11 04:54:00.000000000 +0200
+@@ -676,6 +676,12 @@
+     "" | yes | posix) thread_file='posix' ;;
+   esac
+   ;;
++*-*-deforaos*)
++  gas=yes
++  gnu_ld=yes
++  default_use_cxa_atexit=yes
++  use_gcc_stdint=wrap
++  ;;
+ *-*-dragonfly*)
+   gas=yes
+   gnu_ld=yes
+@@ -1490,6 +1496,15 @@
+ 	tmake_file="${tmake_file} ${cpu_type}/t-darwin64 t-slibgcc"
+ 	tm_file="${tm_file} ${cpu_type}/darwin64.h"
+ 	;;
++i[34567]86-*-deforaos*)
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h"
++	tm_file="${tm_file} i386/i386elf.h deforaos.h i386/deforaos.h"
++	;;
++x86_64-*-deforaos*)
++	tmake_file="${tmake_file} i386/t-x86_64-elf"
++	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h"
++	tm_file="${tm_file} i386/i386elf.h i386/x86-64.h deforaos.h i386/deforaos64.h"
++	;;
+ i[34567]86-*-elfiamcu)
+ 	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/iamcu.h"
+ 	;;
+--- gcc-8.3.0/config.sub.orig	2018-01-03 05:25:18.000000000 +0100
++++ gcc-8.3.0/config.sub	2019-05-11 04:54:00.000000000 +0200
+@@ -1395,7 +1395,7 @@
+ 	      | -hpux* | -unos* | -osf* | -luna* | -dgux* | -auroraux* | -solaris* \
+ 	      | -sym* | -kopensolaris* | -plan9* \
+ 	      | -amigaos* | -amigados* | -msdos* | -newsos* | -unicos* | -aof* \
+-	      | -aos* | -aros* | -cloudabi* | -sortix* \
++	      | -aos* | -aros* | -cloudabi* | -deforaos* | -sortix* \
+ 	      | -nindy* | -vxsim* | -vxworks* | -ebmon* | -hms* | -mvs* \
+ 	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
+ 	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \
