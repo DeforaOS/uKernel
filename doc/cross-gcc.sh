@@ -34,7 +34,7 @@ GCC_TARGETS="all-gcc all-target-libgcc install-gcc install-target-libgcc"
 GCC_VERSION="8.3.0"
 GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
-TARGET="i686-deforaos-elf"
+TARGET="i686-none-deforaos"
 #executables
 ACLOCAL="aclocal"
 AUTOMAKE="automake"
@@ -60,18 +60,20 @@ _binutils()
 	if [ ! -d "binutils-$BINUTILS_VERSION" ]; then
 		$TAR $TAR_FLAGS "binutils-$BINUTILS_VERSION.tar.$GZEXT"
 
-		#Extend binutils for DeforaOS
-		$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_i386_deforaos.sh" << EOF
-. \${srcdir}/emulparams/elf_i386.sh
-GENERATE_SHLIB_SCRIPT=yes
-GENERATE_PIE_SCRIPT=yes
-EOF
-		$CAT > "binutils-$BINUTILS_VERSION/ld/emulparams/elf_x86_64_deforaos.sh" << EOF
-. \${srcdir}/emulparams/elf_x86_64_deforaos.sh
-EOF
+		#Patch binutils for DeforaOS
 		(cd "binutils-$BINUTILS_VERSION" && $PATCH -p1) << EOF
+--- binutils-2.32/ld/emulparams/elf_i386_deforaos.sh.orig	1970-01-01 01:00:00.000000000 +0100
++++ binutils-2.32/ld/emulparams/elf_i386_deforaos.sh	2019-05-09 17:30:46.000000000 +0200
+@@ -0,0 +1,3 @@
++. \${srcdir}/emulparams/elf_i386.sh
++GENERATE_SHLIB_SCRIPT=yes
++GENERATE_PIE_SCRIPT=yes
+--- binutils-2.32/ld/emulparams/elf_x86_64_deforaos.sh.orig	1970-01-01 01:00:00.000000000 +0100
++++ binutils-2.32/ld/emulparams/elf_x86_64_deforaos.sh	2019-05-09 17:30:46.000000000 +0200
+@@ -0,0 +1 @@
++. \${srcdir}/emulparams/elf_x86_64_deforaos.sh
 --- binutils-2.32/ld/Makefile.am.orig	2019-01-19 17:01:33.000000000 +0100
-+++ binutils-2.32/ld/Makefile.am	2019-05-09 02:46:04.000000000 +0200
++++ binutils-2.32/ld/Makefile.am	2019-05-09 17:30:46.000000000 +0200
 @@ -285,6 +285,7 @@
  	eelf_i386.c \\
  	eelf_i386_be.c \\
@@ -110,8 +112,24 @@ EOF
  eelf_x86_64_fbsd.c: \$(srcdir)/emulparams/elf_x86_64_fbsd.sh \\
    \$(srcdir)/emulparams/elf_x86_64.sh \\
    \$(ELF_X86_DEPS) \$(srcdir)/scripttempl/elf.sc \${GEN_DEPENDS}
+--- binutils-2.32/ld/configure.tgt.orig	2019-05-11 04:48:32.000000000 +0200
++++ binutils-2.32/ld/configure.tgt	2019-05-11 05:58:31.000000000 +0200
+@@ -240,10 +240,13 @@
+ i[3-7]86-*-lynxos*)	targ_emul=i386lynx ;;
+ i[3-7]86-*-aros*)	targ_emul=elf_i386
+ 			targ_extra_emuls=elf_iamcu ;;
++i[3-7]86-*-deforaos*)	targ_emul=elf_i386
++			targ_extra_emuls=elf_iamcu ;;
+ i[3-7]86-*-rdos*)	targ_emul=elf_i386
+ 			targ_extra_emuls=elf_iamcu ;;
+ x86_64-*-rdos*)		targ_emul=elf64rdos ;;
+ x86_64-*-cloudabi*)	targ_emul=elf_x86_64_cloudabi ;;
++x86_64-*-deforaos*)	targ_emul=elf_x86_64 ;;
+ i[3-7]86-*-bsd)		targ_emul=i386bsd ;;
+ i[3-7]86-*-bsd386)	targ_emul=i386bsd ;;
+ i[3-7]86-*-bsdi*)	targ_emul=i386bsd ;;
 --- binutils-2.32/gas/configure.tgt.orig	2019-01-19 17:01:33.000000000 +0100
-+++ binutils-2.32/gas/configure.tgt	2019-05-09 02:09:54.000000000 +0200
++++ binutils-2.32/gas/configure.tgt	2019-05-09 17:30:46.000000000 +0200
 @@ -260,6 +260,7 @@
    i386-*-chaos)				fmt=elf ;;
    i386-*-rdos*)				fmt=elf ;;
@@ -121,31 +139,58 @@ EOF
    ia16-*-elf*)				fmt=elf ;;
  
 --- binutils-2.32/bfd/config.bfd.orig	2019-01-19 17:01:32.000000000 +0100
-+++ binutils-2.32/bfd/config.bfd	2019-05-09 02:09:54.000000000 +0200
-@@ -652,6 +652,11 @@
-     targ_selvecs=
-     targ64_selvecs=x86_64_elf64_vec
++++ binutils-2.32/bfd/config.bfd	2019-05-11 05:49:12.000000000 +0200
+@@ -66,6 +66,7 @@
+ 
+ case \$targ in
+  *-*-netbsdelf* | i[3-7]86-*-netbsd*-gnu* | i[3-7]86-*-knetbsd*-gnu | \\
++ *-*-deforaos* | \\
+  mips*-*-irix5* | mips*-*-irix6*)
+     # Not obsolete
+     ;;
+@@ -589,6 +590,11 @@
+     targ_defvec=i386_elf32_vec
+     targ_selvecs=iamcu_elf32_vec
      ;;
 +  i[3-7]86-*-deforaos*)
 +    targ_defvec=i386_elf32_vec
-+    targ_selvecs=
-+    targ64_selvecs=x86_64_elf64_vec
++    targ_selvecs="iamcu_elf32_vec"
++    targ64_selvecs="x86_64_elf64_vec l1om_elf64_vec k1om_elf64_vec"
 +    ;;
- #ifdef BFD64
-   x86_64-*-cloudabi*)
-     targ_defvec=x86_64_elf64_cloudabi_vec
-@@ -718,6 +723,11 @@
-     targ_selvecs=i386_elf32_vec
+   i[3-7]86-*-dicos*)
+     targ_defvec=i386_elf32_vec
+     targ_selvecs=iamcu_elf32_vec
+@@ -663,6 +669,11 @@
+     targ_archs="\$targ_archs bfd_powerpc_arch bfd_rs6000_arch"
      want64=true
      ;;
 +  x86_64-*-deforaos*)
 +    targ_defvec=x86_64_elf64_vec
-+    targ_selvecs=i386_elf32_vec
++    targ_selvecs="i386_elf32_vec iamcu_elf32_vec x86_64_elf32_vec l1om_elf64_vec k1om_elf64_vec"
 +    want64=true
 +    ;;
- #endif
-   i[3-7]86-*-lynxos*)
-     targ_defvec=i386_elf32_vec
+   x86_64-*-dicos*)
+     targ_defvec=x86_64_elf64_vec
+     targ_selvecs="i386_elf32_vec iamcu_elf32_vec l1om_elf64_vec k1om_elf64_vec"
+--- binutils-2.32/config.sub.orig	2019-05-11 04:38:21.000000000 +0200
++++ binutils-2.32/config.sub	2019-05-11 04:38:24.000000000 +0200
+@@ -135,6 +135,7 @@
+ 			| linux-newlib* | linux-musl* | linux-uclibc* | uclinux-uclibc* \\
+ 			| uclinux-gnu* | kfreebsd*-gnu* | knetbsd*-gnu* | netbsd*-gnu* \\
+ 			| netbsd*-eabi* | kopensolaris*-gnu* | cloudabi*-eabi* \\
++			| deforaos*-elf* \\
+ 			| storm-chaos* | os2-emx* | rtmk-nova*)
+ 				basic_machine=\$field1
+ 				os=\$maybe_os
+@@ -1341,7 +1342,7 @@
+ 	     | hpux* | unos* | osf* | luna* | dgux* | auroraux* | solaris* \\
+ 	     | sym* | kopensolaris* | plan9* \\
+ 	     | amigaos* | amigados* | msdos* | newsos* | unicos* | aof* \\
+-	     | aos* | aros* | cloudabi* | sortix* \\
++	     | aos* | aros* | cloudabi* | deforaos* | sortix* \\
+ 	     | nindy* | vxsim* | vxworks* | ebmon* | hms* | mvs* \\
+ 	     | clix* | riscos* | uniplus* | iris* | isc* | rtu* | xenix* \\
+ 	     | knetbsd* | mirbsd* | netbsd* \\
 EOF
 		(cd "binutils-$BINUTILS_VERSION/ld" && $ACLOCAL && $AUTOMAKE)
 	fi
@@ -222,17 +267,24 @@ EOF
 		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos.h" << EOF
 EOF
 		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos64.h" << EOF
+#if TARGET_64BIT_DEFAULT
+# define MULTILIB_DEFAULTS { "m64" }
+#else
+# define MULTILIB_DEFAULTS { "m32" }
+#endif
 EOF
 		(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
---- gcc-8.3.0/libgcc/config.host.orig	2019-05-08 01:33:41.000000000 +0200
-+++ gcc-8.3.0/libgcc/config.host	2019-05-08 01:37:37.000000000 +0200
-@@ -603,6 +603,15 @@
+--- gcc-8.3.0/libgcc/config.host.orig	2018-04-06 22:04:17.000000000 +0200
++++ gcc-8.3.0/libgcc/config.host	2019-05-11 04:54:00.000000000 +0200
+@@ -603,6 +603,17 @@
  	tm_file="\$tm_file i386/darwin-lib.h"
  	extra_parts="\$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
  	;;
 +i[34567]86-*-deforaos*)
-+	extra_parts="crti.o crtbegin.o crtend.o crtn.o"
 +	tmake_file="\$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
++	tmake_file="\$tmake_file t-slibgcc t-slibgcc-elf-ver"
++	tmake_file="\$tmake_file t-slibgcc-libgcc"
++	extra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o crti.o crtn.o"
 +	;;
 +x86_64-*-deforaos*)
 +	extra_parts="crti.o crtbegin.o crtend.o crtn.o"
@@ -242,8 +294,8 @@ EOF
  i[34567]86-*-elfiamcu)
  	tmake_file="\$tmake_file i386/t-crtstuff t-softfp-sfdftf i386/32/t-softfp i386/32/t-iamcu i386/t-softfp t-softfp t-dfprules"
  	;;
---- gcc-8.3.0/gcc/config.gcc.orig	2019-05-08 01:21:50.000000000 +0200
-+++ gcc-8.3.0/gcc/config.gcc	2019-05-08 01:27:44.000000000 +0200
+--- gcc-8.3.0/gcc/config.gcc.orig	2019-01-29 16:31:10.000000000 +0100
++++ gcc-8.3.0/gcc/config.gcc	2019-05-11 04:54:00.000000000 +0200
 @@ -676,6 +676,12 @@
      "" | yes | posix) thread_file='posix' ;;
    esac
@@ -257,21 +309,24 @@ EOF
  *-*-dragonfly*)
    gas=yes
    gnu_ld=yes
-@@ -1490,6 +1496,12 @@
+@@ -1490,6 +1496,15 @@
  	tmake_file="\${tmake_file} \${cpu_type}/t-darwin64 t-slibgcc"
  	tm_file="\${tm_file} \${cpu_type}/darwin64.h"
  	;;
 +i[34567]86-*-deforaos*)
-+	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h deforaos.h i386/deforaos.h"
++	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h"
++	tm_file="\${tm_file} i386/i386elf.h deforaos.h i386/deforaos.h"
 +	;;
 +x86_64-*-deforaos*)
-+	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h i386/x86-64.h deforaos.h i386/deforaos64.h"
++	tmake_file="\${tmake_file} i386/t-x86_64-elf"
++	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h"
++	tm_file="\${tm_file} i386/i386elf.h i386/x86-64.h deforaos.h i386/deforaos64.h"
 +	;;
  i[34567]86-*-elfiamcu)
  	tm_file="\${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/iamcu.h"
  	;;
---- gcc-8.3.0/config.sub.orig	2019-05-08 01:20:42.000000000 +0200
-+++ gcc-8.3.0/config.sub	2019-05-08 01:20:44.000000000 +0200
+--- gcc-8.3.0/config.sub.orig	2018-01-03 05:25:18.000000000 +0100
++++ gcc-8.3.0/config.sub	2019-05-11 04:54:00.000000000 +0200
 @@ -1395,7 +1395,7 @@
  	      | -hpux* | -unos* | -osf* | -luna* | -dgux* | -auroraux* | -solaris* \\
  	      | -sym* | -kopensolaris* | -plan9* \\
