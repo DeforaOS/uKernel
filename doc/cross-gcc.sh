@@ -285,6 +285,8 @@ EOF
 # define MULTILIB_DEFAULTS { "m32" }
 #endif
 EOF
+
+		#Patch GCC for DeforaOS
 		(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2018-04-06 22:04:17.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-11 04:54:00.000000000 +0200
@@ -375,6 +377,8 @@ EOF
 	done
 }
 
+
+#platform
 _platform()
 {
 	case $($UNAME -s) in
