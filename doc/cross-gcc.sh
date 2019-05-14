@@ -41,6 +41,7 @@ ACLOCAL="aclocal"
 AUTOMAKE="automake"
 CAT="cat"
 MAKE="make"
+MAKE_FLAGS=
 MKDIR="mkdir -p"
 PATCH="patch"
 PORT="i386"
@@ -211,7 +212,7 @@ EOF
 			--disable-nls --disable-werror $BINUTILS_FLAGS)
 	fi
 	for target in $BINUTILS_TARGETS; do
-		(cd "binutils-$TARGET" && $MAKE "$target")
+		(cd "binutils-$TARGET" && $MAKE $MAKE_FLAGS "$target")
 	done
 }
 
@@ -373,7 +374,7 @@ EOF
 			--without-headers $GCC_FLAGS)
 	fi
 	for target in $GCC_TARGETS; do
-		(cd "gcc-$TARGET" && $MAKE "$target")
+		(cd "gcc-$TARGET" && $MAKE $MAKE_FLAGS "$target")
 	done
 }
 
