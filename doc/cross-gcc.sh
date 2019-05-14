@@ -34,7 +34,8 @@ GCC_TARGETS="all-gcc all-target-libgcc install-gcc install-target-libgcc"
 GCC_VERSION="8.3.0"
 GZEXT="gz"
 MIRROR="https://ftpmirror.gnu.org"
-TARGET="i686-none-deforaos"
+PROGNAME="cross-gcc.sh"
+TARGET=
 #executables
 ACLOCAL="aclocal"
 AUTOMAKE="automake"
@@ -42,6 +43,7 @@ CAT="cat"
 MAKE="make"
 MKDIR="mkdir -p"
 PATCH="patch"
+PORT="i386"
 TAR="tar"
 TAR_FLAGS="-xzf"
 UNAME="uname"
@@ -213,6 +215,16 @@ EOF
 	done
 }
 
+
+#error
+_error()
+{
+	echo "$PROGNAME: $@" 1>&2
+	return 2
+}
+
+
+#gcc
 _gcc()
 {
 	#Download GCC
@@ -379,10 +391,51 @@ _platform()
 	esac
 }
 
+
+#usage
+_usage()
+{
+	echo "Usage: $PROGNAME [-p port]" 1>&2
+	return 1
+}
+
+
 #main
 #Modify the environment to reflect the port chosen
 PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
+while getopts "O:p:" name; do
+	case "$name" in
+		O)
+			export "${OPTARG%%=*}"="${OPTARG#*=}"
+			;;
+		p)
+			PORT="$OPTARG"
+			;;
+		?)
+			_usage
+			exit $?
+			;;
+	esac
+done
+shift $((OPTIND - 1))
+if [ $# -ne 0 ]; then
+	_usage
+	exit $?
+fi
+
+case "$PORT" in
+	i386)
+		TARGET="i686-none-deforaos"
+		;;
+	amd64)
+		TARGET="amd64-none-deforaos"
+		;;
+	*)
+		_error "$PORT: Port not supported"
+		exit $?
+		;;
+esac
 
 _platform &&
 _binutils &&
