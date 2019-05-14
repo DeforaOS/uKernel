@@ -55,16 +55,18 @@ WGET="wget"
 #binutils
 _binutils()
 {
+	version="$1"
+
 	#Download binutils
-	[ -f "binutils-$BINUTILS_VERSION.tar.$GZEXT" ] ||
-		$WGET "$MIRROR/binutils/binutils-$BINUTILS_VERSION.tar.$GZEXT"
+	[ -f "binutils-$version.tar.$GZEXT" ] ||
+		$WGET "$MIRROR/binutils/binutils-$version.tar.$GZEXT"
 
 	#Extract binutils
-	if [ ! -d "binutils-$BINUTILS_VERSION" ]; then
-		$TAR $TAR_FLAGS "binutils-$BINUTILS_VERSION.tar.$GZEXT"
+	if [ ! -d "binutils-$version" ]; then
+		$TAR $TAR_FLAGS "binutils-$version.tar.$GZEXT"
 
 		#Patch binutils for DeforaOS
-		(cd "binutils-$BINUTILS_VERSION" && $PATCH -p1) << EOF
+		(cd "binutils-$version" && $PATCH -p1) << EOF
 --- binutils-2.32/ld/emulparams/elf_i386_deforaos.sh.orig	1970-01-01 01:00:00.000000000 +0100
 +++ binutils-2.32/ld/emulparams/elf_i386_deforaos.sh	2019-05-09 17:30:46.000000000 +0200
 @@ -0,0 +1,3 @@
@@ -195,7 +197,7 @@ _binutils()
  	     | clix* | riscos* | uniplus* | iris* | isc* | rtu* | xenix* \\
  	     | knetbsd* | mirbsd* | netbsd* \\
 EOF
-		(cd "binutils-$BINUTILS_VERSION/ld" && $ACLOCAL && $AUTOMAKE)
+		(cd "binutils-$version/ld" && $ACLOCAL && $AUTOMAKE)
 	fi
 
 	#Configure and build binutils in a dedicated tree
@@ -207,7 +209,7 @@ EOF
 	$MKDIR "binutils-$TARGET"
 	if [ ! -f "binutils-$TARGET/Makefile" ]; then
 		(cd "binutils-$TARGET" &&
-			"../binutils-$BINUTILS_VERSION/configure" \
+			"../binutils-$version/configure" \
 			--target="$TARGET" --prefix="$PREFIX" --with-sysroot \
 			--disable-nls --disable-werror $BINUTILS_FLAGS)
 	fi
@@ -228,16 +230,18 @@ _error()
 #gcc
 _gcc()
 {
+	version="$1"
+
 	#Download GCC
-	[ -f "gcc-$GCC_VERSION.tar.$GZEXT" ] ||
-		$WGET "$MIRROR/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.$GZEXT"
+	[ -f "gcc-$version.tar.$GZEXT" ] ||
+		$WGET "$MIRROR/gcc/gcc-$version/gcc-$version.tar.$GZEXT"
 
 	#Extract GCC
-	if [ ! -d "gcc-$GCC_VERSION" ]; then
-		$TAR $TAR_FLAGS "gcc-$GCC_VERSION.tar.$GZEXT"
+	if [ ! -d "gcc-$version" ]; then
+		$TAR $TAR_FLAGS "gcc-$version.tar.$GZEXT"
 
 		#Extend GCC for DeforaOS
-		$CAT > "gcc-$GCC_VERSION/gcc/config/deforaos.h" << EOF
+		$CAT > "gcc-$version/gcc/config/deforaos.h" << EOF
 /* Useful if you wish to make target-specific GCC changes. */
 #undef TARGET_DEFORAOS
 #define TARGET_DEFORAOS 1
@@ -272,14 +276,14 @@ _gcc()
     builtin_assert ("system=posix");   \\
   } while(0);
 EOF
-		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/t-x86_64-elf" << EOF
+		$CAT > "gcc-$version/gcc/config/i386/t-x86_64-elf" << EOF
 MULTILIB_OPTIONS = m64 m32 mno-red-zone
 MULTILIB_DIRNAMES = m64 m32 no-red-zone
 MULTILIB_OSDIRNAMES = ../lib ../lib/i386 ../lib/no-red-zone
 EOF
-		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos.h" << EOF
+		$CAT > "gcc-$version/gcc/config/i386/deforaos.h" << EOF
 EOF
-		$CAT > "gcc-$GCC_VERSION/gcc/config/i386/deforaos64.h" << EOF
+		$CAT > "gcc-$version/gcc/config/i386/deforaos64.h" << EOF
 #if TARGET_64BIT_DEFAULT
 # define MULTILIB_DEFAULTS { "m64" }
 #else
@@ -288,7 +292,7 @@ EOF
 EOF
 
 		#Patch GCC for DeforaOS
-		(cd "gcc-$GCC_VERSION" && $PATCH -p1) << EOF
+		(cd "gcc-$version" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2018-04-06 22:04:17.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-11 04:54:00.000000000 +0200
 @@ -603,6 +603,17 @@
@@ -368,7 +372,7 @@ EOF
 	esac
 	$MKDIR "gcc-$TARGET"
 	if [ ! -f "gcc-$TARGET/Makefile" ]; then
-		(cd "gcc-$TARGET" && "../gcc-$GCC_VERSION/configure" \
+		(cd "gcc-$TARGET" && "../gcc-$version/configure" \
 			--target="$TARGET" --prefix="$PREFIX" \
 			--disable-nls --enable-languages=c,c++ \
 			--without-headers $GCC_FLAGS)
@@ -443,5 +447,5 @@ case "$PORT" in
 esac
 
 _platform &&
-_binutils &&
-_gcc
+_binutils "$BINUTILS_VERSION" &&
+_gcc "$GCC_VERSION"
