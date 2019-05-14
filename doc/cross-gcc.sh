@@ -214,7 +214,8 @@ EOF
 			--disable-nls --disable-werror $BINUTILS_FLAGS)
 	fi
 	for target in $BINUTILS_TARGETS; do
-		(cd "binutils-$TARGET" && $MAKE $MAKE_FLAGS "$target")
+		(cd "binutils-$TARGET" && $MAKE $MAKE_FLAGS "$target") \
+								|| break
 	done
 }
 
@@ -378,7 +379,8 @@ EOF
 			--without-headers $GCC_FLAGS)
 	fi
 	for target in $GCC_TARGETS; do
-		(cd "gcc-$TARGET" && $MAKE $MAKE_FLAGS "$target")
+		(cd "gcc-$TARGET" && $MAKE $MAKE_FLAGS "$target") \
+								|| break
 	done
 }
 
