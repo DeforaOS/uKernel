@@ -26,6 +26,7 @@
 
 
 #variables
+ARCH="i386"
 BINUTILS_FLAGS=
 BINUTILS_TARGETS="all install"
 BINUTILS_VERSION="2.32"
@@ -44,7 +45,6 @@ MAKE="make"
 MAKE_FLAGS=
 MKDIR="mkdir -p"
 PATCH="patch"
-PORT="i386"
 TAR="tar"
 TAR_FLAGS="-xzf"
 UNAME="uname"
@@ -406,7 +406,8 @@ _platform()
 #usage
 _usage()
 {
-	echo "Usage: $PROGNAME [-p port]" 1>&2
+	echo "Usage: $PROGNAME [-a architecture]" 1>&2
+	echo "  -a	Select the architecture to build" 1>&2
 	return 1
 }
 
@@ -415,13 +416,13 @@ _usage()
 #Modify the environment to reflect the port chosen
 PREFIX="$HOME/opt/cross-gcc-$TARGET"
 PATH="$PREFIX/bin:$PATH"
-while getopts "O:p:" name; do
+while getopts "a:O:" name; do
 	case "$name" in
+		a)
+			ARCH="$OPTARG"
+			;;
 		O)
 			export "${OPTARG%%=*}"="${OPTARG#*=}"
-			;;
-		p)
-			PORT="$OPTARG"
 			;;
 		?)
 			_usage
@@ -435,7 +436,7 @@ if [ $# -ne 0 ]; then
 	exit $?
 fi
 
-case "$PORT" in
+case "$ARCH" in
 	i386)
 		TARGET="i686-none-deforaos"
 		;;
@@ -443,7 +444,7 @@ case "$PORT" in
 		TARGET="amd64-none-deforaos"
 		;;
 	*)
-		_error "$PORT: Port not supported"
+		_error "$ARCH: Architecture not supported"
 		exit $?
 		;;
 esac

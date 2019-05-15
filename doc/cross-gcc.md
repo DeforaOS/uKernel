@@ -41,12 +41,13 @@ is version 2.32:
 To configure binutils it is necessary to choose a target. It can be chosen
 according to the following table:
 
-| Port  | Target              |
-| ----- | ------------------- |
-| amd64 | amd64-none-deforaos |
-| i386  | i686-none-deforaos  |
+| Architecture | Target              |
+| ------------ | ------------------- |
+| amd64        | amd64-none-deforaos |
+| i386         | i686-none-deforaos  |
 
-Modify the environment to reflect this choice; in this case for the i386 port:
+Modify the environment to reflect this choice; in this case for the i386
+architecture:
 
     $ TARGET="i686-none-deforaos"
     $ PREFIX="$HOME/opt/cross-gcc-$TARGET"
