@@ -413,9 +413,6 @@ _usage()
 
 
 #main
-#Modify the environment to reflect the port chosen
-PREFIX="$HOME/opt/cross-gcc-$TARGET"
-PATH="$PREFIX/bin:$PATH"
 while getopts "a:O:" name; do
 	case "$name" in
 		a)
@@ -448,6 +445,9 @@ case "$ARCH" in
 		exit $?
 		;;
 esac
+#Modify the environment to reflect the architecture chosen
+PREFIX="$HOME/opt/cross-gcc-$TARGET"
+PATH="$PREFIX/bin:$PATH"
 
 _platform &&
 _binutils "$BINUTILS_VERSION" &&
