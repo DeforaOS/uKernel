@@ -296,14 +296,12 @@ EOF
 		(cd "gcc-$version" && $PATCH -p1) << EOF
 --- gcc-8.3.0/libgcc/config.host.orig	2018-04-06 22:04:17.000000000 +0200
 +++ gcc-8.3.0/libgcc/config.host	2019-05-11 04:54:00.000000000 +0200
-@@ -603,6 +603,17 @@
+@@ -603,6 +603,15 @@
  	tm_file="\$tm_file i386/darwin-lib.h"
  	extra_parts="\$extra_parts crtprec32.o crtprec64.o crtprec80.o crtfastmath.o"
  	;;
 +i[34567]86-*-deforaos*)
 +	tmake_file="\$tmake_file i386/t-crtstuff t-crtstuff-pic t-libgcc-pic"
-+	tmake_file="\$tmake_file t-slibgcc t-slibgcc-elf-ver"
-+	tmake_file="\$tmake_file t-slibgcc-libgcc"
 +	extra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o crti.o crtn.o"
 +	;;
 +x86_64-*-deforaos*)
