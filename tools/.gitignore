@@ -1,1 +1,3 @@
+/arch/amd64/platform.c
+/arch/i386/platform.c
 /uKernel
