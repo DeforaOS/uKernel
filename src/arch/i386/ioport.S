@@ -4,7 +4,6 @@
 
 
 
-#if defined(__amd64__) || defined(__i386__)
 /* functions */
 .section .text
 /* inb */
@@ -43,4 +42,3 @@ outb:
 	/* return 0 */
 	xor	%eax, %eax
 	ret
-#endif
