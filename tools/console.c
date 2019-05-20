@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <kernel/drivers/console.h>
 
+#include "drivers/console/stdio.c"
+
 
 /* private */
 /* variables */

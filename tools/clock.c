@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <kernel/drivers/clock.h>
 
+#include "drivers/clock/sys.c"
+
 
 /* private */
 /* variables */
