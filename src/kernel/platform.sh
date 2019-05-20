@@ -51,7 +51,7 @@ _platform()
 
 	#output the header
 	echo "/* \$Id\$ */
-/* Copyright (c) 2018 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2019 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS uKernel */
 
 
@@ -64,14 +64,14 @@ _platform()
 		#convert comments and ignore empty lines
 		case "$name" in
 			"#"*)
-				echo -n "/* "
-				[ -n "${name#?}" ] && echo -n "${name#?}"
-				[ -n "$type" ] && echo -n " $type"
-				[ -n "$at" ] && echo -n " $at"
-				[ -n "$busname" ] && echo -n " $busname"
-				[ -n "$bus" ] && echo -n " $bus"
-				[ -n "$args" ] && echo -n " $args"
-				echo " */"
+				l="/* "
+				[ -n "${name#?}" ] && l="$l${name#?}"
+				[ -n "$type" ] && l="$l $type"
+				[ -n "$at" ] && l="$l $at"
+				[ -n "$busname" ] && l="$l $busname"
+				[ -n "$bus" ] && l="$l $bus"
+				[ -n "$args" ] && l="$l $args"
+				echo "$l */"
 				continue
 				;;
 			"")
