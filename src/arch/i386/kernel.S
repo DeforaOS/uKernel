@@ -20,8 +20,7 @@
 #endif
 
 
-/* sections */
-/* bss */
+/* variables */
 .section .bss
 .align 16
 stack_bottom:
@@ -29,7 +28,7 @@ stack_bottom:
 stack_top:
 
 
-/* text */
+/* functions */
 .section .text
 /* start */
 .global _start

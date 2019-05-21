@@ -4,9 +4,9 @@
 
 
 
-/* sections */
-/* text */
+/* functions */
 .section .text
+/* intr_disable */
 .global intr_disable
 .type intr_disable, @function
 intr_disable:

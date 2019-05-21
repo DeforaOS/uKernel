@@ -5,7 +5,15 @@
 
 
 
-/* text */
+/* variables */
+.section .bss
+.align 16
+idt:
+.skip 2		/* size */
+.skip 4		/* offset */
+
+
+/* functions */
 .section .text
 /* arch_setidt */
 .global __arch_setidt
@@ -22,11 +30,3 @@ __arch_setidt:
 	/* load the IDT */
 	lidt	(%ecx)
 	ret
-
-
-/* bss */
-.section .bss
-.align 16
-idt:
-.skip 2		/* size */
-.skip 4		/* offset */

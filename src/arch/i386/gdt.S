@@ -5,7 +5,15 @@
 
 
 
-/* text */
+/* variables */
+.section .bss
+.align 16
+gdt_descriptor:
+.skip 2		/* size */
+.skip 4		/* offset */
+
+
+/* functions */
 .section .text
 /* arch_setgdt */
 .global __arch_setgdt
@@ -26,11 +34,3 @@ __arch_setgdt:
 	/* load the GDT */
 	lgdt	(%ecx)
 	ret
-
-
-/* bss */
-.section .bss
-.align 16
-gdt_descriptor:
-.skip 2		/* size */
-.skip 4		/* offset */

@@ -20,8 +20,13 @@
 #endif
 
 
-/* sections */
-/* text */
+/* variables */
+.section .bss
+k_ptr:
+.skip 4
+
+
+/* functions */
 .section .text
 /* multiboot_boot_kernel32 */
 .global multiboot_boot_kernel32
@@ -83,9 +88,3 @@ multiboot_boot_kernel64:
 1:
 	mov	$-1, %eax
 	ret
-
-
-/* data */
-.section .data
-k_ptr:
-.long 0x0
