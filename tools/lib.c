@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <ssp.h>
 
+#include "lib/ctype.c"
 #include "lib/errno.c"
 #include "lib/ssp.c"
 #include "lib/stdio.c"
