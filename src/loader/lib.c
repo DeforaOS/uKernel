@@ -12,10 +12,10 @@
 #include <errno.h>
 #include <ssp.h>
 
-#include "lib/errno.c"
-#include "lib/ssp.c"
-#include "lib/stdio.c"
-#include "lib/stdlib.c"
-#include "lib/string.c"
-#include "lib/sys/mman.c"
-#include "lib/unistd.c"
+#include "lib/libc/src/errno.c"
+#include "lib/libc/src/ssp.c"
+#include "lib/libc/src/stdio.c"
+#include "lib/libc/src/stdlib.c"
+#include "lib/libc/src/string.c"
+#include "lib/libc/src/sys/mman.c"
+#include "lib/libc/src/unistd.c"
