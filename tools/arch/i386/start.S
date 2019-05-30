@@ -32,19 +32,6 @@ _syscall:
 	ret
 
 
-/* gettimeofday */
-.global _gettimeofday
-.type _gettimeofday, @function
-_gettimeofday:
-	/* FIXME this syscall may differ on different kernels */
-#ifdef __linux__
-	mov	$0x60, %eax
-#else
-	mov	$0x1a2, %eax
-#endif
-	jmp	_syscall
-
-
 /* read */
 .global _read
 .type _read, @function
@@ -112,24 +99,6 @@ _start:
 	add	$0x4, %esp
 
 	hlt
-
-
-/* time */
-.global _time
-.type _time, @function
-_time:
-	sub	$0xc, %esp
-	mov	%esp, %eax
-	push	$0x0
-	push	%eax
-	call	_gettimeofday
-	cmp	$-1, %eax
-	je	1f
-	mov	0x10(%esp), %eax
-	mov	0xc(%esp), %edx
-1:
-	add	$0x14, %esp
-	ret
 
 
 /* write */

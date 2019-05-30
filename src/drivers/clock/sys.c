@@ -5,6 +5,7 @@
 
 
 #include <stddef.h>
+#include <time.h>
 #include <kernel/drivers/clock.h>
 
 
@@ -17,9 +18,7 @@ typedef struct _ukClock SysClock;
 /* console */
 static SysClock * _sys_clock_init(ukBus * bus);
 
-static int _sys_clock_get_time(SysClock * console, time_t * time);
-
-extern time_t _time(time_t * t);
+static int _sys_clock_get_time(SysClock * console, time_t * ptime);
 
 
 /* public */
@@ -47,14 +46,14 @@ static SysClock * _sys_clock_init(ukBus * bus)
 
 
 /* sys_clock_get_time */
-static int _sys_clock_get_time(SysClock * clock, time_t * time)
+static int _sys_clock_get_time(SysClock * clock, time_t * ptime)
 {
 	time_t t;
 	(void) clock;
 
-	if(_time(&t) == -1)
+	if(time(&t) == -1)
 		return -1;
-	if(time != NULL)
-		*time = t;
+	if(ptime != NULL)
+		*ptime = t;
 	return 0;
 }
