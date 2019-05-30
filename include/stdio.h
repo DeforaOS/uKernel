@@ -11,7 +11,10 @@
 
 
 /* types */
+# ifndef FILE
+#  define FILE FILE
 typedef struct _FILE FILE;
+# endif
 
 # ifndef off_t
 #  define off_t off_t
@@ -34,6 +37,21 @@ typedef __builtin_va_list va_list;
 /* end-of-file return value */
 # define EOF (-1)
 
+/* maximum size of character array to hold ctermid() output */
+# ifndef L_ctermid
+#  define L_ctermid 256
+# endif
+
+/* maximum size of character array to hold tmpnam() output */
+# ifndef L_tmpnam
+#  define L_tmpnam 1024
+# endif
+
+/* default directory prefix for tempnam() */
+# ifndef P_tmpdir
+#  define P_tmpdir "/tmp"
+# endif
+
 
 /* variables */
 /* standard input, output, and error streams */
@@ -42,14 +60,65 @@ extern FILE * stdout;
 extern FILE * stderr;
 
 
-/* prototypes */
+/* functions */
+void clearerr(FILE * file);
+char * ctermid(char * buf);
+int fclose(FILE * file);
+FILE * fdopen(int fildes, char const * mode);
+int feof(FILE * file);
+int ferror(FILE * file);
+int fflush(FILE * file);
+int fgetc(FILE * file);
+char * fgets(char * str, int size, FILE * file);
+int fileno(FILE * file);
+void flockfile(FILE * file);
+FILE * fmemopen(void * buffer, size_t size, char const * mode);
+FILE * fopen(char const * path, char const * mode);
 int fprintf(FILE * file, char const * format, ...);
 int fputc(int c, FILE * file);
+int fputs(char const * str, FILE * file);
+size_t fread(void * ptr, size_t size, size_t nb, FILE * file);
+FILE * freopen(char const * path, char const * mode, FILE * file);
+int fscanf(FILE * file, char const * format, ...);
+int fseek(FILE * file, long offset, int whence);
+int fseeko(FILE * file, off_t offset, int whence);
+long ftell(FILE * file);
+int ftrylock(FILE * file);
+void funlockfile(FILE * file);
 size_t fwrite(void const * ptr, size_t size, size_t nb, FILE * file);
+int getc(FILE * file);
+int getc_unlocked(FILE * file);
+int getchar(void);
+int getchar_unlocked(void);
+int pclose(FILE * stream);
+void perror(char const * str);
+FILE * popen(char const * command, char const * mode);
 int printf(char const * format, ...);
 int putc(int c, FILE * file);
+int putc_unlocked(int c, FILE * file);
 int putchar(int c);
-int puts(char const * string);
+int putchar_unlocked(int c);
+int puts(char const * str);
+int remove(char const * path);
+int rename(char const * from, char const * to);
+int renameat(int fromfd, char const * from, int tofd, char const * to);
+void rewind(FILE * file);
+int scanf(char const * format, ...);
+void setbuf(FILE * file, char * buf);
+int setvbuf(FILE * file, char * buf, int type, size_t size);
+int snprintf(char * str, size_t size, char const * format, ...);
+int sprintf(char * str, char const * format, ...);
+int sscanf(char const * str, char const * format, ...);
+char * tempnam(char const * dir, char const * prefix);
+FILE * tmpfile(void);
+char * tmpnam(char * str);
+int ungetc(int c, FILE * file);
 int vfprintf(FILE * file, char const * format, va_list arg);
+int vfscanf(FILE * file, char const * format, va_list arg);
+int vprintf(char const * format, va_list arg);
+int vscanf(char const * format, va_list arg);
+int vsnprintf(char * str, size_t size, char const * format, va_list arg);
+int vsprintf(char * str, char const * format, va_list arg);
+int vsscanf(char const * str, char const * format, va_list arg);
 
 #endif /* !UKERNEL_STDIO_H */
