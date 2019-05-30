@@ -20,14 +20,6 @@ _syscall_return:
 	ret
 
 
-/* read */
-.global _read
-.type _read, @function
-_read:
-	mov	$0x3, %rax
-	jmp	_syscall
-
-
 /* start */
 .global _start
 .type _start, @function
@@ -97,11 +89,3 @@ auxv_done:
 #endif
 
 	hlt
-
-
-/* write */
-.global _write
-.type _write, @function
-_write:
-	mov	$0x4, %rax
-	jmp	_syscall

@@ -32,14 +32,6 @@ _syscall:
 	ret
 
 
-/* read */
-.global _read
-.type _read, @function
-_read:
-	mov	$0x3, %eax
-	jmp	_syscall
-
-
 /* start */
 .global _start
 .type _start, @function
@@ -99,11 +91,3 @@ _start:
 	add	$0x4, %esp
 
 	hlt
-
-
-/* write */
-.global _write
-.type _write, @function
-_write:
-	mov	$0x4, %eax
-	jmp	_syscall
