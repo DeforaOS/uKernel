@@ -12,7 +12,9 @@
 #include <errno.h>
 #include <ssp.h>
 
+#include "lib/libc/src/ctype.c"
 #include "lib/libc/src/errno.c"
+#include "lib/libc/src/fcntl.c"
 #include "lib/libc/src/ssp.c"
 #include "lib/libc/src/stdio.c"
 #include "lib/libc/src/stdlib.c"
