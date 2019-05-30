@@ -32,40 +32,6 @@ _syscall:
 	ret
 
 
-/* brk */
-.global _brk
-.type _brk, @function
-_brk:
-	/* FIXME this syscall may differ on different kernels */
-#ifdef __linux__
-	mov	$0x2d, %eax
-	push	%ebx
-	mov	0x8(%esp), %ebx
-	int	$0x80
-	pop	%ebx
-	cmp	0x4(%esp), %eax
-	jle	1f
-	mov	$12, %eax
-	mov	%eax, errno
-	mov	$-1, %eax
-	ret
-1:
-	mov	$0, %eax
-	ret
-#else
-	mov	$0x11, %eax
-	jmp	_syscall
-#endif
-
-
-/* exit */
-.global _exit
-.type _exit, @function
-_exit:
-	mov	$0x1, %eax
-	jmp	_syscall
-
-
 /* gettimeofday */
 .global _gettimeofday
 .type _gettimeofday, @function
