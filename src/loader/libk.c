@@ -32,3 +32,4 @@
 #include "lib/libc/src/time.c"
 #include "lib/libc/src/unistd.c"
 #include "lib/sys/mman.c"
+#include "lib/sys/time.c"

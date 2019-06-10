@@ -9,14 +9,8 @@
 #include <sys/mman.h>
 
 
-/* mlock */
-int mlock(const void * addr, size_t length)
-{
-	errno = ENOSYS;
-	return -1;
-}
-
-
+/* public */
+/* functions */
 /* mmap */
 void * mmap(void * addr, size_t length, int prot, int flags, int fd,
 		off_t offset)
@@ -64,14 +58,6 @@ int mprotect(void * addr, size_t length, int prot)
 	}
 	/* FIXME really implement */
 	return 0;
-}
-
-
-/* munlock */
-int munlock(const void * addr, size_t length)
-{
-	errno = ENOSYS;
-	return -1;
 }
 
 
