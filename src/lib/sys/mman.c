@@ -9,6 +9,8 @@
 #include <sys/mman.h>
 
 
+/* public */
+/* functions */
 /* mmap */
 void * mmap(void * addr, size_t length, int prot, int flags, int fd,
 		off_t offset)

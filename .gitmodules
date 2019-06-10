@@ -1,0 +1,3 @@
+[submodule "src/lib/libc"]
+	path = src/lib/libc
+	url = https://git.defora.org/DeforaOS/libc.git

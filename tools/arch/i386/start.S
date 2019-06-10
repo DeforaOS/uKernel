@@ -32,61 +32,6 @@ _syscall:
 	ret
 
 
-/* brk */
-.global _brk
-.type _brk, @function
-_brk:
-	/* FIXME this syscall may differ on different kernels */
-#ifdef __linux__
-	mov	$0x2d, %eax
-	push	%ebx
-	mov	0x8(%esp), %ebx
-	int	$0x80
-	pop	%ebx
-	cmp	0x4(%esp), %eax
-	jle	1f
-	mov	$12, %eax
-	mov	%eax, errno
-	mov	$-1, %eax
-	ret
-1:
-	mov	$0, %eax
-	ret
-#else
-	mov	$0x11, %eax
-	jmp	_syscall
-#endif
-
-
-/* exit */
-.global _exit
-.type _exit, @function
-_exit:
-	mov	$0x1, %eax
-	jmp	_syscall
-
-
-/* gettimeofday */
-.global _gettimeofday
-.type _gettimeofday, @function
-_gettimeofday:
-	/* FIXME this syscall may differ on different kernels */
-#ifdef __linux__
-	mov	$0x60, %eax
-#else
-	mov	$0x1a2, %eax
-#endif
-	jmp	_syscall
-
-
-/* read */
-.global _read
-.type _read, @function
-_read:
-	mov	$0x3, %eax
-	jmp	_syscall
-
-
 /* start */
 .global _start
 .type _start, @function
@@ -146,29 +91,3 @@ _start:
 	add	$0x4, %esp
 
 	hlt
-
-
-/* time */
-.global _time
-.type _time, @function
-_time:
-	sub	$0xc, %esp
-	mov	%esp, %eax
-	push	$0x0
-	push	%eax
-	call	_gettimeofday
-	cmp	$-1, %eax
-	je	1f
-	mov	0x10(%esp), %eax
-	mov	0xc(%esp), %edx
-1:
-	add	$0x14, %esp
-	ret
-
-
-/* write */
-.global _write
-.type _write, @function
-_write:
-	mov	$0x4, %eax
-	jmp	_syscall

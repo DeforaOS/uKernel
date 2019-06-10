@@ -31,24 +31,6 @@ stack_top:
 
 /* text */
 .section .text
-/* brk */
-.global _brk
-.type _brk, @function
-_brk:
-	xor	%eax, %eax
-	ret
-
-
-/* exit */
-.global _exit
-.type _exit, @function
-_exit:
-	/* infinite loop */
-	cli
-1:	hlt
-	jmp	1b
-
-
 /* start */
 .global _start
 .type _start, @function

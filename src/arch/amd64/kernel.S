@@ -46,16 +46,6 @@ _brk:
 	ret
 
 
-/* exit */
-.global _exit
-.type _exit, @function
-_exit:
-	/* infinite loop */
-	cli
-1:	hlt
-	jmp	1b
-
-
 /* start */
 .global _start
 .type _start, @function

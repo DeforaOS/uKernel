@@ -14,6 +14,9 @@
 # include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
 
+# ifndef LOADER_CLOCK
+#  define LOADER_CLOCK		"cmos"
+# endif
 # ifndef LOADER_CONSOLE
 #  define LOADER_CONSOLE	"uart"
 # endif
@@ -41,6 +44,8 @@ int multiboot(const ukMultibootInfo * mi)
 {
 	ukBus * ioportbus;
 	ukBus * vgabus;
+	ukBus * cmosbus;
+	char const * clock = LOADER_CLOCK;
 	char const * console = LOADER_CONSOLE;
 	char const * display = LOADER_DISPLAY;
 	ukMultibootMod * mod;
@@ -54,6 +59,7 @@ int multiboot(const ukMultibootInfo * mi)
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");
 	vgabus = bus_init(ioportbus, "vga");
+	cmosbus = bus_init(ioportbus, "cmos");
 
 #ifdef notyet
 	/* detect the video driver to use */
@@ -66,6 +72,9 @@ int multiboot(const ukMultibootInfo * mi)
 
 	/* initialize the console */
 	console_init(ioportbus, console);
+
+	/* initialize the clock */
+	clock_init(cmosbus, clock);
 
 	/* report information on the boot process */
 	puts("DeforaOS Multiboot");
