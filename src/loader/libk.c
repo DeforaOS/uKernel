@@ -33,3 +33,4 @@
 #include "lib/libc/src/unistd.c"
 #include "lib/sys/mman.c"
 #include "lib/sys/time.c"
+#include "lib/unistd.c"
