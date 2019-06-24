@@ -41,6 +41,7 @@ TARGET=
 ACLOCAL="aclocal"
 AUTOMAKE="automake"
 CAT="cat"
+CURL="curl"
 MAKE="make"
 MAKE_FLAGS=
 MKDIR="mkdir -p"
@@ -59,7 +60,7 @@ _binutils()
 
 	#Download binutils
 	[ -f "binutils-$version.tar.$GZEXT" ] ||
-		$WGET "$MIRROR/binutils/binutils-$version.tar.$GZEXT"
+		_download "$MIRROR/binutils/binutils-$version.tar.$GZEXT"
 
 	#Extract binutils
 	if [ ! -d "binutils-$version" ]; then
@@ -220,6 +221,21 @@ EOF
 }
 
 
+#download
+_download()
+{
+	url="$1"
+
+	$WGET -O "${url##*/}" "$url"
+	ret=$?
+	if [ $ret -eq 127 ]; then
+		$CURL -o "${url##*/}" "$url"
+		ret=$?
+	fi
+	return $ret
+}
+
+
 #error
 _error()
 {
@@ -235,7 +251,7 @@ _gcc()
 
 	#Download GCC
 	[ -f "gcc-$version.tar.$GZEXT" ] ||
-		$WGET "$MIRROR/gcc/gcc-$version/gcc-$version.tar.$GZEXT"
+		_download "$MIRROR/gcc/gcc-$version/gcc-$version.tar.$GZEXT"
 
 	#Extract GCC
 	if [ ! -d "gcc-$version" ]; then
