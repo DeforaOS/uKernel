@@ -72,10 +72,17 @@ _library_ldsoconf()
 				line="${line%#*}"
 
 				#recurse into the file included
-				#XXX does not support globbing
-				filename="${ldsoconf%/*}/${line#include }"
-				[ -f "$filename" ] &&
-					_library_ldsoconf "$filename"
+				line="${line#include }"
+				if [ "${line#/}" = "$line" ]; then
+					files="${ldsoconf%/*}/$line"
+				else
+					files="$DESTDIR${line#include }"
+				fi
+				#XXX breaks on whitespace
+				for filename in $files; do
+					[ -f "$filename" ] &&
+						_library_ldsoconf "$filename"
+				done
 				;;
 			*)
 				#remove trailing comments
