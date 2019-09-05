@@ -5,6 +5,9 @@
 
 
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +20,7 @@
 #include "lib/libc/src/ctype.c"
 #include "lib/libc/src/dirent.c"
 #include "lib/libc/src/errno.c"
+#include "lib/libc/src/fcntl.c"
 #include "lib/libc/src/pwd.c"
 #include "lib/libc/src/signal.c"
 #include "lib/libc/src/ssp/ssp.c"
@@ -26,6 +30,7 @@
 #include "lib/libc/src/string.c"
 #include "lib/libc/src/sys/ioctl.c"
 #include "lib/libc/src/sys/mman.c"
+#include "lib/libc/src/sys/stat.c"
 #include "lib/libc/src/sys/time.c"
 #include "lib/libc/src/sys/wait.c"
 #include "lib/libc/src/termios.c"
