@@ -65,6 +65,13 @@ auxv_done:
 # endif
 #endif
 
+	/* initialize the platform */
+#ifdef __PIC__
+	call	platform_init
+#else
+	call	platform_init
+#endif
+
 	/* run the userland kernel */
 #ifdef __ELF__
 	pop	%rcx

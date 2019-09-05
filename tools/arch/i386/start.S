@@ -71,8 +71,8 @@ _start:
 	/* call the global constructors */
 	call	_init
 
-	/* initialize the userland */
-	call	init
+	/* initialize the platform */
+	call	platform_init
 
 	/* run the userland kernel */
 	call	main
