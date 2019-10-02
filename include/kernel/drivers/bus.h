@@ -7,6 +7,7 @@
 # define UKERNEL_DRIVERS_BUS_H
 
 # include <stdarg.h>
+# include <stddef.h>
 # include <stdint.h>
 
 
