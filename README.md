@@ -41,7 +41,9 @@ amd64 platforms, it produces a multiboot-compliant kernel file.
 Note that it is also possible to build uKernel outside of the source tree, by
 using the "OBJDIR" variable as follows:
 
-    $ make ARCH="i386" OBJDIR="$PWD/obj-i386"
+    $ make ARCH="i386" OBJDIR="$PWD/obj-i386/"
+
+(note that the trailing slash is required)
 
 Testing uKernel
 ---------------
