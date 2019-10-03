@@ -21,7 +21,7 @@ submodules have been initialized and checked out as required:
 
 Then, the Makefiles must be generated for the current platform. This can be
 performed with `configure(1)` from the DeforaOS configure project, found at
-<https://www.defora.org/os/project/16/configure> (or
+<https://www.defora.org/os/project/16/configure> (or on the Github mirror at
 <https://github.com/DeforaOS/configure>). The procedure is then as follows:
 
     $ configure
