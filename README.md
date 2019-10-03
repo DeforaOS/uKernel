@@ -13,7 +13,13 @@ in progress (amd64).
 Compiling uKernel
 -----------------
 
-First, the Makefiles must be generated for the current platform. This can be
+First, when compiling from the source code repository, make sure that the Git
+submodules have been initialized and checked out as required:
+
+    $ git submodule init
+    $ git submodule update
+
+Then, the Makefiles must be generated for the current platform. This can be
 performed with `configure(1)` from the DeforaOS configure project, found at
 <https://www.defora.org/os/project/16/configure> (or
 <https://github.com/DeforaOS/configure>). The procedure is then as follows:
