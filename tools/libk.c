@@ -18,6 +18,7 @@
 #include <ssp.h>
 
 #include "lib/libc/src/ctype.c"
+#include "lib/libc/src/dlfcn.c"
 #include "lib/libc/src/dirent.c"
 #include "lib/libc/src/errno.c"
 #include "lib/libc/src/fcntl.c"
@@ -36,6 +37,3 @@
 #include "lib/libc/src/termios.c"
 #include "lib/libc/src/time.c"
 #include "lib/libc/src/unistd.c"
-#include "lib/sys/mman.c"
-#include "lib/sys/time.c"
-#include "lib/unistd.c"
