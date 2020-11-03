@@ -1,6 +1,6 @@
 #!/bin/sh
 #$Id$
-#Copyright (c) 2017-2019 Pierre Pronchery <khorben@defora.org>
+#Copyright (c) 2017-2020 Pierre Pronchery <khorben@defora.org>
 #
 #Redistribution and use in source and binary forms, with or without
 #modification, are permitted provided that the following conditions are met:
@@ -42,6 +42,7 @@ TR="tr"
 _fixme()
 {
 	res=0
+	subdirs=
 
 	$DATE
 	echo
@@ -56,6 +57,10 @@ _fixme()
 				;;
 		esac
 	done < "$PROJECTCONF"
+	if [ ! -n "$subdirs" ]; then
+		_error "Could not locate directories to analyze"
+		return $?
+	fi
 	for subdir in $subdirs; do
 		[ -d "../$subdir" ] || continue
 		for filename in $($FIND "../$subdir" -type f | $SORT); do
@@ -152,6 +157,14 @@ _debug()
 }
 
 
+#error
+_error()
+{
+	echo "$PROGNAME: $@" 1>&2
+	return 2
+}
+
+
 #usage
 _usage()
 {
@@ -200,6 +213,4 @@ while [ $# -gt 0 ]; do
 	fi
 	_fixme > "$target"					|| ret=$?
 done
-#XXX ignore errors
-ret=0
 exit $ret
