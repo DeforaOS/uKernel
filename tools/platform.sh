@@ -30,9 +30,10 @@ DESTDIR=
 LDSOCONF="/etc/ld.so.conf"
 PREFIX="/usr/local"
 PROGNAME="platform.sh"
-SOEXT=".so"
+SOEXT=
 #executables
 UNAME="uname"
+
 [ -f "$CONFIGSH" ] && . "$CONFIGSH"
 
 
@@ -98,28 +99,31 @@ _library_ldsoconf()
 _platform_variable()
 {
 	variable="$1"
-	context="$2"
 
 	case "$variable" in
 		ARCH)
-			[ -n "$ARCH" ] || ARCH="$context"
-			[ -n "$ARCH" ] || ARCH=$($UNAME -m)
-			[ -n "$ARCH" ] || return 2
-			echo "$ARCH"
+			if [ -n "$ARCH" ]; then
+				echo "$ARCH"
+				return 0
+			fi
+			ARCH=$($UNAME -m)
+			case "$ARCH" in
+				amd64|x86_64)
+					echo "amd64"
+					;;
+				i[3456]86)
+					echo "i386"
+					;;
+				*)
+					echo "unknown"
+					;;
+			esac
 			;;
 		BINDIR)
 			echo "$PREFIX/bin"
 			;;
 		DATADIR)
 			echo "$PREFIX/share"
-			;;
-		LIBK_*|LIBULOADER_*|NATIVE_*|UKERNEL_*|ULOADER_*)
-			[ -n "$PORT" ] || PORT=$(_platform_variable "PORT" "$context")
-			case "$PORT" in
-				amd64|i386)
-					"_platform_variable_$PORT" "$variable"
-					;;
-			esac
 			;;
 		LIBDIR)
 			echo "$PREFIX/lib"
@@ -131,29 +135,24 @@ _platform_variable()
 				echo "$PREFIX/share/man"
 			fi
 			;;
-		PORT)
-			[ -n "$PORT" ] || PORT="$context"
-			if [ ! -n "$PORT" ]; then
-				[ -n "$ARCH" ] || ARCH=$(_platform_variable "ARCH")
-				case "$ARCH" in
-					amd64|x86_64)
-						PORT="amd64"
-						;;
-					i[3456]86)
-						PORT="i386"
-						;;
-					*)
-						return 2
-						;;
-				esac
-			fi
-			echo "$PORT"
-			;;
 		PREFIX)
 			echo "$PREFIX"
 			;;
 		SBINDIR)
 			echo "$PREFIX/sbin"
+			;;
+		SOEXT)
+			case "$($UNAME -s)" in
+				"Darwin")
+					echo ".dylib"
+					;;
+				"MINGW"*)
+					echo ".dll"
+					;;
+				*)
+					echo ".so"
+					;;
+			esac
 			;;
 		SYSCONFDIR)
 			if [ "$PREFIX" = "/usr" ]; then
@@ -165,103 +164,21 @@ _platform_variable()
 	esac
 }
 
-_platform_variable_amd64()
-{
-	variable="$1"
-	extra=
-	platform=$($UNAME -s)
-
-	if [ "$platform" = "OpenBSD" ]; then
-		extra=" -fno-stack-protector"
-	else
-		extra=" -fstack-protector"
-	fi
-	case "$variable" in
-		LIBK_CFLAGS)
-			echo "-ffreestanding -fPIC -mno-red-zone$extra"
-			;;
-		LIBK_LDFLAGS|NATIVE_LDFLAGS)
-			echo "-nostdlib"
-			;;
-		LIBULOADER_CFLAGS)
-			echo "-m32 -ffreestanding -fPIC -mno-red-zone$extra"
-			;;
-		LIBULOADER_LDFLAGS)
-			echo "-m32 -nostdlib"
-			;;
-		NATIVE_CFLAGS)
-			echo "-ffreestanding -fPIE$extra"
-			;;
-		UKERNEL_CFLAGS)
-			echo "-ffreestanding -fPIE -mno-red-zone$extra"
-			;;
-		UKERNEL_LDFLAGS)
-			echo "-nostdlib -pie -static -T ${prepend}src/arch/amd64/uKernel.ld"
-			;;
-		ULOADER_CFLAGS)
-			echo "-m32 -ffreestanding$extra"
-			;;
-		ULOADER_LDFLAGS)
-			[ -n "$CC" ] || CC="cc"
-			echo "-m32 -nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld $($CC -m32 -print-libgcc-file-name)"
-			;;
-	esac
-}
-
-_platform_variable_i386()
-{
-	variable="$1"
-	extra=
-	platform=$($UNAME -s)
-
-	if [ "$platform" = "OpenBSD" ]; then
-		extra=" -fno-stack-protector"
-	else
-		extra=" -fstack-protector"
-	fi
-	case "$variable" in
-		LIBK_CFLAGS|LIBULOADER_CFLAGS)
-			echo "-ffreestanding -fPIC$extra"
-			;;
-		LIBK_LDFLAGS|LIBULOADER_LDFLAGS|NATIVE_LDFLAGS)
-			echo "-nostdlib"
-			;;
-		NATIVE_CFLAGS|UKERNEL_CFLAGS)
-			echo "-ffreestanding -fPIE$extra"
-			;;
-		UKERNEL_LDFLAGS)
-			echo "-nostdlib -pie -static -T ${prepend}src/arch/i386/uKernel.ld"
-			;;
-		ULOADER_CFLAGS)
-			echo "-ffreestanding$extra"
-			;;
-		ULOADER_LDFLAGS)
-			[ -n "$CC" ] || CC="cc"
-			echo "-nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld $($CC -m32 -print-libgcc-file-name)"
-			;;
-	esac
-}
-
 
 #usage
 _usage()
 {
 	echo "Usage: $PROGNAME -l library" 1>&2
-	echo "       $PROGNAME -V variable [-C context]" 1>&2
+	echo "       $PROGNAME -V variable" 1>&2
 	return 1
 }
 
 
 #main
-prepend="${0%tools/platform.sh}"
-context=
 type=
 variable=
-while getopts "C:l:O:V:" name; do
+while getopts "l:O:V:" name; do
 	case "$name" in
-		C)
-			context="$OPTARG"
-			;;
 		O)
 			export "${OPTARG%%=*}"="${OPTARG#*=}"
 			;;
@@ -285,12 +202,14 @@ if [ $# -ne 0 ]; then
 	exit $?
 fi
 
+[ -n "$SOEXT" ] || SOEXT=$(_platform_variable SOEXT)
+
 case "$type" in
 	library)
 		"_platform_$type" "$library"
 		;;
 	variable)
-		"_platform_$type" "$variable" "$context"
+		"_platform_$type" "$variable"
 		;;
 	*)
 		_usage
