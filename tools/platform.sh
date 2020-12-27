@@ -206,7 +206,7 @@ _platform_variable_amd64()
 			echo "-m32 -ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
-			[ -n "$CC" ] || CC="cc"
+			[ -n "$CC" ] || CC="${CROSS}gcc"
 			echo "-m32 -nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld $($CC -m32 -print-libgcc-file-name)"
 			;;
 	esac
@@ -240,7 +240,7 @@ _platform_variable_i386()
 			echo "-ffreestanding$extra"
 			;;
 		ULOADER_LDFLAGS)
-			[ -n "$CC" ] || CC="cc"
+			[ -n "$CC" ] || CC="${CROSS}gcc"
 			echo "-nostdlib -static -T ${prepend}src/arch/i386/uKernel.ld $($CC -m32 -print-libgcc-file-name)"
 			;;
 	esac
