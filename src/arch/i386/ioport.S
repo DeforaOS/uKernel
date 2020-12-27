@@ -8,7 +8,7 @@
 .section .text
 /* inb */
 .global inb
-#ifndef __APPLE__
+#ifndef __clang__
 .type inb, @function
 #endif
 inb:
@@ -24,7 +24,7 @@ inb:
 
 /* iowait */
 .global iowait
-#ifndef __APPLE__
+#ifndef __clang__
 .type iowait, @function
 #endif
 iowait:
@@ -37,7 +37,7 @@ iowait:
 
 /* outb */
 .global outb
-#ifndef __APPLE__
+#ifndef __clang__
 .type outb, @function
 #endif
 outb:

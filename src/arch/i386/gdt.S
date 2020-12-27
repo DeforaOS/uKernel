@@ -9,7 +9,7 @@
 .section .text
 /* arch_setgdt */
 .global __arch_setgdt
-#ifndef __APPLE__
+#ifndef __clang__
 .type __arch_setgdt, @function
 #endif
 __arch_setgdt:

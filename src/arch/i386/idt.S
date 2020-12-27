@@ -9,7 +9,7 @@
 .section .text
 /* arch_setidt */
 .global __arch_setidt
-#ifndef __APPLE__
+#ifndef __clang__
 .type __arch_setidt, @function
 #endif
 __arch_setidt:

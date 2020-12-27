@@ -33,7 +33,7 @@ stack_top:
 .section .text
 /* start */
 .global _start
-#ifndef __APPLE__
+#ifndef __clang__
 .type _start, @function
 #endif
 _start:

@@ -8,7 +8,7 @@
 /* text */
 .section .text
 .global intr_disable
-#ifndef __APPLE__
+#ifndef __clang__
 .type intr_disable, @function
 #endif
 intr_disable:
@@ -18,7 +18,7 @@ intr_disable:
 
 /* intr_enable */
 .global intr_enable
-#ifndef __APPLE__
+#ifndef __clang__
 .type intr_enable, @function
 #endif
 intr_enable:

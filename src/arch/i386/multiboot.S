@@ -25,7 +25,7 @@
 .section .text
 /* multiboot_boot_kernel32 */
 .global multiboot_boot_kernel32
-#ifndef __APPLE__
+#ifndef __clang__
 .type multiboot_boot_kernel32, @function
 #endif
 multiboot_boot_kernel32:
@@ -43,7 +43,7 @@ multiboot_boot_kernel32:
 
 
 .global multiboot_boot_kernel64
-#ifndef __APPLE__
+#ifndef __clang__
 .type multiboot_boot_kernel64, @function
 #endif
 multiboot_boot_kernel64:

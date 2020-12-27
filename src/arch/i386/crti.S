@@ -9,7 +9,7 @@
 /* init */
 .section .init
 .global _init
-#ifndef __APPLE__
+#ifndef __clang__
 .type _init, @function
 #endif
 _init:
@@ -20,7 +20,7 @@ _init:
 /* fini */
 .section .fini
 .global _fini
-#ifndef __APPLE__
+#ifndef __clang__
 .type _fini, @function
 #endif
 _fini:
