@@ -9,7 +9,9 @@
 /* init */
 .section .init
 .global _init
+#ifndef __APPLE__
 .type _init, @function
+#endif
 _init:
 	push	%ebp
 	mov	%esp, %ebp
@@ -18,7 +20,9 @@ _init:
 /* fini */
 .section .fini
 .global _fini
+#ifndef __APPLE__
 .type _fini, @function
+#endif
 _fini:
 	push	%ebp
 	mov	%esp, %ebp

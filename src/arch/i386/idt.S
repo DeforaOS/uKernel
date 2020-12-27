@@ -9,7 +9,9 @@
 .section .text
 /* arch_setidt */
 .global __arch_setidt
+#ifndef __APPLE__
 .type __arch_setidt, @function
+#endif
 __arch_setidt:
 	lea	idt, %ecx
 	/* set the offset of the IDT */

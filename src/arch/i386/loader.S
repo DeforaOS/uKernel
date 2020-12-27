@@ -33,7 +33,9 @@ stack_top:
 .section .text
 /* start */
 .global _start
+#ifndef __APPLE__
 .type _start, @function
+#endif
 _start:
 	/* disable interrupts */
 	cli

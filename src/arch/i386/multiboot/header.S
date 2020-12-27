@@ -50,7 +50,9 @@ multiboot_header:
 .section .text
 /* multiboot_start */
 .global _multiboot_start
+# ifndef __APPLE__
 .type _multiboot_start, @function
+# endif
 _multiboot_start:
 	jmp _start
 #endif

@@ -25,7 +25,9 @@
 .section .text
 /* multiboot_boot_kernel32 */
 .global multiboot_boot_kernel32
+#ifndef __APPLE__
 .type multiboot_boot_kernel32, @function
+#endif
 multiboot_boot_kernel32:
 	/* jump into the 32-bit kernel */
 	mov	0x4(%esp), %ebx
@@ -41,7 +43,9 @@ multiboot_boot_kernel32:
 
 
 .global multiboot_boot_kernel64
+#ifndef __APPLE__
 .type multiboot_boot_kernel64, @function
+#endif
 multiboot_boot_kernel64:
 	/* check for 64-bit capability */
 	pushf

@@ -9,7 +9,9 @@
 .section .text
 /* arch_setgdt */
 .global __arch_setgdt
+#ifndef __APPLE__
 .type __arch_setgdt, @function
+#endif
 __arch_setgdt:
 #if 1
 	lea	gdt_descriptor, %ecx

@@ -8,7 +8,9 @@
 .section .text
 /* inb */
 .global inb
+#ifndef __APPLE__
 .type inb, @function
+#endif
 inb:
 	mov	0x4(%esp), %dx		/* address */
 	movl	0x8(%esp), %ecx		/* return address */
@@ -22,7 +24,9 @@ inb:
 
 /* iowait */
 .global iowait
+#ifndef __APPLE__
 .type iowait, @function
+#endif
 iowait:
 	xor	%eax, %eax
 	outb	%al, $0x80
@@ -33,7 +37,9 @@ iowait:
 
 /* outb */
 .global outb
+#ifndef __APPLE__
 .type outb, @function
+#endif
 outb:
 	mov	0x4(%esp), %dx		/* address */
 	mov	0x8(%esp), %al		/* value */
