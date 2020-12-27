@@ -9,6 +9,7 @@
 # include <string.h>
 # include <kernel/drivers/bus.h>
 # include <kernel/drivers/console.h>
+# include <kernel/drivers/clock.h>
 # include <kernel/drivers/display.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
