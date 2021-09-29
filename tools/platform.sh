@@ -187,8 +187,8 @@ _platform_variable_amd64()
 		LIBK_LDFLAGS|NATIVE_LDFLAGS)
 			echo "-nostdlib"
 			;;
-		LIBULOADER_CFLAGS)
-			echo "-m32 -ffreestanding -fPIC -mno-red-zone$extra"
+		LIBULOADER_ASFLAGS|LIBULOADER_CFLAGS)
+			echo "-m32 -ffreestanding -fPIC$extra"
 			;;
 		LIBULOADER_LDFLAGS)
 			echo "-m32 -nostdlib"
