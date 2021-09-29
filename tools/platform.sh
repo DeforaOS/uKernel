@@ -194,7 +194,7 @@ _platform_variable_amd64()
 			echo "-m32 -nostdlib"
 			;;
 		NATIVE_CFLAGS)
-			echo "-ffreestanding -fPIE$extra"
+			echo "-ffreestanding -fPIC$extra"
 			;;
 		UKERNEL_CFLAGS)
 			echo "-ffreestanding -fPIE -mno-red-zone$extra"
