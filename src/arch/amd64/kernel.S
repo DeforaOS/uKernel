@@ -38,14 +38,6 @@ stack_top:
 
 /* text */
 .section .text
-/* brk */
-.global _brk
-.type _brk, @function
-_brk:
-	xor	%rax, %rax
-	ret
-
-
 /* start */
 .global _start
 .type _start, @function
