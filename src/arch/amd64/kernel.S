@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2018-2019 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2018-2021 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS uKernel */
 /* Originally from https://wiki.osdev.org/Bare_Bones */
 
