@@ -23,9 +23,9 @@ jobs:
       run: git clone https://github.com/DeforaOS/configure.git configure && (cd configure/src && PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make PREFIX="$HOME/opt/DeforaOS" install)
     - name: configure
       run: $HOME/opt/DeforaOS/bin/configure -p "$HOME/opt/DeforaOS" -M i386-debug
-    - name: make ARCH="i386"
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make CCSHARED="cc -shared"
-    - name: make ARCH="i386" tests
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make CCSHARED="cc -shared" tests
-    - name: make ARCH="i386" distcheck
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make CCSHARED="cc -shared" distcheck
+    - name: make (i386)
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared"
+    - name: make tests (i386)
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared" tests
+    - name: make distcheck (i386)
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared" distcheck
