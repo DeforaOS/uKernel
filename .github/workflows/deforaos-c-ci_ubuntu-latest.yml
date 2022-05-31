@@ -13,6 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: initialize sub-modules
+      run: git submodule init
+    - name: update sub-modules
+      run: git submodule update
     - name: bootstrap libSystem
       run: git clone https://github.com/DeforaOS/libSystem.git libSystem && for dir in include data src; do (cd libSystem/$dir && make PREFIX="$HOME/opt/DeforaOS" install); done
     - name: bootstrap configure
