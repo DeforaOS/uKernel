@@ -24,8 +24,9 @@ jobs:
     - name: configure
       run: $HOME/opt/DeforaOS/bin/configure -p "$HOME/opt/DeforaOS" -M i386-debug
     - name: make (i386)
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared"
+      #XXX bootstrap a cross-compiler first
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CC="gcc -m32" CCSHARED="gcc -m32 -shared"
     - name: make tests (i386)
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared" tests
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CC="gcc -m32" CCSHARED="gcc -m32 -shared" tests
     - name: make distcheck (i386)
-      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CCSHARED="cc -shared" distcheck
+      run: PKG_CONFIG_PATH="$HOME/opt/DeforaOS/lib/pkgconfig" make ARCH="i386" CC="gcc -m32" CCSHARED="gcc -m32 -shared" distcheck
