@@ -15,15 +15,15 @@ Dependencies
 Binutils and GCC require the following software components to be available in
 the system prior to their installation:
 
-| Component | Notes                   |
-| --------- | ----------------------- |
-| Make      | eg GNU Make or BSD Make |
-| Bison     |                         |
-| Flex      |                         |
-| GMP       |                         |
-| MPC       |                         |
-| MPFR      |                         |
-| Texinfo   |                         |
+| Component | Notes                      |
+| --------- | -------------------------- |
+| Make      | e.g., GNU Make or BSD Make |
+| Bison     |                            |
+| Flex      |                            |
+| GMP       |                            |
+| MPC       |                            |
+| MPFR      |                            |
+| Texinfo   |                            |
 
 Please refer to the manual of your local system for information on how to find
 and install these components as required.
