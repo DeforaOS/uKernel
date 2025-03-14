@@ -7,7 +7,11 @@
 
 /* sections */
 /* init */
+#ifdef __APPLE__
+.section __TEXT,__text
+#else
 .section .init
+#endif
 .global _init
 #ifndef __clang__
 .type _init, @function
@@ -16,9 +20,19 @@ _init:
 	push	%rbp
 	mov	%rsp, %rbp
 
+#ifdef __APPLE__
+.section __DATA,__mod_init_func,mod_init_funcs
+.p2align 3
+.quad _init
+#endif
+
 
 /* fini */
+#ifdef __APPLE__
+.section __TEXT,__text
+#else
 .section .fini
+#endif
 .global _fini
 #ifndef __clang__
 .type _fini, @function
@@ -26,3 +40,9 @@ _init:
 _fini:
 	push	%rbp
 	mov	%rsp, %rbp
+
+#ifdef __APPLE__
+.section __DATA,__mod_term_func,mod_term_funcs
+.p2align 3
+.quad _fini
+#endif
