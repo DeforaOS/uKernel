@@ -13,7 +13,6 @@
 /* gettimeofday */
 int gettimeofday(struct timeval * tv, void * null)
 {
-	ukClock * clock;
 	time_t t;
 
 	if(clock_get_time(NULL, &t) != 0)
