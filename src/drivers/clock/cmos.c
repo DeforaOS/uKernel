@@ -5,6 +5,7 @@
 
 
 #include <stdlib.h>
+#include <syslog.h>
 #include <errno.h>
 #include <kernel/drivers/clock.h>
 #include "cmos.h"

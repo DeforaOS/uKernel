@@ -4,8 +4,8 @@
 
 
 
-#include <stdio.h>
 #include <string.h>
+#include <syslog.h>
 #include <errno.h>
 #include <kernel/drivers/bus.h>
 
@@ -37,7 +37,7 @@ ukBus * bus_init(ukBus * parent, char const * name)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s bus%s%s%s\n", name,
+			syslog(LOG_KERN | LOG_NOTICE, "%s bus%s%s%s", name,
 					(parent != NULL) ? " at " : "",
 					(parent != NULL) ? parent->name : "",
 					(parent != NULL) ? " bus" : "");

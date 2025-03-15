@@ -5,7 +5,7 @@
 
 
 #if defined(__amd64__) || defined(__i386__)
-# include <stdio.h>
+# include <syslog.h>
 # include <kernel/drivers/bus.h>
 # include <kernel/drivers/clock.h>
 # include <kernel/drivers/console.h>
@@ -56,6 +56,9 @@ int multiboot(const ukMultibootInfo * mi)
 	/* initialize the heap */
 	multiboot_heap_reset(mi);
 
+	/* initialize logging */
+	openlog("uKernel", LOG_ODELAY, LOG_KERN);
+
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");
 	vgabus = bus_init(ioportbus, "vga");
@@ -80,14 +83,14 @@ int multiboot(const ukMultibootInfo * mi)
 	clock_init(cmosbus, "cmos");
 
 	/* report information on the boot process */
-	puts("DeforaOS Multiboot");
+	syslog(LOG_KERN | LOG_NOTICE, "%s", "DeforaOS Multiboot");
 	if(mi->loader_name != NULL)
-		printf("Loader: %s\n", mi->loader_name);
+		syslog(LOG_KERN | LOG_INFO, "Loader: %s", mi->loader_name);
 	if(mi->cmdline != NULL)
-		printf("Command line: %s\n", mi->cmdline);
-	printf("%u MB memory available\n",
+		syslog(LOG_KERN | LOG_INFO, "Command line: %s", mi->cmdline);
+	syslog(LOG_KERN | LOG_INFO, "%u MB memory available",
 			(mi->mem_upper - mi->mem_lower) / 1024);
-	printf("Booted from %#x\n", mi->boot_device_drive);
+	syslog(LOG_KERN | LOG_INFO, "Booted from %#x", mi->boot_device_drive);
 
 	/* setup the GDT */
 #if defined(__amd64__)
@@ -96,16 +99,16 @@ int multiboot(const ukMultibootInfo * mi)
 	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 #endif
 	{
-		puts("Could not setup the GDT");
+		syslog(LOG_KERN | LOG_EMERG, "%s", "Could not setup the GDT");
 		return 4;
 	}
 
 	/* load the modules */
 	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
-		puts("No modules provided");
+		syslog(LOG_KERN | LOG_INFO, "%s", "No modules provided");
 	else
 	{
-		puts("Loading modules...");
+		syslog(LOG_KERN | LOG_INFO, "%s", "Loading modules...");
 		for(i = 0; i < mi->mods_count; i++)
 		{
 			mod = &mi->mods_addr[i];
@@ -116,7 +119,7 @@ int multiboot(const ukMultibootInfo * mi)
 	/* setup the IDT */
 	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
 	{
-		puts("Could not setup the IDT");
+		syslog(LOG_KERN | LOG_EMERG, "%s", "Could not setup the IDT");
 		return 5;
 	}
 

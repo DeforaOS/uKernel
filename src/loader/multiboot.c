@@ -5,8 +5,8 @@
 
 
 #if defined(__i386__)
-# include <stdio.h>
 # include <string.h>
+# include <syslog.h>
 # include <kernel/drivers/bus.h>
 # include <kernel/drivers/console.h>
 # include <kernel/drivers/clock.h>
@@ -57,6 +57,9 @@ int multiboot(const ukMultibootInfo * mi)
 	/* initialize the heap */
 	multiboot_heap_reset(mi);
 
+	/* initialize logging */
+	openlog("uLoader", LOG_ODELAY, LOG_KERN);
+
 	/* initialize the buses */
 	ioportbus = bus_init(NULL, "ioport");
 	vgabus = bus_init(ioportbus, "vga");
@@ -78,38 +81,38 @@ int multiboot(const ukMultibootInfo * mi)
 	clock_init(cmosbus, clock);
 
 	/* report information on the boot process */
-	puts("DeforaOS Multiboot");
+	syslog(LOG_KERN | LOG_NOTICE, "%s", "DeforaOS Multiboot");
 	if(mi->loader_name != NULL)
-		printf("Loader: %s\n", mi->loader_name);
+		syslog(LOG_KERN | LOG_INFO, "Loader: %s", mi->loader_name);
 	if(mi->cmdline != NULL)
-		printf("Command line: %s\n", mi->cmdline);
-	printf("%u MB memory available\n",
+		syslog(LOG_KERN | LOG_INFO, "Command line: %s", mi->cmdline);
+	syslog(LOG_KERN | LOG_INFO, "%u MB memory available",
 			(mi->mem_upper - mi->mem_lower) / 1024);
-	printf("Booted from %#x\n", mi->boot_device_drive);
+	syslog(LOG_KERN | LOG_INFO, "Booted from %#x", mi->boot_device_drive);
 
 	/* setup the GDT */
 	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 	{
-		puts("Could not setup the GDT");
+		syslog(LOG_KERN | LOG_EMERG, "%s", "Could not setup the GDT");
 		return 4;
 	}
 
 	/* load the kernel */
 	if(!(mi->flags & BOOT_MULTIBOOT_INFO_HAS_MODS))
 	{
-		puts("No modules provided");
+		syslog(LOG_KERN | LOG_NOTICE, "%s", "No modules provided");
 		return 6;
 	}
 	if(mi->mods_count == 0)
 	{
-		puts("No kernel provided");
+		syslog(LOG_KERN | LOG_ERR, "%s", "No kernel provided");
 		return 7;
 	}
 	mod = &mi->mods_addr[0];
-	printf("Loading kernel: %s\n", mod->cmdline);
+	syslog(LOG_KERN | LOG_NOTICE, "Loading kernel: %s", mod->cmdline);
 	if(multiboot_load_module(mod, &elfclass, &entrypoint) != 0)
 	{
-		puts("Could not load the kernel");
+		syslog(LOG_KERN | LOG_EMERG, "%s", "Could not load the kernel");
 		return 8;
 	}
 
@@ -122,20 +125,25 @@ int multiboot(const ukMultibootInfo * mi)
 
 	/* hand control over to the kernel */
 #ifdef DEBUG
-	printf("Jumping into the kernel at %#x (%u, %u, %#x)\n", entrypoint,
-			mi->elfshdr_num, mi->elfshdr_size, mi->elfshdr_addr);
+	syslog(LOG_KERN | LOG_DEBUG,
+			"Jumping into the kernel at %#x (%u, %u, %#x)",
+			entrypoint, mi->elfshdr_num, mi->elfshdr_size,
+			mi->elfshdr_addr);
 #endif
 	switch(elfclass)
 	{
 		case ELFCLASS32:
-			puts("Detected 32-bit kernel");
+			syslog(LOG_KERN | LOG_INFO, "%s",
+					"Detected 32-bit kernel");
 			return multiboot_boot_kernel32(&kmi, entrypoint);
 		case ELFCLASS64:
-			puts("Detected 64-bit kernel");
+			syslog(LOG_KERN | LOG_INFO, "%s",
+					"Detected 64-bit kernel");
 			return multiboot_boot_kernel64(&kmi, entrypoint);
 	}
 
-	puts("Unsupported ELF class for the kernel");
+	syslog(LOG_KERN | LOG_EMERG, "%s",
+			"Unsupported ELF class for the kernel");
 	return 7;
 }
 #endif

@@ -26,6 +26,7 @@
 #include "lib/libc/src/sys/ioctl.c"
 #include "lib/libc/src/sys/stat.c"
 #include "lib/libc/src/sys/sysctl.c"
+#include "lib/libc/src/syslog.c"
 #include "lib/libc/src/sys/time.c"
 #include "lib/libc/src/sys/wait.c"
 #include "lib/libc/src/termios.c"

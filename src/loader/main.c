@@ -4,7 +4,10 @@
 
 
 
-#include <stdio.h>
+#include <string.h>
+#include <syslog.h>
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 
 /* public */
@@ -13,15 +16,23 @@
 int main(int argc, char * argv[])
 {
 	int i;
+	char buf[1024];
+	size_t size = sizeof(buf) - 1;
 
-	puts("Failed to boot DeforaOS");
-	printf("Command line:");
+	syslog(LOG_KERN | LOG_EMERG, "Failed to boot DeforaOS");
 	for(i = 0; i < argc; i++)
-		printf(" \"%s\"", argv[i]);
-	printf("\n");
+	{
+		strncat(buf, " ", 1);
+		size -= MIN(size, 1);
+		strncat(buf, argv[i], size);
+		size -= MIN(size, strlen(argv[i]));
+	}
+	buf[sizeof(buf) - 1] = '\0';
+	syslog(LOG_KERN | LOG_INFO, "Command line: %s", buf);
 #ifdef DEBUG
 	if(argv[i] != NULL)
-		puts("uLoader: argv is not terminated properly");
+		syslog(LOG_KERN | LOG_DEBUG, "%s",
+				"uLoader: argv is not terminated properly");
 #endif
 	return 0;
 }

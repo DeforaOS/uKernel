@@ -4,8 +4,8 @@
 
 
 
-#include <stdio.h>
 #include <string.h>
+#include <syslog.h>
 #include <errno.h>
 #include <kernel/drivers/display.h>
 
@@ -41,7 +41,7 @@ ukDisplay * display_init(ukBus * bus, char const * name)
 					strlen(drivers[i]->name)) == 0
 				&& drivers[i]->init != NULL)
 		{
-			fprintf(stderr, "%s display%s%s%s\n", name,
+			syslog(LOG_KERN | LOG_NOTICE, "%s display%s%s%s", name,
 					(bus != NULL) ? " at " : "",
 					(bus != NULL) ? bus->name : "",
 					(bus != NULL) ? " bus" : "");
