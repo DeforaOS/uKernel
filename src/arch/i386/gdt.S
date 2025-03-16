@@ -13,11 +13,7 @@
 .type __arch_setgdt, @function
 #endif
 __arch_setgdt:
-#if 1
 	lea	gdt_descriptor, %ecx
-#else
-	mov	(gdt_descriptor), %ecx
-#endif
 	/* set the offset of the GDT */
 	mov	0x4(%esp), %eax
 	mov	%eax, 0x2(%ecx)
