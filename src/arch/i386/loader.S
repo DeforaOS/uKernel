@@ -125,6 +125,9 @@ _start:
 	push	$0x0
 
 2:
+	/* enable interrupts */
+	sti
+
 	/* start the loader */
 	call	main
 	mov	%ebp, %esp
