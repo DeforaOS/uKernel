@@ -129,6 +129,9 @@ _start:
 	push	$0x0
 
 2:
+	/* enable interrupts */
+	sti
+
 	/* start the kernel */
 	call	main
 	mov	%ebp, %esp
