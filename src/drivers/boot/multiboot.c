@@ -11,8 +11,6 @@
 # include <stdio.h>
 # include <string.h>
 # include <elf.h>
-# include "arch/amd64/gdt.h"
-# include "arch/i386/gdt.h"
 # include "drivers/boot/multiboot.h"
 
 # ifndef MAX

@@ -9,20 +9,36 @@
 .section .text
 /* arch_setgdt */
 .global __arch_setgdt
+#ifndef __clang__
 .type __arch_setgdt, @function
-__arch_setgdt:
-#if 0
-	lea	gdt_descriptor, %rcx
-#else
-	mov	(gdt_descriptor), %rcx
 #endif
+__arch_setgdt:
+	lea	gdt_descriptor, %rcx
+
 	/* set the offset of the GDT */
 	mov	%rsi, 0x2(%rcx)
+
 	/* set the size of the GDT */
+	shl	$0x3, %rdi
 	dec	%rdi
 	mov	%di, (%rcx)
+
 	/* load the GDT */
 	lgdt	(%rcx)
+
+	push	$0x8
+	lea	gdt_flush, %rax
+	push	%rax
+	retf
+
+gdt_flush:
+	mov	$0x10, %ax
+	mov	%ax, %ds
+	mov	%ax, %es
+	mov	%ax, %fs
+	mov	%ax, %gs
+	mov	%ax, %ss
+
 	ret
 
 
@@ -31,4 +47,4 @@ __arch_setgdt:
 .align 16
 gdt_descriptor:
 .skip 2		/* size */
-.skip 4		/* offset */
+.skip 8		/* offset */

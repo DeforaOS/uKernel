@@ -29,12 +29,10 @@
 /* private */
 /* constants */
 /* GDT: 4GB flat memory setup */
-static const GDT _gdt_4gb[4] =
+static const GDTTable _gdt_4gb[2] =
 {
-	{ 0x00000000, 0x00000000, 0x00 },
-	{ 0x00000000, 0xffffffff, 0x9a },
-	{ 0x00000000, 0xffffffff, 0x92 },
-	{ 0x00000000, 0x00000000, 0x89 }
+	{ 0x00000000, 0xffffffff, PROT_READ | PROT_EXEC },
+	{ 0x00000000, 0xffffffff, PROT_READ | PROT_WRITE }
 };
 
 
@@ -88,7 +86,8 @@ int multiboot(const ukMultibootInfo * mi)
 	printf("Booted from %#x\n", mi->boot_device_drive);
 
 	/* setup the GDT */
-	if(_arch_setgdt(_gdt_4gb, sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
+	if(gdt_init_table((const GDTTable *)&_gdt_4gb,
+				sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
 	{
 		puts("Could not setup the GDT");
 		return 4;
