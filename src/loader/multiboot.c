@@ -87,7 +87,7 @@ int multiboot(const ukMultibootInfo * mi)
 
 	/* setup the GDT */
 	if(gdt_init_table((const GDTTable *)&_gdt_4gb,
-				sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
+				sizeof(_gdt_4gb) / sizeof(*_gdt_4gb), 1) != 0)
 	{
 		puts("Could not setup the GDT");
 		return 4;
