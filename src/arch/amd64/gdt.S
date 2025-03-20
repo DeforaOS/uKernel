@@ -26,11 +26,11 @@ __arch_setgdt:
 	/* load the GDT */
 	lgdt	(%rcx)
 
+	/* apply the GDT */
 	push	$0x8
 	lea	gdt_flush, %rax
 	push	%rax
 	retf
-
 gdt_flush:
 	mov	$0x10, %ax
 	mov	%ax, %ds

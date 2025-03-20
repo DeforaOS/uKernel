@@ -24,6 +24,7 @@ __arch_setgdt:
 	shl	$0x3, %eax
 	dec	%eax
 	mov	%ax, (%ecx)
+
 	/* load the GDT */
 	lgdt	(gdt_descriptor)
 
@@ -34,7 +35,7 @@ __arch_setgdt:
 	mov	%ax, %fs
 	mov	%ax, %gs
 	mov	%ax, %ss
-	ljmp	$0x08, $gdt_flush
+	ljmp	$0x8, $gdt_flush
 gdt_flush:
 
 	ret

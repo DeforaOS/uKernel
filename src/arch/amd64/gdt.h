@@ -9,9 +9,4 @@
 
 # include "../i386/gdt.h"
 
-
-/* public */
-/* prototypes */
-int _arch_setgdt64(GDT const * gdt, size_t count);
-
-#endif /* !UKERNEL_ARCH_I386_GDT_H */
+#endif /* !UKERNEL_ARCH_AMD64_GDT_H */
