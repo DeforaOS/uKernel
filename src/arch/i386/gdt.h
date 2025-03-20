@@ -7,7 +7,6 @@
 #ifndef UKERNEL_ARCH_I386_GDT_H
 # define UKERNEL_ARCH_I386_GDT_H
 
-# include <sys/mman.h>
 # include <sys/types.h>
 # include <stdint.h>
 
@@ -70,6 +69,10 @@ typedef struct _TSS
 
 
 /* constants */
+# define GDT_PROT_READ		0x1
+# define GDT_PROT_WRITE		0x2
+# define GDT_PROT_EXEC		0x4
+
 # define GDT_SYSTEM_TYPE_LDT	0x2
 # define GDT_SYSTEM_TYPE_TSS	0x9
 

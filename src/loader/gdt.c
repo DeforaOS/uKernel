@@ -139,9 +139,9 @@ int gdt_append(GDT * gdt, vaddr_t base, size_t size, unsigned int prot)
 		errno = ENOMEM;
 		return -1;
 	}
-	if(prot != PROT_READ
-			&& prot != (PROT_READ | PROT_WRITE)
-			&& prot != (PROT_READ | PROT_EXEC))
+	if(prot != GDT_PROT_READ
+			&& prot != (GDT_PROT_READ | GDT_PROT_WRITE)
+			&& prot != (GDT_PROT_READ | GDT_PROT_EXEC))
 	{
 		errno = EPERM;
 		return -1;
@@ -157,13 +157,13 @@ int gdt_append(GDT * gdt, vaddr_t base, size_t size, unsigned int prot)
 	else
 		limit = size - 1;
 	/* access */
-	if(prot == (PROT_READ | PROT_EXEC))
+	if(prot == (GDT_PROT_READ | GDT_PROT_EXEC))
 		/* code segment */
 		access |= GDT_ACCESS_PROT_RW | GDT_ACCESS_PROT_X;
-	else if(prot == (PROT_READ | PROT_WRITE))
+	else if(prot == (GDT_PROT_READ | GDT_PROT_WRITE))
 		/* data segment (read/write) */
 		access |= GDT_ACCESS_PROT_RW;
-	else if(prot == PROT_READ)
+	else if(prot == GDT_PROT_READ)
 		/* data segment (read-only) */
 		access |= GDT_ACCESS_SET;
 	return _gdt_append_entry(gdt, base, limit, access, flags);

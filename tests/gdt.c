@@ -54,17 +54,17 @@ int main(int argc, char * argv[])
 	/* flat 4 GB */
 	printf("Flat 4 GB:\n");
 	gdt = gdt_init();
-	gdt_append(gdt, 0x00000000, 0xffffffff, PROT_READ | PROT_EXEC);
-	gdt_append(gdt, 0x00000000, 0xffffffff, PROT_READ | PROT_WRITE);
+	gdt_append(gdt, 0x00000000, 0xffffffff, GDT_PROT_READ | GDT_PROT_EXEC);
+	gdt_append(gdt, 0x00000000, 0xffffffff, GDT_PROT_READ | GDT_PROT_WRITE);
 	gdt_append_system(gdt, &tss, sizeof(tss), GDT_SYSTEM_TYPE_TSS);
 	gdt_apply(gdt);
 
 	/* 4 MB code + 4 MB data (read-write) + 4 MB data (read-only) */
 	printf("\n4 MB (rx) + 4 MB (rw) + 4 MB (ro):\n");
 	gdt = gdt_init();
-	gdt_append(gdt, 0x00400000, 0x00400000, PROT_READ | PROT_EXEC);
-	gdt_append(gdt, 0x00800000, 0x00400000, PROT_READ | PROT_WRITE);
-	gdt_append(gdt, 0x00c00000, 0x00400000, PROT_READ);
+	gdt_append(gdt, 0x00400000, 0x00400000, GDT_PROT_READ | GDT_PROT_EXEC);
+	gdt_append(gdt, 0x00800000, 0x00400000, GDT_PROT_READ | GDT_PROT_WRITE);
+	gdt_append(gdt, 0x00c00000, 0x00400000, GDT_PROT_READ);
 	gdt_append_system(gdt, &tss, sizeof(tss), GDT_SYSTEM_TYPE_TSS);
 	gdt_apply(gdt);
 

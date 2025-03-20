@@ -29,8 +29,8 @@
 /* GDT: 4GB flat memory setup */
 static const GDTTable _gdt_4gb[2] =
 {
-	{ 0x00000000, 0xffffffff, PROT_READ | PROT_EXEC },
-	{ 0x00000000, 0xffffffff, PROT_READ | PROT_WRITE }
+	{ 0x00000000, 0xffffffff, GDT_PROT_READ | GDT_PROT_EXEC },
+	{ 0x00000000, 0xffffffff, GDT_PROT_READ | GDT_PROT_WRITE }
 };
 
 static const IDT _idt[] =
