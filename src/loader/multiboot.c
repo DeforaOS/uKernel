@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2018-2020 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2018-2025 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS uKernel */
 
 
@@ -87,7 +87,7 @@ int multiboot(const ukMultibootInfo * mi)
 
 	/* setup the GDT */
 	if(gdt_init_table((const GDTTable *)&_gdt_4gb,
-				sizeof(_gdt_4gb) / sizeof(*_gdt_4gb)) != 0)
+				sizeof(_gdt_4gb) / sizeof(*_gdt_4gb), 1) != 0)
 	{
 		puts("Could not setup the GDT");
 		return 4;
