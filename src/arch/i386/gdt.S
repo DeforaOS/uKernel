@@ -14,15 +14,29 @@
 #endif
 __arch_setgdt:
 	lea	gdt_descriptor, %ecx
+
 	/* set the offset of the GDT */
 	mov	0x4(%esp), %eax
 	mov	%eax, 0x2(%ecx)
+
 	/* set the size of the GDT */
 	mov	0x8(%esp), %eax
+	shl	$0x3, %eax
 	dec	%eax
 	mov	%ax, (%ecx)
 	/* load the GDT */
-	lgdt	(%ecx)
+	lgdt	(gdt_descriptor)
+
+	/* apply the GDT */
+	mov	$0x10, %ax
+	mov	%ax, %ds
+	mov	%ax, %es
+	mov	%ax, %fs
+	mov	%ax, %gs
+	mov	%ax, %ss
+	ljmp	$0x08, $gdt_flush
+gdt_flush:
+
 	ret
 
 
