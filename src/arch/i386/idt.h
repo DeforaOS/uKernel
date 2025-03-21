@@ -12,15 +12,28 @@
 
 /* public */
 /* types */
-typedef struct _IDT
+typedef struct _IDT IDT;
+
+typedef struct _IDTEntry
 {
-	uint32_t base;
+	uint16_t offsetl;
 	uint16_t selector;
-	uint8_t flags;
-} IDT;
+	uint8_t __padding;
+	uint8_t type:4;
+	uint8_t flags:4;
+	uint16_t offseth;
+} IDTEntry;
+
+
+/* constants */
+# define IDT_FLAG_PRESENT	0x8
+# define IDT_FLAG_RING(level)	((level) << 1)
+
+# define IDT_TYPE_INT_GATE	0xe
+# define IDT_TYPE_TRAP_GATE	0xf
 
 
 /* prototypes */
-int _arch_setidt(IDT const * idt, size_t count);
+IDT * idt_init(void);
 
 #endif /* !UKERNEL_ARCH_I386_IDT_H */

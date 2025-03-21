@@ -13,6 +13,7 @@
 # include <kernel/drivers/display.h>
 # include "arch/amd64/gdt.h"
 # include "arch/i386/gdt.h"
+# include "arch/i386/idt.h"
 # include "drivers/boot/multiboot.h"
 
 # ifndef LOADER_CLOCK
@@ -91,6 +92,13 @@ int multiboot(const ukMultibootInfo * mi)
 	{
 		puts("Could not setup the GDT");
 		return 4;
+	}
+
+	/* setup the IDT */
+	if(idt_init() == NULL)
+	{
+		puts("Could not setup the IDT");
+		return 5;
 	}
 
 	/* load the kernel */

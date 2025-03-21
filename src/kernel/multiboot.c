@@ -33,10 +33,6 @@ static const GDTTable _gdt_4gb[2] =
 	{ 0x00000000, 0xffffffff, GDT_PROT_READ | GDT_PROT_WRITE }
 };
 
-static const IDT _idt[] =
-{
-};
-
 
 /* public */
 /* functions */
@@ -113,7 +109,7 @@ int multiboot(const ukMultibootInfo * mi)
 	}
 
 	/* setup the IDT */
-	if(_arch_setidt(_idt, sizeof(_idt) / sizeof(*_idt)) != 0)
+	if(idt_init() == NULL)
 	{
 		puts("Could not setup the IDT");
 		return 5;
